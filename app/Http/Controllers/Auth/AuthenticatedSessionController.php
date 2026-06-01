@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -48,19 +47,7 @@ class AuthenticatedSessionController extends Controller
 
     private function passwordIsValid(User $user, string $password): bool
     {
-        if ($user->password_hash) {
-            return Hash::check($password, $user->password_hash);
-        }
-
-        if (! hash_equals((string) $user->password, md5($password))) {
-            return false;
-        }
-
-        $user->forceFill([
-            'password_hash' => Hash::make($password),
-        ])->save();
-
-        return true;
+        return hash_equals((string) $user->password, md5($password));
     }
 
     public function destroy(Request $request): RedirectResponse

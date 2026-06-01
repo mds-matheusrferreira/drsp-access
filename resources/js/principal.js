@@ -9,11 +9,16 @@ if (principal) {
     const stateTable = document.getElementById('state-modal-table');
     const statePagination = document.getElementById('state-modal-pagination');
     const stateDownload = document.getElementById('state-download');
+    const simplifiedModal = document.getElementById('simplified-modal');
+    const simplifiedPrint = document.getElementById('simplified-print');
+    const simplifiedFields = document.querySelectorAll('[data-simplified-field]');
     const searchForm = document.getElementById('principal-search-form');
     const searchInput = document.getElementById('principal-search');
     const searchResults = document.getElementById('principal-search-results');
     const updatedAt = document.getElementById('principal-updated-at');
     let currentUf = null;
+    let currentSearchRows = [];
+    let currentSimplifiedRow = null;
 
     const escapeHtml = (value) => String(value ?? '')
         .replaceAll('&', '&amp;')
@@ -78,12 +83,134 @@ if (principal) {
         `;
     };
 
+    const searchTableHtml = (rows, columns) => {
+        if (!rows.length) {
+            return '<p class="rounded border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">Nenhum registro encontrado.</p>';
+        }
+
+        return `
+            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="whitespace-nowrap px-3 py-2 text-left font-semibold text-gray-700">Ações</th>
+                            ${columns.map((column) => `<th class="whitespace-nowrap px-3 py-2 text-left font-semibold text-gray-700">${escapeHtml(column)}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 bg-white">
+                        ${rows.map((row, index) => `
+                            <tr>
+                                <td class="whitespace-nowrap px-3 py-2">
+                                    <button type="button" data-simplified-index="${index}" class="rounded bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Leitura Simplificada</button>
+                                </td>
+                                ${columns.map((column) => `<td class="whitespace-nowrap px-3 py-2 text-gray-700">${escapeHtml(row[column])}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    };
+
     const visibleColumns = (rows, preferredColumns = []) => {
         const allColumns = [...new Set(rows.flatMap((row) => Object.keys(row)))];
         const preferred = preferredColumns.filter((column) => allColumns.includes(column));
         const remaining = allColumns.filter((column) => !preferred.includes(column));
 
         return [...preferred, ...remaining].slice(0, 12);
+    };
+
+    const simplifiedReportFields = [
+        ['PROTOCOLO', 'PROTOCOLO'],
+        ['ENTIDADE', 'NOME DA ENTIDADE'],
+        ['MUNICIPIO', 'MUNICÍPIO'],
+        ['UF', 'UF'],
+        ['DT_PROTOCOLO', 'DATA DO PROTOCOLO'],
+        ['FASE_PROCESSO', 'FASE DO PROCESSO'],
+        ['DT_DECISAO_SNAS', 'DT_DECISAO_SNAS'],
+        ['DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU', 'DATA PUBLICAÇÃO CERTIFICAÇÃO ANTERIOR DOU'],
+        ['DT_PUBLICACAO_DOU_RECONSIDERACAO_SNAS', 'DATA PUBLICAÇÃO DOU RECONSIDERAÇÃO SNAS'],
+        ['DT_CERTIFICACAO_ANTERIOR_INICIO', 'DATA DE CERTIFICAÇÃO ANTERIOR INÍCIO'],
+        ['DT_INICIO_CERTIFICACAO_ATUAL', 'DATA INÍCIO DE CERTIFICAÇÃO ATUAL'],
+        ['CNPJ', 'CNPJ'],
+        ['CEBAS', 'STATUS DA CERTIFICAÇÃO'],
+        ['TIPO_PROCESSO', 'TIPO DE PROCESSO'],
+        ['PORTARIAS_SNAS', 'PORTARIA SNAS'],
+        ['DT_PUBLICACAO_PORTARIA_SNAS_DOU', 'DT_PUBLICACAO_PORTARIA_SNAS_DOU'],
+        ['PORTARIA_DECISAO_RECURSO_SNAS', 'PORTARIA DECISÃO RECURSO SNAS'],
+        ['OFERTAS', 'OFERTAS'],
+        ['DT_CERTIFICACAO_ANTERIOR_FIM', 'DATA DE CERTIFICAÇÃO ANTERIOR FIM'],
+        ['DT_FIM_CERTIFICACAO_ATUAL', 'DATA FIM DE CERTIFICAÇÃO ATUAL'],
+    ];
+
+    const rowValue = (row, field) => {
+        const value = row?.[field];
+
+        if (value === undefined || value === null || String(value).trim() === '') {
+            return '-';
+        }
+
+        return value;
+    };
+
+    const openSimplified = (row) => {
+        currentSimplifiedRow = row;
+        simplifiedFields.forEach((field) => {
+            field.textContent = rowValue(row, field.dataset.simplifiedField);
+        });
+        simplifiedModal.classList.remove('hidden');
+        simplifiedModal.classList.add('flex');
+    };
+
+    const closeSimplified = () => {
+        simplifiedModal.classList.add('hidden');
+        simplifiedModal.classList.remove('flex');
+        currentSimplifiedRow = null;
+    };
+
+    const printSimplified = () => {
+        if (!currentSimplifiedRow) {
+            return;
+        }
+
+        const reportRows = simplifiedReportFields.map(([field, label]) => `
+            <tr>
+                <th>${escapeHtml(label)}</th>
+                <td>${escapeHtml(rowValue(currentSimplifiedRow, field))}</td>
+            </tr>
+        `).join('');
+        const printWindow = window.open('', '_blank', 'width=900,height=700');
+
+        if (!printWindow) {
+            return;
+        }
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="utf-8">
+                <title>Informações Simplificadas</title>
+                <style>
+                    body { color: #374151; font-family: Arial, sans-serif; margin: 32px; }
+                    h1 { color: #1f2937; font-size: 24px; margin-bottom: 8px; }
+                    p { margin: 0 0 24px; }
+                    table { border-collapse: collapse; width: 100%; }
+                    th, td { border-bottom: 1px solid #e5e7eb; padding: 10px 8px; text-align: left; vertical-align: top; }
+                    th { color: #6b7280; font-size: 12px; text-transform: uppercase; width: 38%; }
+                    td { font-size: 15px; }
+                </style>
+            </head>
+            <body>
+                <h1>Informações Simplificadas</h1>
+                <p>Resumo do processo ${escapeHtml(rowValue(currentSimplifiedRow, 'PROTOCOLO'))}</p>
+                <table>${reportRows}</table>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
     };
 
     const loadUpdatedAt = async () => {
@@ -130,10 +257,11 @@ if (principal) {
 
         try {
             const data = await fetchJson(`${urls.searchUrl}?search=${encodeURIComponent(term)}`);
-            const columns = visibleColumns(data.data, ['CNPJ', 'ENTIDADE', 'PROCESSO', 'PROTOCOLO', 'BASE', 'UF']);
+            currentSearchRows = data.data;
+            const columns = visibleColumns(data.data, ['BASE', 'PROCESSO', 'PROTOCOLO', 'PROTOCOLO_SEI', 'ENTIDADE', 'CNPJ', 'MUNICIPIO', 'UF', 'DT_PROTOCOLO', 'FASE_PROCESSO']);
             searchResults.innerHTML = `
                 <div class="mb-3 text-sm text-gray-700">${formatNumber(data.count_total)} resultado(s) encontrado(s). Exibindo até 100 registros.</div>
-                ${tableHtml(data.data, columns)}
+                ${searchTableHtml(data.data, columns)}
             `;
         } catch (error) {
             searchResults.innerHTML = `<p class="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">${escapeHtml(error.message)}</p>`;
@@ -172,6 +300,28 @@ if (principal) {
 
     searchForm.addEventListener('submit', search);
 
+    searchResults.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-simplified-index]');
+
+        if (!button) {
+            return;
+        }
+
+        openSimplified(currentSearchRows[Number(button.dataset.simplifiedIndex)]);
+    });
+
+    document.querySelectorAll('[data-simplified-close]').forEach((button) => {
+        button.addEventListener('click', closeSimplified);
+    });
+
+    simplifiedPrint.addEventListener('click', printSimplified);
+
+    simplifiedModal.addEventListener('click', (event) => {
+        if (event.target === simplifiedModal) {
+            closeSimplified();
+        }
+    });
+
     document.querySelectorAll('[data-map-state]').forEach((state) => {
         state.addEventListener('click', () => openState(state.dataset.mapState));
         state.addEventListener('keydown', (event) => {
@@ -196,6 +346,10 @@ if (principal) {
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && currentUf) {
             closeState();
+        }
+
+        if (event.key === 'Escape' && currentSimplifiedRow) {
+            closeSimplified();
         }
     });
 

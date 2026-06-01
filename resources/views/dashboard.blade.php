@@ -75,5 +75,51 @@
             </div>
         </div>
     </div>
+
+    <div id="simplified-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/60 p-4" role="dialog" aria-modal="true" aria-labelledby="simplified-modal-title">
+        <div class="max-h-[90vh] w-full max-w-5xl overflow-hidden rounded-lg bg-white shadow-xl">
+            <div class="flex flex-col gap-3 border-b border-gray-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h3 id="simplified-modal-title" class="text-2xl font-semibold text-gray-700">Informações Simplificadas</h3>
+                    <p class="mt-1 text-sm text-gray-500">Resumo do processo selecionado.</p>
+                </div>
+                <div class="flex flex-col gap-2 sm:flex-row">
+                    <button type="button" id="simplified-print" class="inline-flex items-center justify-center rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Gerar PDF</button>
+                    <button type="button" data-simplified-close class="inline-flex items-center justify-center rounded border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Fechar</button>
+                </div>
+            </div>
+            <div class="max-h-[72vh] overflow-y-auto p-4 sm:p-6">
+                <div class="grid gap-4 md:grid-cols-2">
+                    @foreach ([
+                        ['PROTOCOLO', 'PROTOCOLO'],
+                        ['ENTIDADE', 'NOME DA ENTIDADE'],
+                        ['MUNICIPIO', 'MUNICÍPIO'],
+                        ['UF', 'UF'],
+                        ['DT_PROTOCOLO', 'DATA DO PROTOCOLO'],
+                        ['FASE_PROCESSO', 'FASE DO PROCESSO'],
+                        ['DT_DECISAO_SNAS', 'DT_DECISAO_SNAS'],
+                        ['DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU', 'DATA PUBLICAÇÃO CERTIFICAÇÃO ANTERIOR DOU'],
+                        ['DT_PUBLICACAO_DOU_RECONSIDERACAO_SNAS', 'DATA PUBLICAÇÃO DOU RECONSIDERAÇÃO SNAS'],
+                        ['DT_CERTIFICACAO_ANTERIOR_INICIO', 'DATA DE CERTIFICAÇÃO ANTERIOR INÍCIO'],
+                        ['DT_INICIO_CERTIFICACAO_ATUAL', 'DATA INÍCIO DE CERTIFICAÇÃO ATUAL'],
+                        ['CNPJ', 'CNPJ'],
+                        ['CEBAS', 'STATUS DA CERTIFICAÇÃO'],
+                        ['TIPO_PROCESSO', 'TIPO DE PROCESSO'],
+                        ['PORTARIAS_SNAS', 'PORTARIA SNAS'],
+                        ['DT_PUBLICACAO_PORTARIA_SNAS_DOU', 'DT_PUBLICACAO_PORTARIA_SNAS_DOU'],
+                        ['PORTARIA_DECISAO_RECURSO_SNAS', 'PORTARIA DECISÃO RECURSO SNAS'],
+                        ['OFERTAS', 'OFERTAS'],
+                        ['DT_CERTIFICACAO_ANTERIOR_FIM', 'DATA DE CERTIFICAÇÃO ANTERIOR FIM'],
+                        ['DT_FIM_CERTIFICACAO_ATUAL', 'DATA FIM DE CERTIFICAÇÃO ATUAL'],
+                    ] as [$field, $label])
+                        <div class="border-b border-gray-200 pb-3">
+                            <dt class="text-xs font-bold uppercase tracking-wide text-gray-500">{{ $label }}</dt>
+                            <dd class="mt-1 break-words text-lg text-gray-700" data-simplified-field="{{ $field }}">-</dd>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
