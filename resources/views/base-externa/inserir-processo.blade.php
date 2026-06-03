@@ -114,6 +114,14 @@
                         @error('DT_PROTOCOLO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
+                        <label for="TEMPESTIVIDADE" class="{{ $labelClass }}">Tempestividade</label>
+                        <select id="TEMPESTIVIDADE" name="TEMPESTIVIDADE" class="{{ $inputClass }} bg-white">
+                            <option value="">Selecione</option>
+                            <option value="Tempestivo" @selected(old('TEMPESTIVIDADE') === 'Tempestivo')>Tempestivo</option>
+                        </select>
+                        @error('TEMPESTIVIDADE') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
                         <label for="DT_CERTIFICACAO_ANTERIOR_INICIO" class="{{ $labelClass }}">Início da Certificação Anterior</label>
                         <input id="DT_CERTIFICACAO_ANTERIOR_INICIO" name="DT_CERTIFICACAO_ANTERIOR_INICIO" type="date" value="{{ old('DT_CERTIFICACAO_ANTERIOR_INICIO') }}" class="{{ $inputClass }}">
                         @error('DT_CERTIFICACAO_ANTERIOR_INICIO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
@@ -203,14 +211,6 @@
                     </div>
                 </div>
                 <div class="grid gap-5 lg:grid-cols-3">
-                    <div>
-                        <label for="TEMPESTIVIDADE" class="{{ $labelClass }}">Tempestividade</label>
-                        <select id="TEMPESTIVIDADE" name="TEMPESTIVIDADE" class="{{ $inputClass }} bg-white">
-                            <option value="">Selecione</option>
-                            <option value="Tempestivo" @selected(old('TEMPESTIVIDADE') === 'Tempestivo')>Tempestivo</option>
-                        </select>
-                        @error('TEMPESTIVIDADE') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
-                    </div>
                     <div>
                         <label for="MOTIVO_RECEBIMENTO" class="{{ $labelClass }}">Motivo do Recebimento</label>
                         <select id="MOTIVO_RECEBIMENTO" name="MOTIVO_RECEBIMENTO" class="{{ $inputClass }} bg-white" required>

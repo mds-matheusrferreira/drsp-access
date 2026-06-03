@@ -89,7 +89,7 @@
                     </div>
 
                     <div class="lg:hidden">
-                        <details class="overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-sm" @if (request()->routeIs('base-externa.*')) open @endif>
+                        <details class="overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-sm">
                             <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
                                 <div class="flex min-w-0 items-center gap-3">
                                     <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-sm font-semibold">{{ $initial }}</div>

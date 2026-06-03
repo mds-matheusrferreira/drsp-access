@@ -41,7 +41,8 @@ class BaseExternaAnaliseProcessoTest extends TestCase
         $response->assertOk();
         $response->assertSee('ANALISE-001');
         $response->assertSee('SEI-001');
-        $response->assertSee('Editar');
+        $response->assertSee('Editar banco');
+        $response->assertSee('Parecer Técnico');
     }
 
     public function test_authenticated_user_can_edit_process(): void
@@ -152,7 +153,7 @@ class BaseExternaAnaliseProcessoTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $attributes
+     * @param  array<string, mixed>  $attributes
      */
     private function insertAccessProcess(array $attributes): void
     {

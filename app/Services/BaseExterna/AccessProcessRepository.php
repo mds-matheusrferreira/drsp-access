@@ -2,6 +2,7 @@
 
 namespace App\Services\BaseExterna;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -48,6 +49,126 @@ class AccessProcessRepository
         'MOTIVO',
         'PARECER',
         'NOTA_TECNICA',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    private const PARECER_HEADER_COLUMNS = [
+        'PROTOCOLO',
+        'PROTOCOLO_SEI',
+        'TIPO_PROCESSO',
+        'CNPJ',
+        'DT_PROTOCOLO',
+        'SITUAÇÃO_CNEAS',
+        'ENTIDADE',
+        'MUNICIPIO',
+        'UF',
+        'DT_CERTIFICACAO_ANTERIOR_INICIO',
+        'DT_CERTIFICACAO_ANTERIOR_FIM',
+        'FASE_PROCESSO',
+        'STATUS_PROCESSO',
+    ];
+
+    /**
+     * @var array<string, array<int, string>>
+     */
+    private const PARECER_SECTION_DEFINITIONS = [
+        'Análise técnica' => [
+            'DOCUMENTOS_OBRIGATORIOS',
+            'DOCUMENTOS_PENDENTES',
+            'COMPATIBILIDADE_ESTATUTO_LOAS',
+            'DESTINO_PATRIMONIO_CASO_DISSOLUCAO',
+        ],
+        'Atividades do relatório' => [
+            'OFERTA_I',
+            'VAGAS_I',
+            'USUARIO_I',
+            'QUALIFICACAO_USUARIO_I',
+            'OFERTA_II',
+            'VAGAS_II',
+            'USUARIO_II',
+            'QUALIFICACAO_USUARIO_II',
+            'OFERTA_III',
+            'VAGAS_III',
+            'USUARIO_III',
+            'QUALIFICACAO_USUARIO_III',
+            'OFERTA_IV',
+            'VAGAS_IV',
+            'USUARIO_IV',
+            'QUALIFICACAO_USUARIO_Iv',
+            'OFERTA_V',
+            'VAGAS_V',
+            'USUARIO_V',
+            'QUALIFICACAO_USUARIO_V',
+            'OFERTA_VI',
+            'VAGAS_VI',
+            'USUARIO_VI',
+            'QUALIFICACAO_USUARIO_VI',
+            'OFERTA_VII',
+            'VAGAS_VII',
+            'USUARIO_VII',
+            'QUALIFICACAO_USUARIO_VII',
+            'OUTRAS_ATIVIDADES',
+        ],
+        'Gratuidade e manifestações' => [
+            'GRATUIDADE_PARECER',
+            'ORGAO_ENCAMINHAMENTO',
+            'NOTA_TECNICA_OUTRO_ORGAO',
+            'MANIFESTACAO_OUTRO_MINISTERIO',
+            'OFERTAS_OUTRAS_AREAS',
+        ],
+        'Art. 18 da Lei 12.101/2009' => [
+            'CONTINUIDADE',
+            'PLANEJAMENTO',
+            'UNIVERSALIDADE',
+        ],
+        'Conclusão do parecer' => [
+            'DECISAO_PARECER',
+            'MOTIVO_INDEFERIMENTO',
+            'JUSTIFICATIVA_INDEFERIMENTO',
+        ],
+        'Assinaturas' => [
+            'CGCEB_PARECER',
+            'DRSP_PARECER',
+        ],
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    private const PARECER_LABELS = [
+        'PROTOCOLO' => 'Protocolo',
+        'PROTOCOLO_SEI' => 'Protocolo SEI',
+        'TIPO_PROCESSO' => 'Tipo de Processo',
+        'CNPJ' => 'C.N.P.J.',
+        'DT_PROTOCOLO' => 'Data de Protocolo',
+        'ENTIDADE' => 'Entidade',
+        'MUNICIPIO' => 'Município',
+        'UF' => 'UF',
+        'DT_CERTIFICACAO_ANTERIOR_INICIO' => 'Última Certificação (início)',
+        'DT_CERTIFICACAO_ANTERIOR_FIM' => 'Última Certificação (fim)',
+        'DOCUMENTOS_OBRIGATORIOS' => 'Documentos Obrigatórios',
+        'DOCUMENTOS_PENDENTES' => 'Documentos pendentes',
+        'COMPATIBILIDADE_ESTATUTO_LOAS' => 'Compatibilidade do estatuto com LOAS',
+        'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => 'Destino do patrimônio em caso de dissolução',
+        'OUTRAS_ATIVIDADES' => 'Atividades de outras áreas não certificáveis',
+        'GRATUIDADE_PARECER' => 'Gratuidade',
+        'ORGAO_ENCAMINHAMENTO' => 'Manifestação de outro órgão',
+        'NOTA_TECNICA_OUTRO_ORGAO' => 'Número(s)',
+        'MANIFESTACAO_OUTRO_MINISTERIO' => 'Manifestação de outro ministério',
+        'OFERTAS_OUTRAS_AREAS' => 'Outras atividades (saúde e/ou educação)',
+        'CONTINUIDADE' => 'Continuidade',
+        'PLANEJAMENTO' => 'Planejamento',
+        'UNIVERSALIDADE' => 'Universalidade',
+        'DECISAO_PARECER' => 'Conclusão do parecer',
+        'MOTIVO_INDEFERIMENTO' => 'Motivos de indeferimento',
+        'JUSTIFICATIVA_INDEFERIMENTO' => 'Exposição de motivos',
+        'JUSTIFICATIVA_INDEFERIMENTO_NT' => 'Motivos de indeferimento',
+        'ANALISTA_PARECER' => 'Analista',
+        'CGCEB_PARECER' => 'CGCEB/DRSP/SNAS/MDS',
+        'DRSP_PARECER' => 'DRSP/SNAS/MDS',
+        'RESPONSAVEL_NOTA_TECNICA' => 'Responsável Nota Técnica',
     ];
 
     public function tableExists(): bool
@@ -108,7 +229,7 @@ class AccessProcessRepository
 
         $query = DB::table(self::TABLE)->where(function ($query) use ($searchColumns, $term) {
             foreach ($searchColumns as $column) {
-                $query->orWhere($column, 'like', '%' . $term . '%');
+                $query->orWhere($column, 'like', '%'.$term.'%');
             }
         });
 
@@ -168,7 +289,7 @@ class AccessProcessRepository
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateByProtocolo(string $originalProtocolo, array $data): int
     {
@@ -190,7 +311,7 @@ class AccessProcessRepository
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     public function sanitizeForUpdate(array $data): array
@@ -199,6 +320,10 @@ class AccessProcessRepository
         $types = $this->columnTypes();
         $sanitized = [];
 
+        if (($data['DOCUMENTOS_OBRIGATORIOS'] ?? null) !== 'Não apresentou todos os documentos') {
+            $data['DOCUMENTOS_PENDENTES'] = null;
+        }
+
         foreach ($columns as $column) {
             if (! array_key_exists($column, $data)) {
                 continue;
@@ -206,9 +331,21 @@ class AccessProcessRepository
 
             $value = $data[$column];
 
+            if ($column === 'DOCUMENTOS_PENDENTES' && ($data['DOCUMENTOS_OBRIGATORIOS'] ?? null) !== 'Não apresentou todos os documentos') {
+                $value = null;
+            }
+
+            if (is_array($value)) {
+                $value = implode("\n", array_filter(array_map('trim', $value), fn ($item) => $item !== ''));
+            }
+
             if (is_string($value)) {
                 $value = trim($value);
                 $value = $value === '' ? null : $value;
+            }
+
+            if ($value !== null && str_starts_with($column, 'DT_') && is_string($value) && preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $value)) {
+                $value = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
             }
 
             if ($value !== null && $this->isBooleanColumn($column, $types[$column] ?? null)) {
@@ -269,6 +406,52 @@ class AccessProcessRepository
         }
 
         return $sections;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function parecerTecnicoHeaderColumns(): array
+    {
+        return array_values(array_intersect(self::PARECER_HEADER_COLUMNS, $this->columns()));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function parecerTecnicoColumns(): array
+    {
+        $columns = array_values(array_diff(self::PARECER_HEADER_COLUMNS, ['PROTOCOLO']));
+
+        foreach (self::PARECER_SECTION_DEFINITIONS as $fields) {
+            $columns = array_merge($columns, $fields);
+        }
+
+        return array_values(array_intersect(array_unique($columns), $this->columns()));
+    }
+
+    /**
+     * @return array<int, array{title: string, fields: array<int, string>}>
+     */
+    public function parecerTecnicoSections(): array
+    {
+        $columns = $this->columns();
+        $sections = [];
+
+        foreach (self::PARECER_SECTION_DEFINITIONS as $title => $fields) {
+            $present = array_values(array_intersect($fields, $columns));
+
+            if ($present !== []) {
+                $sections[] = ['title' => $title, 'fields' => $present];
+            }
+        }
+
+        return $sections;
+    }
+
+    public function parecerTecnicoLabel(string $field): string
+    {
+        return self::PARECER_LABELS[$field] ?? $this->fieldLabel($field);
     }
 
     public function fieldLabel(string $field): string
@@ -407,7 +590,6 @@ class AccessProcessRepository
                 'PORTARIA_DECISAO_RECURSO_GM',
                 'DT_PORTARIA_DECISAO_RECURSO_GM',
                 'DT_PUBLICACAO_DOU_PORTARIA_DECISAO_RECURSO_GM',
-                'NUMERO_PARECER_NT',
                 'JUSTIFICATIVA_INDEFERIMENTO',
                 'JUSTIFICATIVA_INDEFERIMENTO_NT',
                 'RESPONSAVEL_NOTA_TECNICA',
@@ -514,7 +696,6 @@ class AccessProcessRepository
                 'ANALISTA_PARECER',
                 'CGCEB_PARECER',
                 'DRSP_PARECER',
-                'NUMERO_PARECER_NT',
                 'ISENCAO_USUFRUIDA',
                 'ASS SNAS',
                 'RESPONSAVEL_SUPERVISAO',

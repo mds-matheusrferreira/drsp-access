@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BaseExterna\AnaliseProcessoController;
 use App\Http\Controllers\BaseExterna\InserirProcessoController;
+use App\Http\Controllers\BaseExterna\ParecerTecnicoController;
 use App\Http\Controllers\PrincipalController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/base-externa/analise-processo', [AnaliseProcessoController::class, 'index'])->name('base-externa.analise-processo.index');
     Route::get('/base-externa/analise-processo/editar', [AnaliseProcessoController::class, 'edit'])->name('base-externa.analise-processo.edit');
     Route::put('/base-externa/analise-processo', [AnaliseProcessoController::class, 'update'])->name('base-externa.analise-processo.update');
+    Route::get('/base-externa/analise-processo/parecer-tecnico', [ParecerTecnicoController::class, 'edit'])->name('base-externa.analise-processo.parecer.edit');
+    Route::put('/base-externa/analise-processo/parecer-tecnico', [ParecerTecnicoController::class, 'update'])->name('base-externa.analise-processo.parecer.update');
+    Route::get('/base-externa/analise-processo/parecer-tecnico/pdf', [ParecerTecnicoController::class, 'pdf'])->name('base-externa.analise-processo.parecer.pdf');
 
     Route::view('/coordenacao', 'coordenacao.index')->name('coordenacao.index');
 

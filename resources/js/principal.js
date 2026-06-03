@@ -222,15 +222,25 @@ if (principal) {
         }
     };
 
+    const mapStates = () => document.querySelectorAll('[data-map-state], .principal-brazil-map .estado');
+
+    const stateUf = (state) => state.dataset.mapState || state.querySelector('text')?.textContent.trim();
+
     const loadStateTotals = async () => {
         try {
             const data = await fetchJson(urls.stateTotalsUrl);
             data.totals.forEach(({ uf, total }) => stateTotals.set(uf, total));
 
-            document.querySelectorAll('[data-map-state]').forEach((state) => {
-                const uf = state.dataset.mapState;
+            mapStates().forEach((state) => {
+                const uf = stateUf(state);
                 const total = stateTotals.get(uf) || 0;
+                state.dataset.mapState = uf;
                 state.dataset.total = total;
+                state.classList.add('map-state');
+                state.setAttribute('role', 'button');
+                state.setAttribute('tabindex', '0');
+                state.setAttribute('href', '#');
+                state.setAttribute('xlink:href', '#');
                 state.querySelectorAll('path').forEach((path) => {
                     path.style.fill = colorForTotal(total);
                 });
@@ -322,12 +332,19 @@ if (principal) {
         }
     });
 
-    document.querySelectorAll('[data-map-state]').forEach((state) => {
-        state.addEventListener('click', () => openState(state.dataset.mapState));
+    mapStates().forEach((state) => {
+        const openMapState = (event) => {
+            event.preventDefault();
+            openState(stateUf(state));
+        };
+
+        state.classList.add('map-state');
+        state.setAttribute('role', 'button');
+        state.setAttribute('tabindex', '0');
+        state.addEventListener('click', openMapState);
         state.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                openState(state.dataset.mapState);
+                openMapState(event);
             }
         });
     });

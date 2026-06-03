@@ -1,21 +1,16 @@
 <div class="relative min-w-[720px] rounded-lg py-8" style="background: linear-gradient(135deg, #f4fbf7 0%, #e3f6eb 100%);">
     <style>
-        .principal-brazil-map {
+        #svg-map {
+            display: block;
             filter: drop-shadow(0 18px 28px rgba(27, 67, 50, .10));
         }
 
-        .principal-brazil-map .map-state path {
+        #svg-map path {
             fill: #98BB98;
             transition: fill .2s ease, filter .2s ease;
         }
 
-        .principal-brazil-map .map-state:hover path,
-        .principal-brazil-map .map-state:focus path {
-            fill: #84A279;
-            filter: saturate(1.08) brightness(0.98);
-        }
-
-        .principal-brazil-map .map-state text {
+        #svg-map text {
             fill: #32774B;
             paint-order: stroke;
             pointer-events: none;
@@ -24,15 +19,26 @@
             font: 700 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
 
-        .principal-brazil-map .map-state path.circle {
+        #svg-map a {
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        #svg-map a:hover path,
+        #svg-map a:focus path {
+            fill: #84A279 !important;
+            filter: saturate(1.08) brightness(0.98);
+        }
+
+        #svg-map .circle {
             fill: #74c69d;
         }
     </style>
 
     <div class="flex items-start justify-center">
         <div class="shrink-0">
-                <svg version="1.1" id="svg-map" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
-            y="0px" viewBox="0 0 450 460" enable-background="new 0 0 450 460" xml:space="preserve">
+                <svg version="1.1" id="svg-map" class="principal-brazil-map" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+            y="0px" width="450px" height="460px" viewBox="0 0 450 460" enable-background="new 0 0 450 460" xml:space="preserve">
             <g>
                 <a xlink:href="#tocantins" class="estado" name="Tocantins" code="17">
                     <path stroke="#FFFFFF" stroke-width="1.0404" stroke-linecap="round"
