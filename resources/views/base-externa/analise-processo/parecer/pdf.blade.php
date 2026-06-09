@@ -4,16 +4,20 @@
     <meta charset="utf-8">
     <title>Parecer Técnico - {{ $originalProtocolo }}</title>
     <style>
-        @page { margin: 24px 38px; }
+        @page { margin: 150px 38px 24px; }
         body { color: #000; font-family: DejaVu Sans, sans-serif; font-size: 10px; line-height: 1.22; }
         *, *:before, *:after { box-sizing: border-box; }
 
         /* Configuração do Cabeçalho Oficial */
-        .header-container { 
-        text-align: center; 
-        margin-bottom: 15px; 
-        width: 100%; 
-        }   
+        .header-container {
+        position: fixed;
+        top: -130px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        margin-bottom: 0;
+        width: 100%;
+        }
         .header-container img { 
         width: 55px;          /* Mudamos para width fixa (em vez de height) para encorpar o SVG */
         height: 55px;         /* Força a proporção quadrada típica do brasão */
@@ -61,6 +65,8 @@
         .indent { padding-left: 16px; }
         .field-box { border-bottom: 1px solid #9a9a9a; min-height: 13px; padding: 0 3px 1px; }
         .textarea-box { border: 1px solid #b5b5b5; min-height: 38px; padding: 4px; }
+        .exposition-label { text-align: right; padding-right: 8px; width: 17%; }
+        .exposition-box { width: 80%; }
         
         /* Tabela de Atividades */
         table { border-collapse: collapse; width: 100%; margin-top: 5px; }
@@ -77,6 +83,7 @@
         .signature.middle { margin: 0; }
         .signature.left { margin-left: 12%; margin-right: 8%; }
         .signature-line { border-top: 1px solid #000; margin-bottom: 3px; }
+        .decision-text { break-inside: avoid; page-break-inside: avoid; text-align: left; }
     </style>
 </head>
 <body>
@@ -256,22 +263,36 @@
         <div class="col w-75 field-box">{{ $v('DECISAO_PARECER') }}</div>
     </div>
     <div class="row">
-        <div class="col w-18" style="text-align: right; padding-right: 8px;">Exposição de<br>motivos:</div>
-        <div class="col w-82 textarea-box">{{ $v('JUSTIFICATIVA_INDEFERIMENTO') }}</div>
+        <div class="col exposition-label">Exposição de<br>motivos:</div>
+        <div class="col textarea-box exposition-box">{{ trim((string) $v('JUSTIFICATIVA_INDEFERIMENTO')) !== '' ? $v('JUSTIFICATIVA_INDEFERIMENTO') : 'Não se aplica' }}</div>
     </div>
 
     @if ($v('DECISAO_PARECER') === 'DEFERIDO')
-        <div class="row" style="margin-top: 18px; text-align: justify;">
-            A partir da documentação apresentada, a entidade demonstrou atuar na área da assistência social em conformidade com a Lei Orgânica da Assistência Social (Lei nº 8.742/93) e a legislação pertinente à certificação (Lei nº 12.101/09 e Decreto nº 8.242/14).<br>
+        <div class="row decision-text" style="margin-top: 18px;">
+            A partir da documentação apresentada, a entidade demonstrou atuar na área da assistência social em conformidade com a Lei Orgânica da Assistência Social (Lei nº 8.742/93) e a legislação pertinente à certificação (Lei nº 12.101/09 e Decreto nº 8.242/14).
+        </div>
+        <div class="row decision-text">
             O conjunto de atividades apresentadas no item III.a do presente parecer expressam as ofertas socioassistenciais em conformidade com a Tipificação Nacional dos Serviços Socioassistenciais e as Resoluções CNAS nº 27, 33 e 34/2011. As atividades descritas no item III.b não se caracterizam como ofertas socioassistenciais. No entanto, não impedem o deferimento do pedido de certificação, pois não correspondem à atuação preponderante da entidade.
         </div>
 
-        <div class="row" style="margin-top: 18px; text-align: justify;">
+        <div class="row decision-text" style="margin-top: 18px;">
             O Cadastro Nacional de Entidades de Assistência Social (CNEAS) é um instrumento de reconhecimento e de monitoramento das ofertas socioassistenciais prestadas por organizações da sociedade civil. Seu preenchimento é responsabilidade dos órgãos gestores municipais. Para consultar a situação da sua entidade, acesse http://aplicacoes.mds.gov.br/cneas/consultacneas. Caso não a encontre, procure pelo órgão gestor da assistência social e solicite o cadastramento no CNEAS.
         </div>
 
-        <div class="row" style="margin-top: 18px; text-align: justify;">
+        <div class="row decision-text" style="margin-top: 18px;">
             Insta informar, por fim, que a entidade poderá ser objeto de supervisão a qualquer tempo, por este Ministério, conforme determina o art. 15 do Decreto nº 8.242/2014 e, caso a entidade descumpra quaisquer requisitos estabelecidos na Lei nº 12.101/2009 e/ou no Decreto nº 8.242/2014, poderá ter a sua Certificação cancelada. Ademais, também estará sujeita à fiscalização da Secretaria da Receita Federal do Brasil, conforme institui o art. 48 e parágrafos seguintes do Dec. 8.242/2014.
+        </div>
+    @elseif ($v('DECISAO_PARECER') === 'INDEFERIDO')
+        <div class="row decision-text" style="margin-top: 18px;">
+            A análise das atividades descritas no referido processo foi fundamentada na Lei Orgânica da Assistência Social (Lei nº 8.742/1993) e na legislação pertinente à certificação (Lei nº 12.101/2009 e Decreto nº 8.242/2014), bem como na Tipificação Nacional dos Serviços Socioassistenciais (Resolução CNAS nº 109/2009) e nas Resoluções CNAS nº 27, 33 e 34/2011.
+        </div>
+
+        <div class="row decision-text" style="margin-top: 10px;">
+            A entidade poderá recorrer da decisão em até trinta (30) dias a partir da publicação no Diário Oficial da União (D.O.U.). Ressalta-se que o recurso não tem efeito suspensivo, ou seja, a partir da publicação do indeferimento a entidade perde o direito à isenção do art. 29 da Lei 12.101/09. Caso o fundamento do indeferimento seja a não apresentação de documentação obrigatória, a entidade poderá apresentar em sede de recurso a documentação faltante indicada acima.
+        </div>
+
+        <div class="row decision-text" style="margin-top: 10px;">
+            “O Cadastro Nacional de Entidades de Assistência Social (CNEAS) é um instrumento de reconhecimento e monitoramento das ofertas socioassistenciais prestadas por organizações da sociedade civil. Seu preenchimento é responsabilidade dos órgãos gestores municipais. Para consultar a situação da sua entidade, acesse http://aplicacoes.mds.gov.br/cneas/consultacneas. Caso não a encontre, procure pelo órgão gestor da assistência social e solicite o cadastramento no CNEAS.”
         </div>
     @endif
 

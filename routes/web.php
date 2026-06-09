@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BaseExterna\AnaliseProcessoController;
 use App\Http\Controllers\BaseExterna\InserirProcessoController;
 use App\Http\Controllers\BaseExterna\ParecerTecnicoController;
+use App\Http\Controllers\Coordenacao\Planilhas\VisdataCebasController;
 use App\Http\Controllers\PrincipalController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +37,18 @@ Route::middleware('auth')->group(function () {
     Route::put('/base-externa/analise-processo/parecer-tecnico', [ParecerTecnicoController::class, 'update'])->name('base-externa.analise-processo.parecer.update');
     Route::get('/base-externa/analise-processo/parecer-tecnico/pdf', [ParecerTecnicoController::class, 'pdf'])->name('base-externa.analise-processo.parecer.pdf');
 
+    // Coordenação e Planilhas
     Route::view('/coordenacao', 'coordenacao.index')->name('coordenacao.index');
+    
+    Route::prefix('/coordenacao/planilhas')->name('coordenacao.planilhas.')->group(function () {
+        Route::get('/visdata-cebas', [VisdataCebasController::class, 'index'])->name('visdata-cebas');
+        Route::post('/visdata-cebas/import', [VisdataCebasController::class, 'import'])->name('visdata-cebas.import');
+        Route::get('/visdata-cebas/modelo', [VisdataCebasController::class, 'modelo'])->name('visdata-cebas.modelo');
+        Route::get('/visdata-cebas/backup', [VisdataCebasController::class, 'backup'])->name('visdata-cebas.backup');
+        Route::view('/processos', 'coordenacao.planilhas.processos')->name('processos');
+        Route::view('/cneas', 'coordenacao.planilhas.cneas')->name('cneas');
+        Route::view('/externo', 'coordenacao.planilhas.externo')->name('externo');
+    });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

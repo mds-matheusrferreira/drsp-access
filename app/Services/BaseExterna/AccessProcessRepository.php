@@ -324,6 +324,8 @@ class AccessProcessRepository
             $data['DOCUMENTOS_PENDENTES'] = null;
         }
 
+        unset($data['MOTIVO_INDEFERIMENTO']);
+
         foreach ($columns as $column) {
             if (! array_key_exists($column, $data)) {
                 continue;
@@ -332,6 +334,10 @@ class AccessProcessRepository
             $value = $data[$column];
 
             if ($column === 'DOCUMENTOS_PENDENTES' && ($data['DOCUMENTOS_OBRIGATORIOS'] ?? null) !== 'Não apresentou todos os documentos') {
+                $value = null;
+            }
+
+            if ($column === 'MOTIVO_INDEFERIMENTO' && ($data['DECISAO_PARECER'] ?? null) !== 'INDEFERIDO') {
                 $value = null;
             }
 

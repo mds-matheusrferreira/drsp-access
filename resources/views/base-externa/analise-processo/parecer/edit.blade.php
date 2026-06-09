@@ -303,6 +303,8 @@
                                 @php
                                     $hidePendingDocuments = $field === 'DOCUMENTOS_PENDENTES'
                                         && old('DOCUMENTOS_OBRIGATORIOS', $processo['DOCUMENTOS_OBRIGATORIOS'] ?? '') !== 'Não apresentou todos os documentos';
+                                    $hideRejectionReasons = $field === 'MOTIVO_INDEFERIMENTO'
+                                        && old('DECISAO_PARECER', $processo['DECISAO_PARECER'] ?? '') !== 'INDEFERIDO';
                                     $wideFields = $isGratuidadeSection
                                         ? ['GRATUIDADE_PARECER', 'ORGAO_ENCAMINHAMENTO', 'NOTA_TECNICA_OUTRO_ORGAO']
                                         : ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'JUSTIFICATIVA_INDEFERIMENTO'];
@@ -310,7 +312,7 @@
                                         ? ($isGratuidadeSection ? 'md:col-span-2' : 'md:col-span-2 xl:col-span-3')
                                         : '';
                                 @endphp
-                                <div class="{{ $wideClass }} {{ $hidePendingDocuments ? 'hidden' : '' }}" @if($field === 'DOCUMENTOS_PENDENTES') data-pending-documents-wrapper @endif>
+                                <div class="{{ $wideClass }} {{ $hidePendingDocuments || $hideRejectionReasons ? 'hidden' : '' }}" @if($field === 'DOCUMENTOS_PENDENTES') data-pending-documents-wrapper @endif @if($field === 'MOTIVO_INDEFERIMENTO') data-rejection-reasons-wrapper @endif>
                                     <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
                                     @include('base-externa.analise-processo.parecer._field', ['field' => $field])
                                 </div>
@@ -358,6 +360,41 @@
 
         requiredDocuments?.addEventListener('change', togglePendingDocuments);
         togglePendingDocuments();
+
+        const decision = document.getElementById('DECISAO_PARECER');
+        const rejectionReasonsWrapper = document.querySelector('[data-rejection-reasons-wrapper]');
+        const rejectionReasons = document.getElementById('MOTIVO_INDEFERIMENTO');
+        const rejectionExposition = document.getElementById('JUSTIFICATIVA_INDEFERIMENTO');
+
+        const updateRejectionExposition = () => {
+            if (!rejectionReasons || !rejectionExposition) {
+                return;
+            }
+
+            const checkedReasons = Array.from(rejectionReasons.querySelectorAll('input[type="checkbox"]:checked'))
+                .map((checkbox) => checkbox.value.trim())
+                .filter((value) => value !== '');
+
+            rejectionExposition.value = checkedReasons.length ? checkedReasons.join('; ') : 'Não se aplica';
+            rejectionExposition.dispatchEvent(new Event('input'));
+        };
+
+        const toggleRejectionReasons = () => {
+            const shouldShow = decision?.value === 'INDEFERIDO';
+            rejectionReasonsWrapper?.classList.toggle('hidden', !shouldShow);
+
+            if (!shouldShow) {
+                rejectionReasons?.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+                    checkbox.checked = false;
+                });
+            }
+        };
+
+        rejectionReasons?.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', updateRejectionExposition);
+        });
+        decision?.addEventListener('change', () => toggleRejectionReasons());
+        toggleRejectionReasons();
 
         document.querySelectorAll('[data-activities-wrapper]').forEach((wrapper) => {
             const buttonWrapper = wrapper.querySelector('[data-add-activity-wrapper]');

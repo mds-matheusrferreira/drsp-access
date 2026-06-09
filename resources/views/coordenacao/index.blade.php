@@ -58,7 +58,10 @@
             'icon' => 'table',
             'theme' => 'indigo',
             'items' => [
-                ['label' => 'Planilha Visdata (CEBAS)', 'href' => '#', 'disabled' => true, 'icon' => 'video'],
+                ['label' => 'VISDATA (CEBAS)', 'href' => route('coordenacao.planilhas.visdata-cebas'), 'icon' => 'table'],
+                ['label' => 'PROCESSOS', 'href' => route('coordenacao.planilhas.processos'), 'icon' => 'table'],
+                ['label' => 'CNEAS', 'href' => route('coordenacao.planilhas.cneas'), 'icon' => 'table'],
+                ['label' => 'EXTERNO', 'href' => route('coordenacao.planilhas.externo'), 'icon' => 'table'],
             ],
         ],
     ];
@@ -70,13 +73,6 @@
         'orange' => ['border' => 'border-orange-200', 'header' => 'bg-orange-50 border-orange-200', 'text' => 'text-orange-700', 'icon' => 'bg-orange-100 border-orange-200 text-orange-700'],
         'red' => ['border' => 'border-red-200', 'header' => 'bg-red-50 border-red-200', 'text' => 'text-red-700', 'icon' => 'bg-red-100 border-red-200 text-red-700'],
         'indigo' => ['border' => 'border-indigo-200', 'header' => 'bg-indigo-50 border-indigo-200', 'text' => 'text-indigo-700', 'icon' => 'bg-indigo-100 border-indigo-200 text-indigo-700'],
-    ];
-
-    $stats = [
-        ['label' => 'Processos Ativos', 'value' => '234', 'icon' => 'document', 'class' => 'from-blue-500 to-blue-700'],
-        ['label' => 'Viagens Agendadas', 'value' => '12', 'icon' => 'plane', 'class' => 'from-purple-500 to-fuchsia-700'],
-        ['label' => 'Usuários Ativos', 'value' => '87', 'icon' => 'users', 'class' => 'from-green-500 to-emerald-700'],
-        ['label' => 'Registros Totais', 'value' => '1.2k', 'icon' => 'database', 'class' => 'from-orange-500 to-orange-700'],
     ];
 @endphp
 
@@ -111,22 +107,6 @@
                             </svg>
                         </a>
                     @endforeach
-                </div>
-            </article>
-        @endforeach
-    </section>
-
-    <section class="grid gap-4 lg:grid-cols-4 sm:grid-cols-2" aria-label="Resumo da Coordenação">
-        @foreach ($stats as $stat)
-            <article class="rounded-2xl bg-gradient-to-br {{ $stat['class'] }} p-6 text-white shadow-lg">
-                <div class="flex items-start justify-between gap-4">
-                    <div class="space-y-3">
-                        <div class="text-white/90">
-                            @include('partials.coordenacao-icon', ['name' => $stat['icon']])
-                        </div>
-                        <p class="text-sm font-medium text-white/90">{{ $stat['label'] }}</p>
-                    </div>
-                    <strong class="text-3xl font-bold">{{ $stat['value'] }}</strong>
                 </div>
             </article>
         @endforeach
