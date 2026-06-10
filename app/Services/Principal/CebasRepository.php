@@ -14,13 +14,24 @@ class CebasRepository
 
     public function updatedAt(): ?string
     {
-        if (! Schema::hasTable(self::MAP_TABLE) || ! Schema::hasColumn(self::MAP_TABLE, 'DT_REFERÊNCIA')) {
+        if (! Schema::hasTable(self::MAP_TABLE)) {
+            return null;
+        }
+
+        $referenceColumn = $this->resolveColumn(Schema::getColumnListing(self::MAP_TABLE), [
+            'dt_referencia',
+            'DT_REFERENCIA',
+            'DT_REFERÊNCIA',
+        ]);
+
+        if (! $referenceColumn) {
             return null;
         }
 
         $value = DB::table(self::MAP_TABLE)
-            ->whereNotNull('DT_REFERÊNCIA')
-            ->value('DT_REFERÊNCIA');
+            ->whereNotNull($referenceColumn)
+            ->orderByDesc($referenceColumn)
+            ->value($referenceColumn);
 
         if (! $value) {
             return null;
@@ -181,6 +192,30 @@ class CebasRepository
         $uf = strtoupper(trim($uf));
 
         return preg_match(self::UF_REGEX, $uf) ? $uf : null;
+    }
+
+    private function resolveColumn(array $columns, array $candidates): ?string
+    {
+        $normalized = [];
+        foreach ($columns as $column) {
+            $normalized[$this->normalizeColumnName($column)] = $column;
+        }
+
+        foreach ($candidates as $candidate) {
+            $key = $this->normalizeColumnName($candidate);
+            if (isset($normalized[$key])) {
+                return $normalized[$key];
+            }
+        }
+
+        return null;
+    }
+
+    private function normalizeColumnName(string $value): string
+    {
+        $value = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value) ?: $value;
+
+        return strtolower(preg_replace('/[^a-zA-Z0-9]+/', '', $value) ?: '');
     }
 
     private function safeOrderColumn(string $column): string

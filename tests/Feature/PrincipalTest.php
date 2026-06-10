@@ -25,11 +25,12 @@ class PrincipalTest extends TestCase
     {
         $this->createCebasSuasTable();
         $this->insertCebasSuas('RS', '111', 'Entidade RS', 'Porto Alegre', '2026-05-13');
+        $this->insertCebasSuas('SP', '222', 'Entidade SP', 'São Paulo', '2026-05-29');
 
         $response = $this->actingAs(User::factory()->create())->getJson('/principal/updated-at');
 
         $response->assertOk()->assertJson([
-            'updated_at' => '13/05/2026',
+            'updated_at' => '29/05/2026',
         ]);
     }
 
@@ -109,7 +110,7 @@ class PrincipalTest extends TestCase
             $table->string('CNPJ')->nullable();
             $table->string('ENTIDADE')->nullable();
             $table->string('MUNICIPIO')->nullable();
-            $table->date('DT_REFERÊNCIA')->nullable();
+            $table->date('dt_referencia')->nullable();
         });
     }
 
@@ -131,7 +132,7 @@ class PrincipalTest extends TestCase
             'CNPJ' => $cnpj,
             'ENTIDADE' => $entidade,
             'MUNICIPIO' => $municipio,
-            'DT_REFERÊNCIA' => $date,
+            'dt_referencia' => $date,
         ]);
     }
 }

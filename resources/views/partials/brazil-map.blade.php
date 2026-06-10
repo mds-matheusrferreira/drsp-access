@@ -6,17 +6,14 @@
         }
 
         #svg-map path {
-            fill: #98BB98;
+            fill: #e0e0e0;
             transition: fill .2s ease, filter .2s ease;
         }
 
         #svg-map text {
-            fill: #32774B;
-            paint-order: stroke;
+            fill: #fff;
             pointer-events: none;
-            stroke: rgba(255, 255, 255, .72);
-            stroke-width: 2px;
-            font: 700 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font: 12px Arial-BoldMT, sans-serif;
         }
 
         #svg-map a {
@@ -26,12 +23,16 @@
 
         #svg-map a:hover path,
         #svg-map a:focus path {
-            fill: #84A279 !important;
-            filter: saturate(1.08) brightness(0.98);
+            fill: #2563eb !important;
+        }
+
+        #svg-map a:hover .circle,
+        #svg-map a:focus .circle {
+            fill: #2563eb !important;
         }
 
         #svg-map .circle {
-            fill: #74c69d;
+            fill: #cecece;
         }
     </style>
 
@@ -397,9 +398,9 @@
     </div>
 
     <div class="mt-4 grid gap-2 px-4 text-sm text-emerald-950 sm:text-base" aria-label="Legenda do mapa CEBAS">
-        <button type="button" data-map-legend="low" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-emerald-900/30 bg-[#b7e4c7]"></span><span>0 - 100 Entidades presentes do estado</span></button>
-        <button type="button" data-map-legend="medium" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-emerald-900/30 bg-[#74c69d]"></span><span>100 - 500 Entidades presentes do estado</span></button>
-        <button type="button" data-map-legend="high" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-emerald-900/30 bg-[#2d6a4f]"></span><span>500+ Entidades presentes do estado</span></button>
-        <button type="button" data-map-legend="none" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-emerald-900/30 bg-[#e9f7ef]"></span><span>Nenhuma entidade presente no estado</span></button>
+        <button type="button" data-map-legend="low" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-black bg-[rgb(152,187,152)]"></span><span>0 - 100 Entidades presentes do estado</span></button>
+        <button type="button" data-map-legend="medium" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-black bg-[rgb(132,162,121)]"></span><span>100 - 500 Entidades presentes do estado</span></button>
+        <button type="button" data-map-legend="high" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-black bg-[rgb(50,119,75)]"></span><span>500+ Entidades presentes do estado</span></button>
+        <button type="button" data-map-legend="none" class="flex items-center gap-3 rounded text-left transition-colors hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="h-5 w-5 border border-black bg-[#e0e0e0]"></span><span>Nenhuma entidade presente no estado</span></button>
     </div>
 </div>

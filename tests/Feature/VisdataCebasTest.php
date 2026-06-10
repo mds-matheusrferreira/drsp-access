@@ -81,6 +81,7 @@ class VisdataCebasTest extends TestCase
             'entidade' => 'Nova Entidade',
             'uf' => 'DF',
             'dt_referencia' => '2026-05-29',
+            'receita_bruta' => '1234.56',
         ]);
     }
 

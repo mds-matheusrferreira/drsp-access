@@ -31,21 +31,21 @@ if (principal) {
 
     const colorForTotal = (total) => {
         if (total <= 0) {
-            return '#e9f7ef';
+            return '#e0e0e0';
         }
 
         if (total <= 100) {
-            return '#b7e4c7';
+            return 'rgb(152,187,152)';
         }
 
         if (total <= 500) {
-            return '#74c69d';
+            return 'rgb(132, 162, 121)';
         }
 
-        return '#2d6a4f';
+        return 'rgb(50, 119, 75)';
     };
 
-    const textColorForTotal = () => '#064e3b';
+    const textColorForTotal = () => '#fff';
 
     const fetchJson = async (url) => {
         const response = await fetch(url, {

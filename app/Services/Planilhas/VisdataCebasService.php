@@ -375,10 +375,12 @@ class VisdataCebasService
         }
 
         $clean = preg_replace('/[^0-9.,\-]/', '', (string) $value) ?: '';
-        if (str_contains($clean, ',') && ! str_contains($clean, '.')) {
+        if (str_contains($clean, ',') && str_contains($clean, '.')) {
+            $clean = strrpos($clean, ',') > strrpos($clean, '.')
+                ? str_replace(',', '.', str_replace('.', '', $clean))
+                : str_replace(',', '', $clean);
+        } elseif (str_contains($clean, ',')) {
             $clean = str_replace(',', '.', $clean);
-        } elseif (str_contains($clean, ',') && str_contains($clean, '.')) {
-            $clean = str_replace(',', '', $clean);
         }
 
         return (float) $clean;
