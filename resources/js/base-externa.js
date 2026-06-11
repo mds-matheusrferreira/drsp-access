@@ -1,5 +1,5 @@
-const ufSelect = document.getElementById('UF');
-const municipioSelect = document.getElementById('MUNICIPIO');
+const ufSelect = document.getElementById('uf');
+const municipioSelect = document.getElementById('municipio');
 
 if (ufSelect && municipioSelect) {
     const normalizeMunicipio = (value) => value
@@ -7,7 +7,7 @@ if (ufSelect && municipioSelect) {
         .replace(/[\u0300-\u036f]/g, '')
         .toUpperCase();
 
-    const resetMunicipios = (message = 'Selecione a UF primeiro') => {
+    const resetMunicipios = (message = 'Selecione a uf primeiro') => {
         municipioSelect.innerHTML = `<option value="">${message}</option>`;
         municipioSelect.disabled = true;
     };

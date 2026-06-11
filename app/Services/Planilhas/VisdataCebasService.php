@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 use SimpleXMLElement;
@@ -241,7 +242,10 @@ class VisdataCebasService
         $errors = [];
 
         foreach (self::HEADERS as $index => $header) {
-            if (strtoupper(trim((string) ($actualHeaders[$index] ?? ''))) !== strtoupper($header)) {
+            $actual = $this->normalizeName((string) ($actualHeaders[$index] ?? ''));
+            $expected = $this->normalizeName($header);
+
+            if ($actual !== $expected) {
                 $errors[] = 'Coluna ' . ($index + 1) . ": esperado '{$header}', encontrado '" . ($actualHeaders[$index] ?? '') . "'";
             }
         }
@@ -256,7 +260,8 @@ class VisdataCebasService
                 continue;
             }
 
-            if (trim((string) ($row[0] ?? '')) === '') {
+            // CORRIGIDO: valida cnpj (índice 1, NOT NULL/PK) em vez de protocolo (índice 0)
+            if (trim((string) ($row[1] ?? '')) === '') {
                 continue;
             }
 
@@ -347,10 +352,12 @@ class VisdataCebasService
                 return sprintf('%04d-01-01', $number);
             }
 
+            Log::warning('VisdataCebas: valor numérico de data fora do intervalo esperado', ['value' => $value]);
             return null;
         }
 
         $value = trim((string) $value);
+
         if (preg_match('/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/', $value, $match)) {
             $year = (int) $match[3];
             if ($year < 100) {
@@ -364,6 +371,7 @@ class VisdataCebasService
             return sprintf('%04d-%02d-%02d', (int) $match[1], (int) $match[2], (int) $match[3]);
         }
 
+        Log::warning('VisdataCebas: valor de data não reconhecido', ['value' => $value]);
         return null;
     }
 

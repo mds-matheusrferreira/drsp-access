@@ -45,7 +45,7 @@
     <form method="POST" action="{{ route('base-externa.analise-processo.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
-        <input type="hidden" name="ORIGINAL_PROTOCOLO" value="{{ $originalProtocolo }}">
+        <input type="hidden" name="original_protocolo" value="{{ $originalProtocolo }}">
 
         @foreach ($sections as $section)
             @php

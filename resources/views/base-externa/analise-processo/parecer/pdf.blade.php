@@ -92,7 +92,7 @@
     $date = fn (string $field) => preg_match('/^\d{4}-\d{2}-\d{2}/', (string) $v($field))
         ? \Carbon\Carbon::parse($v($field))->format('d/m/Y')
         : $v($field);
-    $certificacao = trim(($date('DT_CERTIFICACAO_ANTERIOR_INICIO') ?: '').' '.($date('DT_CERTIFICACAO_ANTERIOR_FIM') ?: ''));
+    $certificacao = trim(($date('dt_certificacao_anterior_inicio') ?: '').' '.($date('dt_certificacao_anterior_fim') ?: ''));
     $certificacao = $certificacao !== '' ? $certificacao : $v('CERTIFICACAO', '');
     $signatureName = fn (string $field, array $names) => $names[(string) (int) $v($field)] ?? $v($field);
     $manifestacaoOutroMinisterioOptions = [
@@ -107,11 +107,11 @@
         '9' => 'Pareceres desfavoráveis em ambos os ministérios',
         '10' => 'Pareceres favoráveis em ambos os ministérios',
     ];
-    $manifestacaoOutroMinisterio = $manifestacaoOutroMinisterioOptions[(string) $v('MANIFESTACAO_OUTRO_MINISTERIO')] ?? $v('MANIFESTACAO_OUTRO_MINISTERIO');
+    $manifestacaoOutroMinisterio = $manifestacaoOutroMinisterioOptions[(string) $v('manifestacao_outro_ministerio')] ?? $v('manifestacao_outro_ministerio');
     $list = fn (string $field) => implode('; ', array_filter(array_map('trim', preg_split('/\r\n|\r|\n|;/', (string) $v($field)))));
-    $pendingDocuments = $list('DOCUMENTOS_PENDENTES');
-    $cgcebSignature = $signatureName('CGCEB_PARECER', ['1' => 'Leandro de Oliveira Nardi']);
-    $drspSignature = $signatureName('DRSP_PARECER', ['3' => 'Edgilson Tavares de Araújo']);
+    $pendingDocuments = $list('documentos_pendentes');
+    $cgcebSignature = $signatureName('cgceb_parecer', ['1' => 'Leandro de Oliveira Nardi']);
+    $drspSignature = $signatureName('drsp_parecer', ['3' => 'Edgilson Tavares de Araújo']);
 @endphp
 
     <!-- Cabeçalho Oficial do Ministério -->
@@ -129,33 +129,33 @@
     <div class="row">
         <div class="col w-58">&nbsp;</div>
         <div class="col w-20 label">Situação CNEAS:</div>
-        <div class="col w-22">{{ $v('SITUAÇÃO_CNEAS', $v('SITUACAO_CNEAS')) }}</div>
+        <div class="col w-22">{{ $v('situacao_cneas', $v('situacao_cneas')) }}</div>
     </div>
 
     <div class="row">
         <div class="col w-18 label">Protocolo:</div>
-        <div class="col w-40">{{ $v('PROTOCOLO') }}</div>
+        <div class="col w-40">{{ $v('protocolo') }}</div>
         <div class="col w-20 label">Tipo de Processo:</div>
-        <div class="col w-22">{{ $v('TIPO_PROCESSO') }}</div>
+        <div class="col w-22">{{ $v('tipo_processo') }}</div>
     </div>
 
     <div class="row">
         <div class="col w-18 label">C.N.P.J:</div>
-        <div class="col w-40">{{ $v('CNPJ') }}</div>
+        <div class="col w-40">{{ $v('cnpj') }}</div>
         <div class="col w-20 label">Data de Protocolo:</div>
-        <div class="col w-22">{{ $date('DT_PROTOCOLO') }}</div>
+        <div class="col w-22">{{ $date('dt_protocolo') }}</div>
     </div>
 
     <div class="row">
         <div class="col w-18 label">Entidade:</div>
-        <div class="col w-82">{{ $v('ENTIDADE') }}</div>
+        <div class="col w-82">{{ $v('entidade') }}</div>
     </div>
 
     <div class="row">
         <div class="col w-18 label">Município:</div>
-        <div class="col w-32">{{ $v('MUNICIPIO') }}</div>
-        <div class="col w-10 label">UF:</div>
-        <div class="col w-40">{{ $v('UF') }}</div>
+        <div class="col w-32">{{ $v('municipio') }}</div>
+        <div class="col w-10 label">uf:</div>
+        <div class="col w-40">{{ $v('uf') }}</div>
     </div>
 
     <div class="row">
@@ -168,11 +168,11 @@
 
     <div class="row">
         <div class="label">I) DOCUMENTOS OBRIGATÓRIOS: Art. 3º, II, III, IV, VIII e Art. 39, I e II do Decreto 8.242/2014</div>
-        <div class="field-box">{{ $v('DOCUMENTOS_OBRIGATORIOS') }}</div>
+        <div class="field-box">{{ $v('documentos_obrigatorios') }}</div>
     </div>
     <div class="row indent">
         <div class="col w-25 label">(Documentos pendentes)</div>
-        <div class="col w-75 field-box">{{ $pendingDocuments }}</div>
+        <div class="col field-box" style="width: 72%;">{{ $pendingDocuments }}</div>
     </div>
 
     <!-- II) Finalidades Objetivos -->
@@ -180,13 +180,17 @@
         <div class="label">II) Finalidades ou objetivos do estatuto social:</div>
     </div>
     <div class="row">
-        <div class="col w-50 indent">
-            <div>a) Compatibilidade do estatuto com LOAS: art. 34, I, Dec. 7.237/10 ou art. 39, I, Dec. 8.242/14</div>
-            <div class="field-box">{{ $v('COMPATIBILIDADE_ESTATUTO_LOAS') }}</div>
+        <div class="col w-50">
+            <div class="indent">
+                <div>a) Compatibilidade do estatuto com LOAS: art. 34, I, Dec. 7.237/10 ou art. 39, I, Dec. 8.242/14</div>
+                <div class="field-box">{{ $v('compatibilidade_estatuto_loas') }}</div>
+            </div>
         </div>
-        <div class="col w-50 indent">
-            <div>b) Destino do patrimônio em caso de dissolução: art. 3º, II, Lei 12.101/09</div>
-            <div class="field-box">{{ $v('DESTINO_PATRIMONIO_CASO_DISSOLUCAO') }}</div>
+        <div class="col w-50">
+            <div class="indent">
+                <div>b) Destino do patrimônio em caso de dissolução: art. 3º, II, Lei 12.101/09</div>
+                <div class="field-box">{{ $v('destino_patrimonio_caso_dissolucao') }}</div>
+            </div>
         </div>
     </div>
 
@@ -204,12 +208,13 @@
         <tbody>
             @foreach ($offerRomanNumerals as $roman)
                 @php
-                    $qualificacaoField = $roman === 'IV' ? 'QUALIFICACAO_USUARIO_Iv' : "QUALIFICACAO_USUARIO_$roman";
+                    $romanLower = strtolower($roman);
+                    $qualificacaoField = "qualificacao_usuario_$romanLower";
                 @endphp
                 <tr>
-                    <td>{{ $v("OFERTA_$roman") }}</td>
-                    <td>{{ $v("VAGAS_$roman") }}</td>
-                    <td>{{ $list("USUARIO_$roman") }}</td>
+                    <td>{{ $v("oferta_$romanLower") }}</td>
+                    <td>{{ $v("vagas_$romanLower") }}</td>
+                    <td>{{ $list("usuario_$romanLower") }}</td>
                     <td>{{ $list($qualificacaoField) }}</td>
                 </tr>
             @endforeach
@@ -218,23 +223,27 @@
 
     <div class="row" style="margin-top: 8px;">
         <div style="padding-left: 15px; font-size: 8px; text-transform: none;">b) Atividades de outras áreas não certificáveis:</div>
-        <div class="field-box">{{ $v('OUTRAS_ATIVIDADES') }}</div>
+        <div class="field-box">{{ $v('outras_atividades') }}</div>
     </div>
 
     <!-- IV) Gratuidade -->
     <div class="row" style="margin-top: 8px;">
         <div class="label">IV) Gratuidade (a partir dos documentos apresentados): Art. 18 da Lei 12.101/09 e Art. 57 do Decreto 8.242/14</div>
-        <div class="field-box">{{ $v('GRATUIDADE_PARECER') }}</div>
+        <div class="field-box">{{ $v('gratuidade_parecer') }}</div>
     </div>
 
     <!-- V) Manifestações de Outros Órgãos -->
     <div class="row" style="margin-top: 8px;">
         <div class="col w-32 label">V) Manifestação de outro órgão:</div>
-        <div class="col field-box" style="width: 68%;">{{ $list('ORGAO_ENCAMINHAMENTO') }}</div>
+        <div class="col" style="width: 68%;">
+            <div class="field-box">{{ $list('orgao_encaminhamento') }}</div>
+        </div>
     </div>
     <div class="row">
         <div class="col w-32">Número(s):</div>
-        <div class="col field-box" style="width: 68%;">{{ $v('NOTA_TECNICA_OUTRO_ORGAO') }}</div>
+        <div class="col" style="width: 68%;">
+            <div class="field-box">{{ $v('nota_tecnica_outro_orgao') }}</div>
+        </div>
     </div>
     @if (trim((string) $manifestacaoOutroMinisterio) !== '')
         <div class="row indent">
@@ -243,31 +252,35 @@
     @endif
     <div class="row">
         <div class="col w-32">Outras atividades (saúde e/ou educação):</div>
-        <div class="col field-box" style="width: 68%;">{{ $v('OFERTAS_OUTRAS_AREAS') }}</div>
+        <div class="col" style="width: 68%;">
+            <div class="field-box">{{ $v('ofertas_outras_areas') }}</div>
+        </div>
     </div>
 
     <!-- VI) Artigo 18 -->
     <div class="row" style="margin-top: 8px;">
         <span class="label">VI) Art. 18 da Lei 12.101/2009</span>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <span class="label">Continuidade</span> {{ $v('CONTINUIDADE') }}
+        <span class="label">Continuidade</span> {{ $v('continuidade') }}
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <span class="label">Planejamento</span> {{ $v('PLANEJAMENTO') }}
+        <span class="label">Planejamento</span> {{ $v('planejamento') }}
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <span class="label">Universalidade</span> {{ $v('UNIVERSALIDADE') }}
+        <span class="label">Universalidade</span> {{ $v('universalidade') }}
     </div>
 
     <!-- VII) Conclusão do Parecer -->
     <div class="row" style="margin-top: 8px;">
         <div class="col w-25 label">VII) Conclusão do parecer:</div>
-        <div class="col w-75 field-box">{{ $v('DECISAO_PARECER') }}</div>
+        <div class="col w-75">
+            <div class="field-box">{{ $v('decisao_parecer') }}</div>
+        </div>
     </div>
     <div class="row">
         <div class="col exposition-label">Exposição de<br>motivos:</div>
-        <div class="col textarea-box exposition-box">{{ trim((string) $v('JUSTIFICATIVA_INDEFERIMENTO')) !== '' ? $v('JUSTIFICATIVA_INDEFERIMENTO') : 'Não se aplica' }}</div>
+        <div class="col textarea-box exposition-box">{{ trim((string) $v('justificativa_indeferimento')) !== '' ? $v('justificativa_indeferimento') : 'Não se aplica' }}</div>
     </div>
 
-    @if ($v('DECISAO_PARECER') === 'DEFERIDO')
+    @if ($v('decisao_parecer') === 'DEFERIDO')
         <div class="row decision-text" style="margin-top: 18px;">
             A partir da documentação apresentada, a entidade demonstrou atuar na área da assistência social em conformidade com a Lei Orgânica da Assistência Social (Lei nº 8.742/93) e a legislação pertinente à certificação (Lei nº 12.101/09 e Decreto nº 8.242/14).
         </div>
@@ -282,7 +295,7 @@
         <div class="row decision-text" style="margin-top: 18px;">
             Insta informar, por fim, que a entidade poderá ser objeto de supervisão a qualquer tempo, por este Ministério, conforme determina o art. 15 do Decreto nº 8.242/2014 e, caso a entidade descumpra quaisquer requisitos estabelecidos na Lei nº 12.101/2009 e/ou no Decreto nº 8.242/2014, poderá ter a sua Certificação cancelada. Ademais, também estará sujeita à fiscalização da Secretaria da Receita Federal do Brasil, conforme institui o art. 48 e parágrafos seguintes do Dec. 8.242/2014.
         </div>
-    @elseif ($v('DECISAO_PARECER') === 'INDEFERIDO')
+    @elseif ($v('decisao_parecer') === 'INDEFERIDO')
         <div class="row decision-text" style="margin-top: 18px;">
             A análise das atividades descritas no referido processo foi fundamentada na Lei Orgânica da Assistência Social (Lei nº 8.742/1993) e na legislação pertinente à certificação (Lei nº 12.101/2009 e Decreto nº 8.242/2014), bem como na Tipificação Nacional dos Serviços Socioassistenciais (Resolução CNAS nº 109/2009) e nas Resoluções CNAS nº 27, 33 e 34/2011.
         </div>

@@ -1,5 +1,5 @@
 @php
-    $value = $field === 'MOTIVO_INDEFERIMENTO' ? '' : old($field, $processo[$field] ?? '');
+    $value = $field === 'motivo_indeferimento' ? '' : old($field, $processo[$field] ?? '');
     $type = $repository->inputType($field, $columnTypes[$field] ?? null);
 
     if ($type === 'date' && is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {
@@ -10,9 +10,9 @@
 
 @if (isset($selectValues[$field]))
     @php
-        $isMultiple = in_array($field, ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'ORGAO_ENCAMINHAMENTO'], true)
-            || str_starts_with($field, 'USUARIO_')
-            || str_starts_with($field, 'QUALIFICACAO_USUARIO_');
+        $isMultiple = in_array($field, ['documentos_pendentes', 'motivo_indeferimento', 'orgao_encaminhamento'], true)
+            || str_starts_with($field, 'usuario_')
+            || str_starts_with($field, 'qualificacao_usuario_');
         $selectedValues = $isMultiple
             ? array_map('trim', preg_split('/\r\n|\r|\n|;/', (string) $value, -1, PREG_SPLIT_NO_EMPTY))
             : [];
@@ -23,7 +23,7 @@
             <div class="grid gap-x-10 gap-y-3 sm:grid-cols-2 xl:grid-cols-3">
             @foreach ($selectValues[$field] as $option)
                 <label class="flex items-start gap-2 text-sm leading-5 text-gray-700">
-                    <input type="checkbox" @if($field !== 'MOTIVO_INDEFERIMENTO') name="{{ $field }}[]" @endif value="{{ $option }}" @checked(in_array($option, $selectedValues, true)) class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <input type="checkbox" @if($field !== 'motivo_indeferimento') name="{{ $field }}[]" @endif value="{{ $option }}" @checked(in_array($option, $selectedValues, true)) class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     <span>{{ $option }}</span>
                 </label>
             @endforeach

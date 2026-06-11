@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BaseExterna\AnaliseProcessoController;
 use App\Http\Controllers\BaseExterna\InserirProcessoController;
 use App\Http\Controllers\BaseExterna\ParecerTecnicoController;
+use App\Http\Controllers\Coordenacao\Planilhas\ExternoController;
 use App\Http\Controllers\Coordenacao\Planilhas\VisdataCebasController;
 use App\Http\Controllers\PrincipalController;
 use Illuminate\Support\Facades\Route;
@@ -47,7 +48,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/visdata-cebas/backup', [VisdataCebasController::class, 'backup'])->name('visdata-cebas.backup');
         Route::view('/processos', 'coordenacao.planilhas.processos')->name('processos');
         Route::view('/cneas', 'coordenacao.planilhas.cneas')->name('cneas');
-        Route::view('/externo', 'coordenacao.planilhas.externo')->name('externo');
+        Route::get('/externo', [ExternoController::class, 'index'])->name('externo');
+        Route::post('/externo/import', [ExternoController::class, 'import'])->name('externo.import');
+        Route::get('/externo/modelo', [ExternoController::class, 'modelo'])->name('externo.modelo');
+        Route::get('/externo/backup', [ExternoController::class, 'backup'])->name('externo.backup');
     });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

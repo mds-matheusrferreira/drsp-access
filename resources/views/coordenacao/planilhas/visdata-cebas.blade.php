@@ -32,17 +32,11 @@
     </section>
 
     <div class="flex flex-wrap gap-3">
-        <a href="{{ route('coordenacao.planilhas.visdata-cebas.modelo') }}" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 12 12 16.5m0 0 4.5-4.5M12 16.5V3" />
-            </svg>
-            Baixar Modelo de Planilha
-        </a>
         <a href="{{ route('coordenacao.planilhas.visdata-cebas.backup') }}" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 12 12 16.5m0 0 4.5-4.5M12 16.5V3" />
             </svg>
-            Baixar backup atual
+            Baixar tabela atual
         </a>
     </div>
 
@@ -61,26 +55,34 @@
             </div>
         </div>
 
-        <form class="space-y-6 p-6" data-visdata-form enctype="multipart/form-data">
-            <label for="visdata-file" data-dropzone class="flex min-h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 px-6 py-12 text-center transition-colors hover:border-blue-400 hover:bg-blue-50/40">
-                <span class="flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                    <svg class="h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 7.5 12 3m0 0 4.5 4.5M12 3v13.5" />
-                    </svg>
-                </span>
-                <span class="mt-6 text-lg font-semibold text-gray-900">Clique para selecionar ou arraste o arquivo</span>
-                <span data-file-label class="mt-2 text-sm font-medium text-gray-600">Arquivo Excel .xlsx - Máximo 10MB</span>
-                <input id="visdata-file" name="excelFile" type="file" class="sr-only" accept=".xlsx,.xls" data-file-input>
-            </label>
+        @if (session('success'))
+            <div class="mx-6 mt-6 rounded-lg bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+                {{ session('success') }}
+            </div>
+        @endif
 
-            <button data-submit-button type="submit" disabled class="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-4 py-4 text-base font-semibold text-white transition-colors">
+        @if (session('error'))
+            <div class="mx-6 mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('coordenacao.planilhas.visdata-cebas.import') }}" class="space-y-5 p-6" enctype="multipart/form-data">
+            @csrf
+            <div>
+                <label for="visdata-file" class="mb-2 block text-sm font-medium text-gray-700">Selecione o arquivo Excel:</label>
+                <input id="visdata-file" name="excelFile" type="file" class="block w-full rounded-lg border border-dashed border-gray-300 bg-white px-3 py-3 text-sm text-gray-700 file:mr-4 file:rounded file:border-0 file:bg-gray-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-gray-700 hover:file:bg-gray-200" accept=".xlsx,.xls" required>
+                @error('excelFile')
+                    <p class="mt-2 text-sm font-medium text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-4 text-base font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M7.5 7.5 12 3m0 0 4.5 4.5M12 3v13.5" />
                 </svg>
                 Enviar CEBAS
             </button>
-
-            <div data-result class="hidden rounded-lg px-4 py-3 text-sm font-medium"></div>
         </form>
     </section>
 

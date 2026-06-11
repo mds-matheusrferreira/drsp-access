@@ -91,13 +91,13 @@
     ];
 
     $selectValues = [
-        'DOCUMENTOS_OBRIGATORIOS' => ['Apresentou todos os documentos', 'Não apresentou todos os documentos', 'Não foram analisados os documentos por não autar na assistência social'],
-        'DOCUMENTOS_PENDENTES' => ['Ata de eleição', 'Balanço patrimonial', 'Comprovante de CNPJ', 'Declaração de gratuidade', 'Demonstração dos fluxos de caixa', 'Demonstração das mutações do patrimônio líquido', 'Demonstração de resultado de exercício (D.R.E.)', 'Estatuto', 'Inscrição no Conselho Local de Assistência Social', 'Nota explicativa', 'Parecer de auditoria independente', 'Relatório de atividades'],
-        'COMPATIBILIDADE_ESTATUTO_LOAS' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
-        'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
-        'GRATUIDADE_PARECER' => ['A participação do idoso supera o limite da lei', 'É possível aferir a gratuidade das ofertas', 'Há indícios de contraprestação do usuário', 'Não apresentou documento que demonstre gratuidade', 'Não é possível aferir a gratuidade das ofertas', 'Não se aplica'],
-        'ORGAO_ENCAMINHAMENTO' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
-        'MANIFESTACAO_OUTRO_MINISTERIO' => [
+        'documentos_obrigatorios' => ['Apresentou todos os documentos', 'Não apresentou todos os documentos', 'Não foram analisados os documentos por não autar na assistência social'],
+        'documentos_pendentes' => ['Ata de eleição', 'Balanço patrimonial', 'Comprovante de cnpj', 'Declaração de gratuidade', 'Demonstração dos fluxos de caixa', 'Demonstração das mutações do patrimônio líquido', 'Demonstração de resultado de exercício (D.R.E.)', 'Estatuto', 'Inscrição no Conselho Local de Assistência Social', 'Nota explicativa', 'Parecer de auditoria independente', 'Relatório de atividades'],
+        'compatibilidade_estatuto_loas' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
+        'destino_patrimonio_caso_dissolucao' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
+        'gratuidade_parecer' => ['A participação do idoso supera o limite da lei', 'É possível aferir a gratuidade das ofertas', 'Há indícios de contraprestação do usuário', 'Não apresentou documento que demonstre gratuidade', 'Não é possível aferir a gratuidade das ofertas', 'Não se aplica'],
+        'orgao_encaminhamento' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
+        'manifestacao_outro_ministerio' => [
             ['value' => '1', 'label' => 'MEC: não atua para fins de CEBAS; e parecer favorável do MS'],
             ['value' => '2', 'label' => 'MS: não atua para fins de CEBAS; e parecer desfavorável do MEC'],
             ['value' => '3', 'label' => 'Não atua para fins de CEBAS'],
@@ -109,24 +109,25 @@
             ['value' => '9', 'label' => 'Pareceres desfavoráveis em ambos os ministérios'],
             ['value' => '10', 'label' => 'Pareceres favoráveis em ambos os ministérios'],
         ],
-        'CONTINUIDADE' => ['Não', 'Sim'],
-        'PLANEJAMENTO' => ['Não', 'Sim'],
-        'UNIVERSALIDADE' => ['Não', 'Sim'],
-        'DECISAO_PARECER' => ['DEFERIDO', 'INDEFERIDO', 'FAVORÁVEL', 'DESFAVORÁVEL', 'ENCAMINHAMENTO', 'MANUTENÇÃO DO CEBAS', 'APRESENTAR DEFESA', 'SUGERE-SE O CANCELAMENTO DA CERTIFICAÇÃO'],
-        'MOTIVO_INDEFERIMENTO' => $rejectionReasonOptions,
-        'CGCEB_PARECER' => [
+        'continuidade' => ['Não', 'Sim'],
+        'planejamento' => ['Não', 'Sim'],
+        'universalidade' => ['Não', 'Sim'],
+        'decisao_parecer' => ['DEFERIDO', 'INDEFERIDO', 'FAVORÁVEL', 'DESFAVORÁVEL', 'ENCAMINHAMENTO', 'MANUTENÇÃO DO CEBAS', 'APRESENTAR DEFESA', 'SUGERE-SE O CANCELAMENTO DA CERTIFICAÇÃO'],
+        'motivo_indeferimento' => $rejectionReasonOptions,
+        'cgceb_parecer' => [
             ['value' => '1', 'label' => 'Leandro de Oliveira Nardi'],
         ],
-        'DRSP_PARECER' => [
+        'drsp_parecer' => [
             ['value' => '3', 'label' => 'Edgilson Tavares de Araújo'],
         ],
     ];
 
-    $qualificationField = fn (string $roman) => $roman === 'IV' ? 'QUALIFICACAO_USUARIO_Iv' : "QUALIFICACAO_USUARIO_$roman";
+    $romanField = fn (string $prefix, string $roman) => $prefix.'_'.strtolower($roman);
+    $qualificationField = fn (string $roman) => 'qualificacao_usuario_'.strtolower($roman);
 
     foreach (['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'] as $roman) {
-        $selectValues["OFERTA_$roman"] = $offerOptions;
-        $selectValues["USUARIO_$roman"] = $userOptions;
+        $selectValues[$romanField('oferta', $roman)] = $offerOptions;
+        $selectValues[$romanField('usuario', $roman)] = $userOptions;
         $selectValues[$qualificationField($roman)] = $userQualificationOptions;
     }
     $sectionStyles = [
@@ -179,7 +180,7 @@
     <form method="POST" action="{{ route('base-externa.analise-processo.parecer.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
-        <input type="hidden" name="ORIGINAL_PROTOCOLO" value="{{ $originalProtocolo }}">
+        <input type="hidden" name="original_protocolo" value="{{ $originalProtocolo }}">
 
         <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm" aria-labelledby="informacoes-title">
             <div class="border-b border-blue-200 bg-blue-50 px-6 py-4">
@@ -200,11 +201,11 @@
                     @php
                         $headerValue = $processo[$field] ?? '-';
 
-                        if (str_starts_with($field, 'DT_') && is_string($headerValue) && preg_match('/^\d{4}-\d{2}-\d{2}/', $headerValue)) {
+                        if (str_starts_with($field, 'dt_') && is_string($headerValue) && preg_match('/^\d{4}-\d{2}-\d{2}/', $headerValue)) {
                             $headerValue = \Carbon\Carbon::parse($headerValue)->format('d/m/Y');
                         }
                     @endphp
-                    <div class="{{ $field === 'ENTIDADE' ? 'md:col-span-2 xl:col-span-3' : '' }}">
+                    <div class="{{ $field === 'entidade' ? 'md:col-span-2 xl:col-span-3' : '' }}">
                         <label class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
                         <div class="min-h-11 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700">{{ $headerValue }}</div>
                     </div>
@@ -235,14 +236,14 @@
                         <div class="space-y-4" data-activities-wrapper>
                             @php
                                 $activityFields = collect($offerRomanNumerals)
-                                    ->flatMap(fn ($roman) => ["OFERTA_$roman", "VAGAS_$roman", "USUARIO_$roman", $qualificationField($roman)])
+                                    ->flatMap(fn ($roman) => [$romanField('oferta', $roman), $romanField('vagas', $roman), $romanField('usuario', $roman), $qualificationField($roman)])
                                     ->all();
                                 $visibleActivities = 0;
                             @endphp
 
                             @foreach ($offerRomanNumerals as $roman)
                                 @php
-                                    $fields = ["OFERTA_$roman", "VAGAS_$roman", "USUARIO_$roman", $qualificationField($roman)];
+                                    $fields = [$romanField('oferta', $roman), $romanField('vagas', $roman), $romanField('usuario', $roman), $qualificationField($roman)];
                                     $presentFields = array_values(array_intersect($fields, $section['fields']));
                                     $hasContent = collect($presentFields)->contains(fn ($field) => filled(old($field, $processo[$field] ?? null)));
                                     $isVisible = $loop->first || $hasContent;
@@ -255,7 +256,7 @@
                                             @foreach ($presentFields as $field)
                                                 @php
                                                     $fieldClass = match (true) {
-                                                        str_starts_with($field, 'USUARIO_'), str_starts_with($field, 'QUALIFICACAO_USUARIO_') => 'md:col-span-2',
+                                                        str_starts_with($field, 'usuario_'), str_starts_with($field, 'qualificacao_usuario_') => 'md:col-span-2',
                                                         default => '',
                                                     };
                                                 @endphp
@@ -293,26 +294,26 @@
                             $sectionFields = $section['fields'];
                             $isGratuidadeSection = $section['title'] === 'Gratuidade e manifestações';
 
-                            if ($isGratuidadeSection && ! in_array('NOTA_TECNICA_OUTRO_ORGAO', $sectionFields, true)) {
-                                $insertAfter = array_search('ORGAO_ENCAMINHAMENTO', $sectionFields, true);
-                                array_splice($sectionFields, $insertAfter === false ? count($sectionFields) : $insertAfter + 1, 0, ['NOTA_TECNICA_OUTRO_ORGAO']);
+                            if ($isGratuidadeSection && ! in_array('nota_tecnica_outro_orgao', $sectionFields, true)) {
+                                $insertAfter = array_search('orgao_encaminhamento', $sectionFields, true);
+                                array_splice($sectionFields, $insertAfter === false ? count($sectionFields) : $insertAfter + 1, 0, ['nota_tecnica_outro_orgao']);
                             }
                         @endphp
                         <div class="grid gap-5 md:grid-cols-2 {{ $isGratuidadeSection ? '' : 'xl:grid-cols-3' }}">
                             @foreach ($sectionFields as $field)
                                 @php
-                                    $hidePendingDocuments = $field === 'DOCUMENTOS_PENDENTES'
-                                        && old('DOCUMENTOS_OBRIGATORIOS', $processo['DOCUMENTOS_OBRIGATORIOS'] ?? '') !== 'Não apresentou todos os documentos';
-                                    $hideRejectionReasons = $field === 'MOTIVO_INDEFERIMENTO'
-                                        && old('DECISAO_PARECER', $processo['DECISAO_PARECER'] ?? '') !== 'INDEFERIDO';
+                                    $hidePendingDocuments = $field === 'documentos_pendentes'
+                                        && old('documentos_obrigatorios', $processo['documentos_obrigatorios'] ?? '') !== 'Não apresentou todos os documentos';
+                                    $hideRejectionReasons = $field === 'motivo_indeferimento'
+                                        && old('decisao_parecer', $processo['decisao_parecer'] ?? '') !== 'INDEFERIDO';
                                     $wideFields = $isGratuidadeSection
-                                        ? ['GRATUIDADE_PARECER', 'ORGAO_ENCAMINHAMENTO', 'NOTA_TECNICA_OUTRO_ORGAO']
-                                        : ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'JUSTIFICATIVA_INDEFERIMENTO'];
+                                        ? ['gratuidade_parecer', 'orgao_encaminhamento', 'nota_tecnica_outro_orgao']
+                                        : ['documentos_pendentes', 'motivo_indeferimento', 'justificativa_indeferimento'];
                                     $wideClass = in_array($field, $wideFields, true)
                                         ? ($isGratuidadeSection ? 'md:col-span-2' : 'md:col-span-2 xl:col-span-3')
                                         : '';
                                 @endphp
-                                <div class="{{ $wideClass }} {{ $hidePendingDocuments || $hideRejectionReasons ? 'hidden' : '' }}" @if($field === 'DOCUMENTOS_PENDENTES') data-pending-documents-wrapper @endif @if($field === 'MOTIVO_INDEFERIMENTO') data-rejection-reasons-wrapper @endif>
+                                <div class="{{ $wideClass }} {{ $hidePendingDocuments || $hideRejectionReasons ? 'hidden' : '' }}" @if($field === 'documentos_pendentes') data-pending-documents-wrapper @endif @if($field === 'motivo_indeferimento') data-rejection-reasons-wrapper @endif>
                                     <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
                                     @include('base-externa.analise-processo.parecer._field', ['field' => $field])
                                 </div>
@@ -343,9 +344,9 @@
             resize();
         });
 
-        const requiredDocuments = document.getElementById('DOCUMENTOS_OBRIGATORIOS');
+        const requiredDocuments = document.getElementById('documentos_obrigatorios');
         const pendingDocumentsWrapper = document.querySelector('[data-pending-documents-wrapper]');
-        const pendingDocuments = document.getElementById('DOCUMENTOS_PENDENTES');
+        const pendingDocuments = document.getElementById('documentos_pendentes');
 
         const togglePendingDocuments = () => {
             const shouldShow = requiredDocuments?.value === 'Não apresentou todos os documentos';
@@ -361,10 +362,10 @@
         requiredDocuments?.addEventListener('change', togglePendingDocuments);
         togglePendingDocuments();
 
-        const decision = document.getElementById('DECISAO_PARECER');
+        const decision = document.getElementById('decisao_parecer');
         const rejectionReasonsWrapper = document.querySelector('[data-rejection-reasons-wrapper]');
-        const rejectionReasons = document.getElementById('MOTIVO_INDEFERIMENTO');
-        const rejectionExposition = document.getElementById('JUSTIFICATIVA_INDEFERIMENTO');
+        const rejectionReasons = document.getElementById('motivo_indeferimento');
+        const rejectionExposition = document.getElementById('justificativa_indeferimento');
 
         const updateRejectionExposition = () => {
             if (!rejectionReasons || !rejectionExposition) {

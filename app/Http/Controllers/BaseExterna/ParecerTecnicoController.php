@@ -34,11 +34,11 @@ class ParecerTecnicoController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'ORIGINAL_PROTOCOLO' => ['required', 'string', 'max:255'],
+            'original_protocolo' => ['required', 'string', 'max:255'],
             '_action' => ['nullable', 'string', 'in:save,save_pdf'],
         ]);
 
-        $originalProtocolo = trim($validated['ORIGINAL_PROTOCOLO']);
+        $originalProtocolo = trim($validated['original_protocolo']);
         $count = $this->accessProcesses->protocolCount($originalProtocolo);
 
         if ($count !== 1) {
