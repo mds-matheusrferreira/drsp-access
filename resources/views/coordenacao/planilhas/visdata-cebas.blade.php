@@ -23,7 +23,7 @@
                 <h2 id="informacoes-visdata-title" class="font-semibold">Informações Importantes</h2>
                 <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
                     <li>Formato aceito: Excel .xlsx. Arquivos .xls antigos devem ser salvos como .xlsx antes da importação.</li>
-                    <li>Tamanho máximo: 10MB</li>
+                    <li>Tamanho máximo: 50MB</li>
                     <li>A aba deve se chamar <strong>SITUAÇÃO CNPJ CEBAS (VISDATA)</strong></li>
                     <li>A importação substitui todos os dados atuais da tabela <strong>cebas_suas</strong> após validar a planilha.</li>
                 </ul>

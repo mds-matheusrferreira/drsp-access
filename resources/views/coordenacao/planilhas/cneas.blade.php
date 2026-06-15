@@ -18,7 +18,7 @@
                 <h2 id="informacoes-cneas-title" class="font-semibold">Informações Importantes</h2>
                 <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
                     <li>Formato aceito: Excel (.xlsx, .xls)</li>
-                    <li>Tamanho máximo: 10MB</li>
+                    <li>Tamanho máximo: 50MB</li>
                     <li>Certifique-se de que a planilha segue o modelo padrão</li>
                 </ul>
             </div>
@@ -57,7 +57,7 @@
                     </svg>
                 </span>
                 <span class="mt-6 text-lg font-semibold text-gray-900">Clique para selecionar ou arraste o arquivo</span>
-                <span id="cneas-file-label" class="mt-2 text-sm font-medium text-gray-600">Arquivos Excel (.xlsx, .xls) - Máximo 10MB</span>
+                <span id="cneas-file-label" class="mt-2 text-sm font-medium text-gray-600">Arquivos Excel (.xlsx, .xls) - Máximo 50MB</span>
                 <input id="cneas-file" type="file" class="sr-only" accept=".xlsx,.xls">
             </label>
 
@@ -117,7 +117,7 @@
             const file = fileInput.files?.[0];
 
             if (!file) {
-                fileLabel.textContent = 'Arquivos Excel (.xlsx, .xls) - Máximo 10MB';
+                fileLabel.textContent = 'Arquivos Excel (.xlsx, .xls) - Máximo 50MB';
                 submitButton.disabled = true;
                 submitButton.classList.add('cursor-not-allowed', 'bg-gray-300');
                 submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');

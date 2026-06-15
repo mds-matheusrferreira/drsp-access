@@ -40,6 +40,34 @@ class BaseExternaParecerTecnicoTest extends TestCase
         $response->assertSee('Gerar PDF');
     }
 
+    public function test_parecer_uses_lei_12101_until_2021_12_16(): void
+    {
+        $this->insertAccessProcess([
+            'protocolo' => 'PARECER-LEI-12101-001',
+            'dt_protocolo' => '2021-12-16',
+        ]);
+
+        $response = $this->actingAs(User::factory()->create())
+            ->get('/base-externa/analise-processo/parecer-tecnico?protocolo=PARECER-LEI-12101-001');
+
+        $response->assertOk();
+        $response->assertSee('Princípios de Atendimento da Assistência Social');
+    }
+
+    public function test_parecer_uses_lei_187_from_2021_12_17(): void
+    {
+        $this->insertAccessProcess([
+            'protocolo' => 'PARECER-LEI-187-001',
+            'dt_protocolo' => '2021-12-17',
+        ]);
+
+        $response = $this->actingAs(User::factory()->create())
+            ->get('/base-externa/analise-processo/parecer-tecnico?protocolo=PARECER-LEI-187-001');
+
+        $response->assertOk();
+        $response->assertSee('Princípios de Atendimento da Assistência Social');
+    }
+
     public function test_analysis_action_links_to_parecer_page(): void
     {
         $this->insertAccessProcess(['protocolo' => 'PARECER-LINK-001']);

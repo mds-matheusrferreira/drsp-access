@@ -25,3 +25,4 @@ Thumbs.db
 /docs
 /.claude
 .openclaude-profile.json
+/.venv

@@ -26,7 +26,7 @@ class VisdataCebasController extends Controller
     public function import(Request $request): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
-            'excelFile' => ['required', 'file', 'max:10240', 'mimes:xlsx,xls'],
+            'excelFile' => ['required', 'file', 'max:51200', 'mimes:xlsx,xls'],
         ]);
 
         try {

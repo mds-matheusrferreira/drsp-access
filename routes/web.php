@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BaseExterna\AnaliseProcessoController;
 use App\Http\Controllers\BaseExterna\InserirProcessoController;
 use App\Http\Controllers\BaseExterna\ParecerTecnicoController;
+use App\Http\Controllers\Coordenacao\Automacoes\CneasController;
 use App\Http\Controllers\Coordenacao\Planilhas\ExternoController;
 use App\Http\Controllers\Coordenacao\Planilhas\VisdataCebasController;
 use App\Http\Controllers\PrincipalController;
@@ -41,6 +42,12 @@ Route::middleware('auth')->group(function () {
     // Coordenação e Planilhas
     Route::view('/coordenacao', 'coordenacao.index')->name('coordenacao.index');
     
+    Route::prefix('/coordenacao/automacoes')->name('coordenacao.automacoes.')->group(function () {
+        Route::get('/cneas', [CneasController::class, 'index'])->name('cneas');
+        Route::post('/cneas/gerar', [CneasController::class, 'generate'])->name('cneas.generate');
+        Route::get('/cneas/ultimo', [CneasController::class, 'downloadLatest'])->name('cneas.latest');
+    });
+
     Route::prefix('/coordenacao/planilhas')->name('coordenacao.planilhas.')->group(function () {
         Route::get('/visdata-cebas', [VisdataCebasController::class, 'index'])->name('visdata-cebas');
         Route::post('/visdata-cebas/import', [VisdataCebasController::class, 'import'])->name('visdata-cebas.import');

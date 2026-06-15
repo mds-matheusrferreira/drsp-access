@@ -58,10 +58,18 @@
             'icon' => 'table',
             'theme' => 'indigo',
             'items' => [
-                ['label' => 'VISDATA (CEBAS)', 'href' => route('coordenacao.planilhas.visdata-cebas'), 'icon' => 'table'],
-                ['label' => 'PROCESSOS', 'href' => route('coordenacao.planilhas.processos'), 'icon' => 'table'],
-                ['label' => 'CNEAS', 'href' => route('coordenacao.planilhas.cneas'), 'icon' => 'table'],
+                ['label' => 'CNEAS', 'href' => '#', 'disabled' => true, 'icon' => 'table'],
                 ['label' => 'EXTERNO', 'href' => route('coordenacao.planilhas.externo'), 'icon' => 'table'],
+                ['label' => 'PROCESSOS', 'href' => '#', 'disabled' => true, 'icon' => 'table'],
+                ['label' => 'VISDATA (CEBAS)', 'href' => route('coordenacao.planilhas.visdata-cebas'), 'icon' => 'table'],
+            ],
+        ],
+        [
+            'title' => 'Automações',
+            'icon' => 'activity',
+            'theme' => 'blue',
+            'items' => [
+                ['label' => 'AUTOMAÇÃO CNEAS', 'href' => route('coordenacao.automacoes.cneas'), 'icon' => 'activity'],
             ],
         ],
     ];

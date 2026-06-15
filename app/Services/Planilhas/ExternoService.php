@@ -217,11 +217,17 @@ class ExternoService
 
         $rows = $this->readXlsxRows($file->getRealPath() ?: $file->path());
         $records = $this->recordsFromRows($rows);
+        $uploadedAt = now()->toDateString();
+
+        foreach ($records as &$record) {
+            $record['dt_atualizacao'] = $uploadedAt;
+        }
+        unset($record);
 
         DB::transaction(function () use ($records) {
             DB::table(self::TABLE)->delete();
 
-            foreach (array_chunk($records, 500) as $chunk) {
+            foreach (array_chunk($records, 100) as $chunk) {
                 DB::table(self::TABLE)->insert($chunk);
             }
         });

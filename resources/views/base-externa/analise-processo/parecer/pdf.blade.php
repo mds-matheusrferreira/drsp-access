@@ -112,6 +112,19 @@
     $pendingDocuments = $list('documentos_pendentes');
     $cgcebSignature = $signatureName('cgceb_parecer', ['1' => 'Leandro de Oliveira Nardi']);
     $drspSignature = $signatureName('drsp_parecer', ['3' => 'Edgilson Tavares de Araújo']);
+    $isLei187 = $v('legislacao_parecer') === 'Lei Complementar 187/2021';
+    $documentosObrigatoriosLabel = $isLei187 ? 'Art. 31º I, II, III, IV - LC 187/2021' : 'Art. 3º, II, III, IV, VIII e Art. 39, I e II do Decreto 8.242/2014';
+    $compatibilidadeLoasLabel = $isLei187 ? 'art. 73º, I Dec.111791/2023' : 'art. 34, I, Dec. 7.237/10 ou art. 39, I, Dec. 8.242/14';
+    $destinoPatrimonioLabel = $isLei187 ? 'art. 3º, VIII, Lei 187/2021' : 'art. 3º, II, Lei 12.101/09';
+    $gratuidadeLabel = $isLei187 ? 'Art. 3º, IV, Lei 187/2021 - Art.5º I, C, Decreto 11.791/2023.' : 'Art. 18 da Lei 12.101/09 e Art. 57 do Decreto 8.242/14';
+    $cpuLabel = $isLei187 ? 'ART. 31º, §§ 1º, 2º -Lei 187/2021:' : 'Art. 18 da Lei 12.101/2009';
+    $certificacaoLegislacao = $isLei187 ? 'Lei Complementar nº 187/2021 e Decreto nº 11.791/2023' : 'Lei nº 12.101/2009 e Decreto nº 8.242/2014';
+    $deferidoIntroText = $isLei187
+        ? 'A partir da documentação apresentada, a entidade demonstrou atuar na área da assistência social em conformidade com a Lei Orgânica da Assistência Social (Lei nº 8.742/93) e a legislação pertinente à certificação.'
+        : 'A partir da documentação apresentada, a entidade demonstrou atuar na área da assistência social em conformidade com a Lei Orgânica da Assistência Social (Lei nº 8.742/93) e a legislação pertinente à certificação (Lei nº 12.101/2009 e Decreto nº 8.242/2014).';
+    $supervisaoText = $isLei187
+        ? 'Insta informar, por fim, que a entidade poderá ser objeto de supervisão a qualquer tempo, por este Ministério, conforme determina o Decreto nº 11.791/2023 e, caso a entidade descumpra quaisquer requisitos estabelecidos na Lei nº 187/2021, poderá ter a sua Certificação cancelada.'
+        : 'Insta informar, por fim, que a entidade poderá ser objeto de supervisão a qualquer tempo por este Ministério e, caso a entidade descumpra quaisquer requisitos estabelecidos na legislação pertinente à certificação (Lei nº 12.101/2009 e Decreto nº 8.242/2014), poderá ter a sua Certificação cancelada.';
 @endphp
 
     <!-- Cabeçalho Oficial do Ministério -->
@@ -167,7 +180,7 @@
     <div class="section-title">Análise Técnica</div>
 
     <div class="row">
-        <div class="label">I) DOCUMENTOS OBRIGATÓRIOS: Art. 3º, II, III, IV, VIII e Art. 39, I e II do Decreto 8.242/2014</div>
+        <div class="label">I) DOCUMENTOS OBRIGATÓRIOS: {{ $documentosObrigatoriosLabel }}</div>
         <div class="field-box">{{ $v('documentos_obrigatorios') }}</div>
     </div>
     <div class="row indent">
@@ -182,13 +195,13 @@
     <div class="row">
         <div class="col w-50">
             <div class="indent">
-                <div>a) Compatibilidade do estatuto com LOAS: art. 34, I, Dec. 7.237/10 ou art. 39, I, Dec. 8.242/14</div>
+                <div>a) Compatibilidade do estatuto com LOAS: {{ $compatibilidadeLoasLabel }}</div>
                 <div class="field-box">{{ $v('compatibilidade_estatuto_loas') }}</div>
             </div>
         </div>
         <div class="col w-50">
             <div class="indent">
-                <div>b) Destino do patrimônio em caso de dissolução: art. 3º, II, Lei 12.101/09</div>
+                <div>b) Destino do patrimônio em caso de dissolução: {{ $destinoPatrimonioLabel }}</div>
                 <div class="field-box">{{ $v('destino_patrimonio_caso_dissolucao') }}</div>
             </div>
         </div>
@@ -228,7 +241,7 @@
 
     <!-- IV) Gratuidade -->
     <div class="row" style="margin-top: 8px;">
-        <div class="label">IV) Gratuidade (a partir dos documentos apresentados): Art. 18 da Lei 12.101/09 e Art. 57 do Decreto 8.242/14</div>
+        <div class="label">IV) Gratuidade (a partir dos documentos apresentados): {{ $gratuidadeLabel }}</div>
         <div class="field-box">{{ $v('gratuidade_parecer') }}</div>
     </div>
 
@@ -259,7 +272,7 @@
 
     <!-- VI) Artigo 18 -->
     <div class="row" style="margin-top: 8px;">
-        <span class="label">VI) Art. 18 da Lei 12.101/2009</span>
+        <span class="label">VI) {{ $cpuLabel }}</span>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <span class="label">Continuidade</span> {{ $v('continuidade') }}
         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -282,7 +295,7 @@
 
     @if ($v('decisao_parecer') === 'DEFERIDO')
         <div class="row decision-text" style="margin-top: 18px;">
-            A partir da documentação apresentada, a entidade demonstrou atuar na área da assistência social em conformidade com a Lei Orgânica da Assistência Social (Lei nº 8.742/93) e a legislação pertinente à certificação (Lei nº 12.101/09 e Decreto nº 8.242/14).
+            {{ $deferidoIntroText }}
         </div>
         <div class="row decision-text">
             O conjunto de atividades apresentadas no item III.a do presente parecer expressam as ofertas socioassistenciais em conformidade com a Tipificação Nacional dos Serviços Socioassistenciais e as Resoluções CNAS nº 27, 33 e 34/2011. As atividades descritas no item III.b não se caracterizam como ofertas socioassistenciais. No entanto, não impedem o deferimento do pedido de certificação, pois não correspondem à atuação preponderante da entidade.
@@ -293,19 +306,21 @@
         </div>
 
         <div class="row decision-text" style="margin-top: 18px;">
-            Insta informar, por fim, que a entidade poderá ser objeto de supervisão a qualquer tempo, por este Ministério, conforme determina o art. 15 do Decreto nº 8.242/2014 e, caso a entidade descumpra quaisquer requisitos estabelecidos na Lei nº 12.101/2009 e/ou no Decreto nº 8.242/2014, poderá ter a sua Certificação cancelada. Ademais, também estará sujeita à fiscalização da Secretaria da Receita Federal do Brasil, conforme institui o art. 48 e parágrafos seguintes do Dec. 8.242/2014.
+            {{ $supervisaoText }}
         </div>
     @elseif ($v('decisao_parecer') === 'INDEFERIDO')
         <div class="row decision-text" style="margin-top: 18px;">
-            A análise das atividades descritas no referido processo foi fundamentada na Lei Orgânica da Assistência Social (Lei nº 8.742/1993) e na legislação pertinente à certificação (Lei nº 12.101/2009 e Decreto nº 8.242/2014), bem como na Tipificação Nacional dos Serviços Socioassistenciais (Resolução CNAS nº 109/2009) e nas Resoluções CNAS nº 27, 33 e 34/2011.
+            A análise das atividades descritas no referido processo foi fundamentada na Lei Orgânica da Assistência Social (Lei nº 8.742/1993) e na legislação pertinente à certificação ({{ $certificacaoLegislacao }}), bem como na Tipificação Nacional dos Serviços Socioassistenciais (Resolução CNAS nº 109/2009) e nas Resoluções CNAS nº 27, 33 e 34/2011.
         </div>
 
-        <div class="row decision-text" style="margin-top: 10px;">
-            A entidade poderá recorrer da decisão em até trinta (30) dias a partir da publicação no Diário Oficial da União (D.O.U.). Ressalta-se que o recurso não tem efeito suspensivo, ou seja, a partir da publicação do indeferimento a entidade perde o direito à isenção do art. 29 da Lei 12.101/09. Caso o fundamento do indeferimento seja a não apresentação de documentação obrigatória, a entidade poderá apresentar em sede de recurso a documentação faltante indicada acima.
-        </div>
+        @if (! $isLei187)
+            <div class="row decision-text" style="margin-top: 10px;">
+                A entidade poderá recorrer da decisão em até trinta (30) dias a partir da publicação no Diário Oficial da União (D.O.U.). Ressalta-se que o recurso não tem efeito suspensivo, ou seja, a partir da publicação do indeferimento a entidade perde o direito à isenção prevista na legislação pertinente à certificação ({{ $certificacaoLegislacao }}). Caso o fundamento do indeferimento seja a não apresentação de documentação obrigatória, a entidade poderá apresentar em sede de recurso a documentação faltante indicada acima.
+            </div>
+        @endif
 
         <div class="row decision-text" style="margin-top: 10px;">
-            “O Cadastro Nacional de Entidades de Assistência Social (CNEAS) é um instrumento de reconhecimento e monitoramento das ofertas socioassistenciais prestadas por organizações da sociedade civil. Seu preenchimento é responsabilidade dos órgãos gestores municipais. Para consultar a situação da sua entidade, acesse http://aplicacoes.mds.gov.br/cneas/consultacneas. Caso não a encontre, procure pelo órgão gestor da assistência social e solicite o cadastramento no CNEAS.”
+            “O Cadastro Nacional de Entidades de Assistência Social (CNEAS) é um instrumento de reconhecimento e de monitoramento das ofertas socioassistenciais prestadas por organizações da sociedade civil. Seu preenchimento é responsabilidade dos órgãos gestores municipais. Para consultar a situação da sua entidade, acesse http://aplicacoes.mds.gov.br/cneas/consultacneas. Caso não a encontre, procure pelo órgão gestor da assistência social e solicite o cadastramento no CNEAS.”
         </div>
     @endif
 

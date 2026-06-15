@@ -134,7 +134,7 @@
         'Análise técnica' => ['iconBg' => 'bg-blue-600', 'header' => 'border-blue-200 bg-blue-50', 'subtitle' => 'Documentos obrigatórios e objetivos estatutários'],
         'Atividades do relatório' => ['iconBg' => 'bg-purple-600', 'header' => 'border-purple-200 bg-purple-50', 'subtitle' => 'Ofertas, vagas, usuários e qualificações'],
         'Gratuidade e manifestações' => ['iconBg' => 'bg-orange-600', 'header' => 'border-orange-200 bg-orange-50', 'subtitle' => 'Gratuidade e manifestações de outros órgãos'],
-        'Art. 18 da Lei 12.101/2009' => ['iconBg' => 'bg-teal-600', 'header' => 'border-teal-200 bg-teal-50', 'subtitle' => 'Continuidade, planejamento e universalidade'],
+        'Princípios de Atendimento da Assistência Social' => ['iconBg' => 'bg-teal-600', 'header' => 'border-teal-200 bg-teal-50', 'subtitle' => 'Continuidade, planejamento e universalidade'],
         'Conclusão do parecer' => ['iconBg' => 'bg-green-600', 'header' => 'border-green-200 bg-green-50', 'subtitle' => 'Decisão e exposição de motivos'],
         'Assinaturas' => ['iconBg' => 'bg-gray-600', 'header' => 'border-gray-200 bg-gray-50', 'subtitle' => 'Responsáveis pelo parecer'],
     ];
@@ -215,6 +215,7 @@
 
         @foreach ($sections as $section)
             @php
+                $sectionTitle = $section['title'];
                 $style = $sectionStyles[$section['title']] ?? ['iconBg' => 'bg-blue-600', 'header' => 'border-blue-200 bg-blue-50', 'subtitle' => 'Campos do parecer técnico'];
             @endphp
             <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm" aria-labelledby="section-{{ $loop->index }}-title">
@@ -226,7 +227,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h2 id="section-{{ $loop->index }}-title" class="text-lg font-semibold text-gray-900">{{ $section['title'] }}</h2>
+                            <h2 id="section-{{ $loop->index }}-title" class="text-lg font-semibold text-gray-900">{{ $sectionTitle }}</h2>
                             <p class="text-sm text-gray-600">{{ $style['subtitle'] }}</p>
                         </div>
                     </div>

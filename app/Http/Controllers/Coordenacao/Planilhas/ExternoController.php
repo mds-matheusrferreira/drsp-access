@@ -25,7 +25,7 @@ class ExternoController extends Controller
     public function import(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'excelFile' => ['required', 'file', 'max:10240', 'mimes:xlsx,xls'],
+            'excelFile' => ['required', 'file', 'max:51200', 'mimes:xlsx,xls'],
         ]);
 
         try {

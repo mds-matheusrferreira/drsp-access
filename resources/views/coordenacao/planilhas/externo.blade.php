@@ -23,7 +23,7 @@
                 <h2 id="informacoes-externo-title" class="font-semibold">Informações Importantes</h2>
                 <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
                     <li>Formato aceito: Excel .xlsx. Arquivos .xls antigos devem ser salvos como .xlsx antes da importação.</li>
-                    <li>Tamanho máximo: 10MB</li>
+                    <li>Tamanho máximo: 50MB</li>
                     <li>A planilha deve seguir exatamente o modelo padrão da tabela <strong>access</strong>.</li>
                     <li>A importação substitui todos os dados atuais da tabela <strong>access</strong> após validar a planilha.</li>
                 </ul>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\BaseExterna;
 use App\Http\Controllers\Controller;
 use App\Services\BaseExterna\AccessProcessRepository;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -83,8 +84,11 @@ class ParecerTecnicoController extends Controller
      */
     private function viewData(string $protocolo): array
     {
+        $processo = $this->accessProcesses->findByProtocolo($protocolo);
+        $processo['legislacao_parecer'] = $this->legislacaoByDataProtocolo($processo['dt_protocolo'] ?? null);
+
         return [
-            'processo' => $this->accessProcesses->findByProtocolo($protocolo),
+            'processo' => $processo,
             'headerColumns' => $this->accessProcesses->parecerTecnicoHeaderColumns(),
             'sections' => $this->accessProcesses->parecerTecnicoSections(),
             'columnTypes' => $this->accessProcesses->columnTypes(),
@@ -92,6 +96,17 @@ class ParecerTecnicoController extends Controller
             'originalProtocolo' => $protocolo,
             'offerRomanNumerals' => ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'],
         ];
+    }
+
+    private function legislacaoByDataProtocolo(mixed $dtProtocolo): string
+    {
+        if (! $dtProtocolo) {
+            return 'Lei 12.101/2009';
+        }
+
+        return Carbon::parse($dtProtocolo)->startOfDay()->gte(Carbon::create(2021, 12, 17)->startOfDay())
+            ? 'Lei Complementar 187/2021'
+            : 'Lei 12.101/2009';
     }
 
     private function blockedRedirect(string $protocolo, int $count): RedirectResponse

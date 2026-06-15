@@ -118,7 +118,7 @@ class AccessProcessRepository
             'manifestacao_outro_ministerio',
             'ofertas_outras_areas',
         ],
-        'Art. 18 da Lei 12.101/2009' => [
+        'Princípios de Atendimento da Assistência Social' => [
             'continuidade',
             'planejamento',
             'universalidade',
