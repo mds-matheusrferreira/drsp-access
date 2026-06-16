@@ -324,8 +324,6 @@ class AccessProcessRepository
             $data['documentos_pendentes'] = null;
         }
 
-        unset($data['motivo_indeferimento']);
-
         foreach ($columns as $column) {
             if (! array_key_exists($column, $data)) {
                 continue;

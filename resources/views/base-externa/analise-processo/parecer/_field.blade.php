@@ -1,5 +1,5 @@
 @php
-    $value = $field === 'motivo_indeferimento' ? '' : old($field, $processo[$field] ?? '');
+    $value = old($field, $processo[$field] ?? '');
     $type = $repository->inputType($field, $columnTypes[$field] ?? null);
 
     if ($type === 'date' && is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {
@@ -23,7 +23,7 @@
             <div class="grid gap-x-10 gap-y-3 sm:grid-cols-2 xl:grid-cols-3">
             @foreach ($selectValues[$field] as $option)
                 <label class="flex items-start gap-2 text-sm leading-5 text-gray-700">
-                    <input type="checkbox" @if($field !== 'motivo_indeferimento') name="{{ $field }}[]" @endif value="{{ $option }}" @checked(in_array($option, $selectedValues, true)) class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <input type="checkbox" name="{{ $field }}[]" value="{{ $option }}" @checked(in_array($option, $selectedValues, true)) class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     <span>{{ $option }}</span>
                 </label>
             @endforeach

@@ -84,6 +84,8 @@
         .signature.left { margin-left: 12%; margin-right: 8%; }
         .signature-line { border-top: 1px solid #000; margin-bottom: 3px; }
         .decision-text { break-inside: avoid; page-break-inside: avoid; text-align: left; }
+        .analysis-block { break-inside: avoid; page-break-inside: avoid; }
+        .analysis-title { font-weight: bold; margin: 16px 0 2px; }
     </style>
 </head>
 <body>
@@ -288,10 +290,12 @@
             <div class="field-box">{{ $v('decisao_parecer') }}</div>
         </div>
     </div>
-    <div class="row">
-        <div class="col exposition-label">Exposição de<br>motivos:</div>
-        <div class="col textarea-box exposition-box">{{ trim((string) $v('justificativa_indeferimento')) !== '' ? $v('justificativa_indeferimento') : 'Não se aplica' }}</div>
-    </div>
+    @if ($v('decisao_parecer') === 'INDEFERIDO')
+        <div class="row">
+            <div class="col exposition-label">Exposição de<br>motivos:</div>
+            <div class="col textarea-box exposition-box">{{ $list('motivo_indeferimento') ?: 'Não se aplica' }}</div>
+        </div>
+    @endif
 
     @if ($v('decisao_parecer') === 'DEFERIDO')
         <div class="row decision-text" style="margin-top: 18px;">
@@ -309,6 +313,11 @@
             {{ $supervisaoText }}
         </div>
     @elseif ($v('decisao_parecer') === 'INDEFERIDO')
+        <div class="analysis-block">
+            <div class="analysis-title">Análise:</div>
+            <div class="textarea-box decision-text">{{ trim((string) $v('justificativa_indeferimento')) !== '' ? $v('justificativa_indeferimento') : 'Não se aplica' }}</div>
+        </div>
+
         <div class="row decision-text" style="margin-top: 18px;">
             A análise das atividades descritas no referido processo foi fundamentada na Lei Orgânica da Assistência Social (Lei nº 8.742/1993) e na legislação pertinente à certificação ({{ $certificacaoLegislacao }}), bem como na Tipificação Nacional dos Serviços Socioassistenciais (Resolução CNAS nº 109/2009) e nas Resoluções CNAS nº 27, 33 e 34/2011.
         </div>
