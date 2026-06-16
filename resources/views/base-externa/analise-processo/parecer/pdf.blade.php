@@ -90,11 +90,15 @@
 </head>
 <body>
 @php
-    $v = fn (string $field, string $fallback = '') => $processo[$field] ?? $fallback;
+    $v = fn (string $field, string $fallback = '') => is_string($processo[$field] ?? null)
+        ? str_replace('_x000D_', "\n", $processo[$field])
+        : ($processo[$field] ?? $fallback);
     $date = fn (string $field) => preg_match('/^\d{4}-\d{2}-\d{2}/', (string) $v($field))
         ? \Carbon\Carbon::parse($v($field))->format('d/m/Y')
         : $v($field);
-    $certificacao = trim(($date('dt_certificacao_anterior_inicio') ?: '').' '.($date('dt_certificacao_anterior_fim') ?: ''));
+    $certificacaoInicio = $date('dt_certificacao_anterior_inicio');
+    $certificacaoFim = $date('dt_certificacao_anterior_fim');
+    $certificacao = trim($certificacaoInicio && $certificacaoFim ? "$certificacaoInicio a $certificacaoFim" : "$certificacaoInicio $certificacaoFim");
     $certificacao = $certificacao !== '' ? $certificacao : $v('CERTIFICACAO', '');
     $signatureName = fn (string $field, array $names) => $names[(string) (int) $v($field)] ?? $v($field);
     $manifestacaoOutroMinisterioOptions = [

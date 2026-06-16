@@ -1,5 +1,9 @@
 @php
     $value = old($field, $processo[$field] ?? '');
+    if (is_string($value)) {
+        $value = str_replace('_x000D_', "\n", $value);
+    }
+
     $type = $repository->inputType($field, $columnTypes[$field] ?? null);
 
     if ($type === 'date' && is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {

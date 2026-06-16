@@ -344,6 +344,7 @@ class AccessProcessRepository
             }
 
             if (is_string($value)) {
+                $value = str_replace('_x000D_', "\n", $value);
                 $value = trim($value);
                 $value = $value === '' ? null : $value;
             }
