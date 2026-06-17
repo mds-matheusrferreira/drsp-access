@@ -63,6 +63,7 @@ return new class extends Migration
         'cgceb_parecer' => 'integer',
         'drsp_parecer' => 'integer',
         'responsavel_nota_tecnica' => 'string',
+        'legislacao_parecer' => 'string',
     ];
 
     public function up(): void

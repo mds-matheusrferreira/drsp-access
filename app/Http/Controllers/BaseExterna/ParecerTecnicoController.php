@@ -10,6 +10,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ParecerTecnicoController extends Controller
@@ -47,7 +48,15 @@ class ParecerTecnicoController extends Controller
         }
 
         $payload = $request->only($this->accessProcesses->parecerTecnicoColumns());
+        $payload['legislacao_parecer'] = $request->input('legislacao_parecer');
+        $original = $this->accessProcesses->findByProtocolo($originalProtocolo) ?? [];
+        $sanitized = $this->accessProcesses->sanitizeForUpdate($payload);
+        $changedFields = $this->changedFields($original, $sanitized);
         $this->accessProcesses->updateByProtocolo($originalProtocolo, $payload);
+
+        if (($validated['_action'] ?? 'save') === 'save' && $changedFields !== []) {
+            $this->logParecerSave($request, $originalProtocolo, $changedFields);
+        }
 
         if (($validated['_action'] ?? 'save') === 'save_pdf') {
             return redirect()
@@ -94,8 +103,67 @@ class ParecerTecnicoController extends Controller
             'columnTypes' => $this->accessProcesses->columnTypes(),
             'repository' => $this->accessProcesses,
             'originalProtocolo' => $protocolo,
+            'parecerLogs' => $this->parecerLogs($protocolo),
             'offerRomanNumerals' => ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'],
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $original
+     * @param  array<string, mixed>  $sanitized
+     * @return array<int, string>
+     */
+    private function changedFields(array $original, array $sanitized): array
+    {
+        return array_values(array_filter(array_keys($sanitized), fn (string $field) => $this->normalizeForLog($original[$field] ?? null) !== $this->normalizeForLog($sanitized[$field] ?? null)));
+    }
+
+    private function normalizeForLog(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return trim(str_replace('_x000D_', "\n", (string) $value));
+    }
+
+    private function logParecerSave(Request $request, string $protocolo, array $campos): void
+    {
+        $user = $request->user();
+        $userName = trim((string) ($user?->name ?: $user?->user ?: 'Usuário desconhecido'));
+
+        DB::table('logs')->insert([
+            'log' => json_encode([
+                'area' => 'parecer_tecnico',
+                'acao' => 'salvar',
+                'protocolo' => $protocolo,
+                'campos_alterados' => array_values($campos),
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'user' => $userName,
+            'date_created' => now(),
+        ]);
+    }
+
+    /**
+     * @return array<int, array{user: string, date_created: string|null, campos: array<int, string>}>
+     */
+    private function parecerLogs(string $protocolo): array
+    {
+        return DB::table('logs')
+            ->where('log', 'like', '%"area":"parecer_tecnico"%')
+            ->where('log', 'like', '%'.$protocolo.'%')
+            ->orderByDesc('date_created')
+            ->get()
+            ->map(function ($row): array {
+                $data = json_decode((string) $row->log, true) ?: [];
+
+                return [
+                    'user' => (string) $row->user,
+                    'date_created' => $row->date_created ? Carbon::parse($row->date_created)->format('d/m/Y H:i') : null,
+                    'campos' => $data['campos_alterados'] ?? [],
+                ];
+            })
+            ->all();
     }
 
     private function legislacaoByDataProtocolo(mixed $dtProtocolo): string

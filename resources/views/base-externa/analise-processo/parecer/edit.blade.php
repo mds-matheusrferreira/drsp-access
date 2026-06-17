@@ -325,12 +325,54 @@
             </section>
         @endforeach
 
+        @php
+            $logUsers = collect($parecerLogs)->pluck('user')->filter()->unique()->values();
+        @endphp
+        @if ($logUsers->isNotEmpty())
+            <div class="pt-2 text-sm text-gray-600">
+                Parecer atualizado por:
+                <button type="button" class="font-semibold text-blue-600 hover:text-blue-700 hover:underline" data-open-log-modal>
+                    {{ $logUsers->join(', ') }}
+                </button>
+            </div>
+        @endif
+
         <div class="flex flex-col items-stretch justify-end gap-4 pt-4 sm:flex-row sm:items-center">
             <a href="{{ route('base-externa.analise-processo.index', ['search' => $originalProtocolo]) }}" class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-8 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50">Cancelar</a>
             <button type="submit" name="_action" value="save" class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-3 text-sm font-medium text-white shadow-md transition-colors hover:bg-blue-700 hover:shadow-lg">Salvar alterações</button>
             <button type="submit" name="_action" value="save_pdf" class="inline-flex items-center justify-center rounded-lg bg-green-600 px-8 py-3 text-sm font-medium text-white shadow-md transition-colors hover:bg-green-700 hover:shadow-lg">Gerar PDF</button>
         </div>
     </form>
+
+    @if (! empty($parecerLogs))
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4" data-log-modal>
+        <div class="flex w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl" style="max-height: 60vh;">
+            
+            <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4 shrink-0 bg-white">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-lg font-bold text-gray-800">Histórico de alterações do parecer</h2>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-gray-600 text-xl leading-none cursor-pointer" data-close-log-modal>&times;</button>
+            </div>
+
+            <div class="min-h-0 flex-1 space-y-3 overflow-y-auto bg-white p-4">
+                @foreach ($parecerLogs as $log)
+                    <div class="rounded-xl border border-gray-200/80 p-4 text-sm shadow-xs">
+                        <div class="flex items-center justify-between gap-4 mb-2">
+                            <div class="font-bold text-gray-800">{{ $log['date_created'] }} — {{ $log['user'] }}</div>
+                            <div class="text-xs font-semibold text-blue-600 shrink-0">Salvou parecer</div>
+                        </div>
+                        <div class="text-gray-500 leading-relaxed">
+                            <strong class="font-semibold text-gray-700">Campos alterados:</strong> {{ collect($log['campos'])->map(fn ($field) => $repository->parecerTecnicoLabel($field))->join('; ') ?: 'Não informado' }}
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+        </div>
+    </div>
+    @endif
 </div>
 
 <script>
@@ -397,6 +439,22 @@
         });
         decision?.addEventListener('change', () => toggleRejectionReasons());
         toggleRejectionReasons();
+
+        const logModal = document.querySelector('[data-log-modal]');
+        document.querySelector('[data-open-log-modal]')?.addEventListener('click', () => {
+            logModal?.classList.remove('hidden');
+            logModal?.classList.add('flex');
+        });
+        document.querySelector('[data-close-log-modal]')?.addEventListener('click', () => {
+            logModal?.classList.add('hidden');
+            logModal?.classList.remove('flex');
+        });
+        logModal?.addEventListener('click', (event) => {
+            if (event.target === logModal) {
+                logModal.classList.add('hidden');
+                logModal.classList.remove('flex');
+            }
+        });
 
         document.querySelectorAll('[data-activities-wrapper]').forEach((wrapper) => {
             const buttonWrapper = wrapper.querySelector('[data-add-activity-wrapper]');

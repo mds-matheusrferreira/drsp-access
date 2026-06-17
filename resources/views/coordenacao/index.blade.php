@@ -59,7 +59,7 @@
             'theme' => 'indigo',
             'items' => [
                 ['label' => 'CNEAS', 'href' => '#', 'disabled' => true, 'icon' => 'table'],
-                ['label' => 'EXTERNO', 'href' => route('coordenacao.planilhas.externo'), 'icon' => 'table'],
+                ['label' => 'EXTERNO (SEI)', 'href' => route('coordenacao.planilhas.externo'), 'icon' => 'table'],
                 ['label' => 'PROCESSOS', 'href' => '#', 'disabled' => true, 'icon' => 'table'],
                 ['label' => 'VISDATA (CEBAS)', 'href' => route('coordenacao.planilhas.visdata-cebas'), 'icon' => 'table'],
             ],
