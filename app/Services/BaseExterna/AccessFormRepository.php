@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class AccessFormRepository
 {
-    private const TABLE = 'access';
+    private const TABLE = 'processos_sei';
 
     /**
      * @param array<string, mixed> $data

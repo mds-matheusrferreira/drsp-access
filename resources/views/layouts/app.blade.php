@@ -11,21 +11,27 @@
         $user = auth()->user();
         $displayName = $user?->name ?: $user?->email ?: 'Usuário';
         $initial = mb_strtoupper(mb_substr($displayName, 0, 1));
+        $hasCoordenacaoPermission = in_array((string) ($user?->permission ?? ''), ['1', '2'], true);
+        $canInsertBaseExterna = in_array((string) ($user?->permission ?? ''), ['1', '2'], true);
         $menuItems = [
             ['label' => 'Principal', 'active' => request()->routeIs('dashboard') || request()->routeIs('principal.*'), 'icon' => 'home', 'href' => route('dashboard')],
-            ['label' => 'Base externa', 'active' => request()->routeIs('base-externa.*'), 'icon' => 'building', 'children' => [
-                ['label' => 'Inserir Processo Externo', 'href' => route('base-externa.processos.create'), 'active' => request()->routeIs('base-externa.processos.create') || request()->routeIs('base-externa.processos.store')],
+            ['label' => 'Base externa', 'active' => request()->routeIs('base-externa.*'), 'icon' => 'building', 'children' => array_values(array_filter([
+                $canInsertBaseExterna ? ['label' => 'Inserir Processo Externo', 'href' => route('base-externa.processos.create'), 'active' => request()->routeIs('base-externa.processos.create') || request()->routeIs('base-externa.processos.store')] : null,
                 ['label' => 'Análise de Processo', 'href' => route('base-externa.analise-processo.index'), 'active' => request()->routeIs('base-externa.analise-processo.*')],
-            ]],
-            ['label' => 'Coordenação', 'active' => request()->routeIs('coordenacao.*'), 'icon' => 'folder', 'href' => route('coordenacao.index')],
-            ['label' => 'Emissor de Certificado', 'active' => false, 'icon' => 'file', 'href' => 'https://aplicacoes.mds.gov.br/snas/redeprivada/eccebas/', 'external' => true],
-            ['label' => 'Plataformas', 'active' => false, 'icon' => 'layers', 'children' => [
-                ['label' => 'Lecom', 'href' => 'https://cidadania.servicos.gov.br/bpm/pesquisa_processo', 'external' => true],
-                ['label' => 'SEI', 'href' => 'https://sei.cidadania.gov.br/sei/controlador.php?acao=procedimento_controlar&acao_origem=principal&acao_retorno=principal&inicializando=1&infra_sistema=100000100&infra_unidade_atual=110000221&infra_hash=8cb6c25c95791024313862d3229b5a82cd9b808c004770caeebd59464ba6f74b', 'external' => true],
-                ['label' => 'CNEAS', 'href' => 'https://aplicacoes.mds.gov.br/saa-web/login.action?url=https://aplicacoes.mds.gov.br/cneas&mensagemSaa=Sess%E3o+encerrada.', 'external' => true],
-                ['label' => 'Protocolo Digital', 'href' => 'https://app.anm.gov.br/SCA/Site/Login.aspx?ReturnUrl=https%3A%2F%2Fapp.anm.gov.br%2Fprotocolo', 'external' => true],
-            ]],
+            ]))],
         ];
+
+        if ($hasCoordenacaoPermission) {
+            $menuItems[] = ['label' => 'Coordenação', 'active' => request()->routeIs('coordenacao.*'), 'icon' => 'folder', 'href' => route('coordenacao.index')];
+        }
+
+        $menuItems[] = ['label' => 'Emissor de Certificado', 'active' => false, 'icon' => 'file', 'href' => 'https://aplicacoes.mds.gov.br/snas/redeprivada/eccebas/', 'external' => true];
+        $menuItems[] = ['label' => 'Plataformas', 'active' => false, 'icon' => 'layers', 'children' => [
+            ['label' => 'Lecom', 'href' => 'https://cidadania.servicos.gov.br/bpm/pesquisa_processo', 'external' => true],
+            ['label' => 'SEI', 'href' => 'https://sei.cidadania.gov.br/sei/controlador.php?acao=procedimento_controlar&acao_origem=principal&acao_retorno=principal&inicializando=1&infra_sistema=100000100&infra_unidade_atual=110000221&infra_hash=8cb6c25c95791024313862d3229b5a82cd9b808c004770caeebd59464ba6f74b', 'external' => true],
+            ['label' => 'CNEAS', 'href' => 'https://aplicacoes.mds.gov.br/saa-web/login.action?url=https://aplicacoes.mds.gov.br/cneas&mensagemSaa=Sess%E3o+encerrada.', 'external' => true],
+            ['label' => 'Protocolo Digital', 'href' => 'https://app.anm.gov.br/SCA/Site/Login.aspx?ReturnUrl=https%3A%2F%2Fapp.anm.gov.br%2Fprotocolo', 'external' => true],
+        ]];
     @endphp
 
     <div class="min-h-screen lg:flex">

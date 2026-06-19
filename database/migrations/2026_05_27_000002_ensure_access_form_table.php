@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    private const TABLE = 'access';
+    private const TABLE = 'processos_sei';
 
     /**
      * @var array<string, string>

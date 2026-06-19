@@ -6,13 +6,14 @@
 @php
     $inputClass = 'w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-700 shadow-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500';
     $visibleColumns = array_values(array_intersect($summaryColumns, $results['columns']));
+    $canEditBank = in_array((string) (auth()->user()?->permission ?? ''), ['1', '2'], true);
 @endphp
 
 <div class="space-y-6">
     <div class="space-y-2">
         <div class="text-sm font-semibold uppercase tracking-wide text-blue-600">Base Externa</div>
         <h1 class="text-3xl font-semibold text-gray-900">Análise de Processo</h1>
-        <p class="text-gray-600">Pesquise e edite processos cadastrados na tabela access.</p>
+        <p class="text-gray-600">Pesquise e edite processos cadastrados na tabela processos_sei.</p>
     </div>
 
     @if (session('success'))
@@ -78,32 +79,30 @@
                                 @foreach ($results['data'] as $row)
                                     <tr>
                                         <td class="whitespace-nowrap px-6 py-4 align-top">
-                                            @if ($row['_can_edit'])
-                                                <details class="group inline-block text-left">
-                                                    <summary class="inline-flex cursor-pointer list-none items-center justify-center rounded bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700 [&::-webkit-details-marker]:hidden" aria-label="Abrir ações">
-                                                        <span class="sr-only">Abrir ações</span>
-                                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
-                                                        </svg>
-                                                    </summary>
-                                                    <div class="mt-2 w-44 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+                                            <details class="group inline-block text-left">
+                                                <summary class="inline-flex cursor-pointer list-none items-center justify-center rounded bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700 [&::-webkit-details-marker]:hidden" aria-label="Abrir ações">
+                                                    <span class="sr-only">Abrir ações</span>
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+                                                    </svg>
+                                                </summary>
+                                                <div class="mt-2 w-44 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+                                                    @if ($canEditBank)
                                                         <a href="{{ route('base-externa.analise-processo.edit', ['protocolo' => $row['protocolo']]) }}" class="block px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700">
                                                             Editar banco
                                                         </a>
-                                                        <a href="{{ route('base-externa.analise-processo.parecer.edit', ['protocolo' => $row['protocolo']]) }}" class="block px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700">
-                                                            Parecer Técnico
-                                                        </a>
-                                                        <a href="#" class="block px-4 py-2 text-sm font-medium text-gray-400" aria-disabled="true" title="Funcionalidade ainda não implementada">
-                                                            Nota técnica
-                                                        </a>
-                                                        <a href="#" class="block px-4 py-2 text-sm font-medium text-gray-400" aria-disabled="true" title="Funcionalidade ainda não implementada">
-                                                            Manifestação
-                                                        </a>
-                                                    </div>
-                                                </details>
-                                            @else
-                                                <span class="rounded bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600">{{ $row['_edit_block_reason'] }}</span>
-                                            @endif
+                                                    @endif
+                                                    <a href="{{ route('base-externa.analise-processo.parecer.edit', ['protocolo' => $row['protocolo']]) }}" class="block px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700">
+                                                        Parecer Técnico
+                                                    </a>
+                                                    <a href="#" class="block px-4 py-2 text-sm font-medium text-gray-400" aria-disabled="true" title="Funcionalidade ainda não implementada">
+                                                        Nota técnica
+                                                    </a>
+                                                    <a href="#" class="block px-4 py-2 text-sm font-medium text-gray-400" aria-disabled="true" title="Funcionalidade ainda não implementada">
+                                                        Manifestação
+                                                    </a>
+                                                </div>
+                                            </details>
                                         </td>
                                         @foreach ($visibleColumns as $column)
                                             @php

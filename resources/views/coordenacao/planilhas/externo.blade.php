@@ -24,8 +24,8 @@
                 <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
                     <li>Formato aceito: Excel .xlsx. Arquivos .xls antigos devem ser salvos como .xlsx antes da importação.</li>
                     <li>Tamanho máximo: 50MB</li>
-                    <li>A planilha deve seguir exatamente o modelo padrão da tabela <strong>access</strong>.</li>
-                    <li>A importação substitui todos os dados atuais da tabela <strong>access</strong> após validar a planilha.</li>
+                    <li>A planilha deve seguir exatamente o modelo padrão da tabela <strong>processos_sei</strong>.</li>
+                    <li>A importação substitui todos os dados atuais da tabela <strong>processos_sei</strong> após validar a planilha.</li>
                 </ul>
             </div>
         </div>
@@ -105,7 +105,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-900">access</h3>
+                        <h3 class="font-semibold text-gray-900">processos_sei</h3>
                         <p class="text-sm text-gray-600">Atualização: {{ $updatedAt }}</p>
                     </div>
                 </div>

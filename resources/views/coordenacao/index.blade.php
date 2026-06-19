@@ -12,7 +12,7 @@
             'items' => [
                 ['label' => 'Relatório de Análises', 'href' => '#', 'disabled' => true, 'icon' => 'clipboard'],
                 ['label' => 'Inserir Processo(s)', 'href' => route('base-externa.processos.create'), 'icon' => 'plus'],
-                ['label' => 'Processos de access', 'href' => route('base-externa.analise-processo.index'), 'icon' => 'folder'],
+                ['label' => 'Processos de processos_sei', 'href' => route('base-externa.analise-processo.index'), 'icon' => 'folder'],
                 ['label' => 'Levantamentos', 'href' => '#', 'disabled' => true, 'icon' => 'trend'],
             ],
         ],

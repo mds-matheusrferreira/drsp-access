@@ -34,7 +34,7 @@ class ExternoTest extends TestCase
             ->assertSee('Baixar modelo de planilha')
             ->assertSee('Baixar tabela atual')
             ->assertSee('Enviar Arquivo Externo')
-            ->assertSee('access');
+            ->assertSee('processos_sei');
     }
 
     public function test_model_download_contains_expected_headers(): void
@@ -52,7 +52,7 @@ class ExternoTest extends TestCase
     public function test_backup_downloads_current_access_data(): void
     {
         $this->createAccessTable();
-        $this->app['db']->table('access')->insert($this->row(['protocolo' => 'BACKUP-001', 'entidade' => 'Entidade Backup']));
+        $this->app['db']->table('processos_sei')->insert($this->row(['protocolo' => 'BACKUP-001', 'entidade' => 'Entidade Backup']));
 
         $response = $this->actingAs(User::factory()->create())->get('/coordenacao/planilhas/externo/backup');
 
@@ -66,7 +66,7 @@ class ExternoTest extends TestCase
     public function test_valid_import_replaces_existing_access_rows(): void
     {
         $this->createAccessTable();
-        $this->app['db']->table('access')->insert($this->row(['protocolo' => 'antigo', 'entidade' => 'Antiga']));
+        $this->app['db']->table('processos_sei')->insert($this->row(['protocolo' => 'antigo', 'entidade' => 'Antiga']));
 
         $file = $this->xlsxUpload([
             ExternoService::HEADERS,
@@ -78,7 +78,7 @@ class ExternoTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('success');
 
-        $this->assertDatabaseMissing('access', ['protocolo' => 'antigo']);
+        $this->assertDatabaseMissing('processos_sei', ['protocolo' => 'antigo']);
         $this->assertDatabaseHas('access', [
             'protocolo' => 'novo',
             'entidade' => 'Nova Entidade',
@@ -90,7 +90,7 @@ class ExternoTest extends TestCase
     public function test_invalid_header_does_not_delete_existing_access_rows(): void
     {
         $this->createAccessTable();
-        $this->app['db']->table('access')->insert($this->row(['protocolo' => 'antigo', 'entidade' => 'Antiga']));
+        $this->app['db']->table('processos_sei')->insert($this->row(['protocolo' => 'antigo', 'entidade' => 'Antiga']));
 
         $headers = ExternoService::HEADERS;
         $headers[0] = 'protocolo_errado';
@@ -102,14 +102,14 @@ class ExternoTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('error');
 
-        $this->assertDatabaseHas('access', ['protocolo' => 'antigo', 'entidade' => 'Antiga']);
-        $this->assertDatabaseMissing('access', ['protocolo' => 'novo']);
+        $this->assertDatabaseHas('processos_sei', ['protocolo' => 'antigo', 'entidade' => 'Antiga']);
+        $this->assertDatabaseMissing('processos_sei', ['protocolo' => 'novo']);
     }
 
     private function createAccessTable(): void
     {
-        Schema::dropIfExists('access');
-        Schema::create('access', function (Blueprint $table) {
+        Schema::dropIfExists('processos_sei');
+        Schema::create('processos_sei', function (Blueprint $table) {
             foreach (ExternoService::HEADERS as $column) {
                 $table->text($column)->nullable();
             }

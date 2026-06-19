@@ -174,6 +174,6 @@ class BaseExternaParecerTecnicoTest extends TestCase
             'justificativa_indeferimento' => 'Exposição inicial',
         ], $attributes);
 
-        DB::table('access')->insert(array_intersect_key($data, array_flip(Schema::getColumnListing('access'))));
+        DB::table('processos_sei')->insert(array_intersect_key($data, array_flip(Schema::getColumnListing('processos_sei'))));
     }
 }

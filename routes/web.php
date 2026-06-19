@@ -30,8 +30,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/principal/states/{uf}/download', [PrincipalController::class, 'downloadState'])->name('principal.states.download');
     Route::get('/principal/download', [PrincipalController::class, 'downloadAll'])->name('principal.download');
 
-    Route::get('/base-externa/inserir-processo', [InserirProcessoController::class, 'create'])->name('base-externa.processos.create');
-    Route::post('/base-externa/inserir-processo', [InserirProcessoController::class, 'store'])->name('base-externa.processos.store');
+    Route::middleware('base-externa.permission')->group(function () {
+        Route::get('/base-externa/inserir-processo', [InserirProcessoController::class, 'create'])->name('base-externa.processos.create');
+        Route::post('/base-externa/inserir-processo', [InserirProcessoController::class, 'store'])->name('base-externa.processos.store');
+    });
+
     Route::get('/base-externa/analise-processo', [AnaliseProcessoController::class, 'index'])->name('base-externa.analise-processo.index');
     Route::get('/base-externa/analise-processo/editar', [AnaliseProcessoController::class, 'edit'])->name('base-externa.analise-processo.edit');
     Route::put('/base-externa/analise-processo', [AnaliseProcessoController::class, 'update'])->name('base-externa.analise-processo.update');
@@ -39,26 +42,28 @@ Route::middleware('auth')->group(function () {
     Route::put('/base-externa/analise-processo/parecer-tecnico', [ParecerTecnicoController::class, 'update'])->name('base-externa.analise-processo.parecer.update');
     Route::get('/base-externa/analise-processo/parecer-tecnico/pdf', [ParecerTecnicoController::class, 'pdf'])->name('base-externa.analise-processo.parecer.pdf');
 
-    // Coordenação e Planilhas
-    Route::view('/coordenacao', 'coordenacao.index')->name('coordenacao.index');
-    
-    Route::prefix('/coordenacao/automacoes')->name('coordenacao.automacoes.')->group(function () {
-        Route::get('/cneas', [CneasController::class, 'index'])->name('cneas');
-        Route::post('/cneas/gerar', [CneasController::class, 'generate'])->name('cneas.generate');
-        Route::get('/cneas/ultimo', [CneasController::class, 'downloadLatest'])->name('cneas.latest');
-    });
+    Route::middleware('coordenacao.permission')->group(function () {
+        // Coordenação e Planilhas
+        Route::view('/coordenacao', 'coordenacao.index')->name('coordenacao.index');
 
-    Route::prefix('/coordenacao/planilhas')->name('coordenacao.planilhas.')->group(function () {
-        Route::get('/visdata-cebas', [VisdataCebasController::class, 'index'])->name('visdata-cebas');
-        Route::post('/visdata-cebas/import', [VisdataCebasController::class, 'import'])->name('visdata-cebas.import');
-        Route::get('/visdata-cebas/modelo', [VisdataCebasController::class, 'modelo'])->name('visdata-cebas.modelo');
-        Route::get('/visdata-cebas/backup', [VisdataCebasController::class, 'backup'])->name('visdata-cebas.backup');
-        Route::view('/processos', 'coordenacao.planilhas.processos')->name('processos');
-        Route::view('/cneas', 'coordenacao.planilhas.cneas')->name('cneas');
-        Route::get('/externo', [ExternoController::class, 'index'])->name('externo');
-        Route::post('/externo/import', [ExternoController::class, 'import'])->name('externo.import');
-        Route::get('/externo/modelo', [ExternoController::class, 'modelo'])->name('externo.modelo');
-        Route::get('/externo/backup', [ExternoController::class, 'backup'])->name('externo.backup');
+        Route::prefix('/coordenacao/automacoes')->name('coordenacao.automacoes.')->group(function () {
+            Route::get('/cneas', [CneasController::class, 'index'])->name('cneas');
+            Route::post('/cneas/gerar', [CneasController::class, 'generate'])->name('cneas.generate');
+            Route::get('/cneas/ultimo', [CneasController::class, 'downloadLatest'])->name('cneas.latest');
+        });
+
+        Route::prefix('/coordenacao/planilhas')->name('coordenacao.planilhas.')->group(function () {
+            Route::get('/visdata-cebas', [VisdataCebasController::class, 'index'])->name('visdata-cebas');
+            Route::post('/visdata-cebas/import', [VisdataCebasController::class, 'import'])->name('visdata-cebas.import');
+            Route::get('/visdata-cebas/modelo', [VisdataCebasController::class, 'modelo'])->name('visdata-cebas.modelo');
+            Route::get('/visdata-cebas/backup', [VisdataCebasController::class, 'backup'])->name('visdata-cebas.backup');
+            Route::view('/processos', 'coordenacao.planilhas.processos')->name('processos');
+            Route::view('/cneas', 'coordenacao.planilhas.cneas')->name('cneas');
+            Route::get('/externo', [ExternoController::class, 'index'])->name('externo');
+            Route::post('/externo/import', [ExternoController::class, 'import'])->name('externo.import');
+            Route::get('/externo/modelo', [ExternoController::class, 'modelo'])->name('externo.modelo');
+            Route::get('/externo/backup', [ExternoController::class, 'backup'])->name('externo.backup');
+        });
     });
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

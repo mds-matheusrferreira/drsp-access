@@ -13,7 +13,7 @@ use ZipArchive;
 
 class ExternoService
 {
-    public const TABLE = 'access';
+    public const TABLE = 'processos_sei';
 
     public const HEADERS = [
         'protocolo',

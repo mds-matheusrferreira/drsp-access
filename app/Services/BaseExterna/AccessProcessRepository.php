@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class AccessProcessRepository
 {
-    private const TABLE = 'access';
+    private const TABLE = 'processos_sei';
 
     /**
      * @var array<int, string>
