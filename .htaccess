@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /drsp-access/
+
+    # Serve existing files and directories directly.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Normalize legacy /public/* URLs to the application root.
+    RewriteRule ^public/?(.*)$ /drsp-access/$1 [R=301,L]
+
+    # Route all other requests through Laravel's front controller.
+    RewriteRule ^ public/index.php [L]
+</IfModule>

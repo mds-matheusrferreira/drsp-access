@@ -90,16 +90,16 @@ class StoreInserirProcessoRequest extends FormRequest
             }
         }
 
-        if (array_key_exists('CNPJ', $data) && $data['CNPJ'] !== null) {
-            $data['CNPJ'] = preg_replace('/\D+/', '', (string) $data['CNPJ']);
+        if (array_key_exists('cnpj', $data) && $data['cnpj'] !== null) {
+            $data['cnpj'] = preg_replace('/\D+/', '', (string) $data['cnpj']);
         }
 
-        if (array_key_exists('UF', $data) && $data['UF'] !== null) {
-            $data['UF'] = mb_strtoupper((string) $data['UF']);
+        if (array_key_exists('uf', $data) && $data['uf'] !== null) {
+            $data['uf'] = mb_strtoupper((string) $data['uf']);
         }
 
-        if (array_key_exists('MUNICIPIO', $data) && $data['MUNICIPIO'] !== null) {
-            $data['MUNICIPIO'] = $this->normalizeUpperAscii((string) $data['MUNICIPIO']);
+        if (array_key_exists('municipio', $data) && $data['municipio'] !== null) {
+            $data['municipio'] = $this->normalizeUpperAscii((string) $data['municipio']);
         }
 
         $this->merge($data);
@@ -119,22 +119,22 @@ class StoreInserirProcessoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'TIPO_PROCESSO' => ['required', 'string', Rule::in($this->tiposProcesso)],
-            'PROTOCOLO' => ['nullable', 'required_without:PROTOCOLO_SEI', 'string', 'max:80'],
-            'PROTOCOLO_SEI' => ['nullable', 'required_without:PROTOCOLO', 'string', 'max:80'],
-            'CNPJ' => ['required', 'digits:14'],
-            'UF' => ['required', Rule::in($this->ufs)],
-            'MUNICIPIO' => ['required', 'string', 'max:120'],
-            'ORGAO_ORIGEM' => ['required', 'string', Rule::in($this->orgaosOrigem)],
-            'DT_PROTOCOLO' => ['required', 'date'],
-            'DT_RECEBIMENTO_MDS' => ['required', 'date'],
-            'MOTIVO_RECEBIMENTO' => ['required', 'string', Rule::in($this->motivosRecebimento)],
-            'DT_CERTIFICACAO_ANTERIOR_INICIO' => ['nullable', 'date'],
-            'DT_CERTIFICACAO_ANTERIOR_FIM' => ['nullable', 'date', 'after_or_equal:DT_CERTIFICACAO_ANTERIOR_INICIO'],
-            'DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU' => ['nullable', 'date'],
-            'TEMPESTIVIDADE' => ['nullable', 'string', Rule::in(['Tempestivo'])],
-            'FASE_PROCESSO' => ['required', 'string', Rule::in($this->fasesProcesso)],
-            'SITUACAO_CNEAS' => ['required', 'string', 'max:100'],
+            'tipo_processo' => ['required', 'string', Rule::in($this->tiposProcesso)],
+            'protocolo' => ['nullable', 'required_without:protocolo_sei', 'string', 'max:80'],
+            'protocolo_sei' => ['nullable', 'required_without:protocolo', 'string', 'max:80'],
+            'cnpj' => ['required', 'digits:14'],
+            'uf' => ['required', Rule::in($this->ufs)],
+            'municipio' => ['required', 'string', 'max:120'],
+            'orgao_origem' => ['required', 'string', Rule::in($this->orgaosOrigem)],
+            'dt_protocolo' => ['required', 'date'],
+            'dt_recebimento_mds' => ['required', 'date'],
+            'motivo_recebimento' => ['required', 'string', Rule::in($this->motivosRecebimento)],
+            'dt_certificacao_anterior_inicio' => ['nullable', 'date'],
+            'dt_certificacao_anterior_fim' => ['nullable', 'date', 'after_or_equal:dt_certificacao_anterior_inicio'],
+            'dt_publicacao_certificacao_anterior_dou' => ['nullable', 'date'],
+            'tempestividade' => ['nullable', 'string', Rule::in(['Tempestivo'])],
+            'fase_processo' => ['required', 'string', Rule::in($this->fasesProcesso)],
+            'situacao_cneas' => ['required', 'string', 'max:100'],
         ];
     }
 
@@ -144,22 +144,22 @@ class StoreInserirProcessoRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'TIPO_PROCESSO' => 'tipo do processo',
-            'PROTOCOLO' => 'protocolo',
-            'PROTOCOLO_SEI' => 'protocolo SEI',
-            'CNPJ' => 'CNPJ',
-            'UF' => 'UF',
-            'MUNICIPIO' => 'município',
-            'ORGAO_ORIGEM' => 'órgão de origem',
-            'DT_PROTOCOLO' => 'data do protocolo',
-            'DT_RECEBIMENTO_MDS' => 'data de recebimento no MDS',
-            'MOTIVO_RECEBIMENTO' => 'motivo do recebimento',
-            'DT_CERTIFICACAO_ANTERIOR_INICIO' => 'início da certificação anterior',
-            'DT_CERTIFICACAO_ANTERIOR_FIM' => 'fim da certificação anterior',
-            'DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU' => 'publicação da certificação anterior no DOU',
-            'TEMPESTIVIDADE' => 'tempestividade',
-            'FASE_PROCESSO' => 'fase do processo',
-            'SITUACAO_CNEAS' => 'situação CNEAS',
+            'tipo_processo' => 'tipo do processo',
+            'protocolo' => 'protocolo',
+            'protocolo_sei' => 'protocolo SEI',
+            'cnpj' => 'cnpj',
+            'uf' => 'uf',
+            'municipio' => 'município',
+            'orgao_origem' => 'órgão de origem',
+            'dt_protocolo' => 'data do protocolo',
+            'dt_recebimento_mds' => 'data de recebimento no MDS',
+            'motivo_recebimento' => 'motivo do recebimento',
+            'dt_certificacao_anterior_inicio' => 'início da certificação anterior',
+            'dt_certificacao_anterior_fim' => 'fim da certificação anterior',
+            'dt_publicacao_certificacao_anterior_dou' => 'publicação da certificação anterior no DOU',
+            'tempestividade' => 'tempestividade',
+            'fase_processo' => 'fase do processo',
+            'situacao_cneas' => 'situação CNEAS',
         ];
     }
 }

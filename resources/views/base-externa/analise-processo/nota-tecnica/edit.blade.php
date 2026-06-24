@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Base externa - Parecer Técnico')
+@section('title', 'Base externa - Nota Técnica')
 
 @section('content')
 @php
@@ -96,6 +96,7 @@
         'COMPATIBILIDADE_ESTATUTO_LOAS' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
         'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
         'GRATUIDADE_PARECER' => ['A participação do idoso supera o limite da lei', 'É possível aferir a gratuidade das ofertas', 'Há indícios de contraprestação do usuário', 'Não apresentou documento que demonstre gratuidade', 'Não é possível aferir a gratuidade das ofertas', 'Não se aplica'],
+        'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO' => ['Encaminhamento de processo ao', 'Resposta de manifestação ao'],
         'ORGAO_ENCAMINHAMENTO' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
         'MANIFESTACAO_OUTRO_MINISTERIO' => [
             ['value' => '1', 'label' => 'MEC: não atua para fins de CEBAS; e parecer favorável do MS'],
@@ -136,7 +137,7 @@
         'Gratuidade e manifestações' => ['iconBg' => 'bg-orange-600', 'header' => 'border-orange-200 bg-orange-50', 'subtitle' => 'Gratuidade e manifestações de outros órgãos'],
         'Princípios de Atendimento da Assistência Social' => ['iconBg' => 'bg-teal-600', 'header' => 'border-teal-200 bg-teal-50', 'subtitle' => 'Continuidade, planejamento e universalidade'],
         'Conclusão do parecer' => ['iconBg' => 'bg-green-600', 'header' => 'border-green-200 bg-green-50', 'subtitle' => 'Decisão e exposição de motivos'],
-        'Assinaturas' => ['iconBg' => 'bg-gray-600', 'header' => 'border-gray-200 bg-gray-50', 'subtitle' => 'Responsáveis pelo parecer'],
+        'Assinaturas' => ['iconBg' => 'bg-gray-600', 'header' => 'border-gray-200 bg-gray-50', 'subtitle' => 'Responsáveis pela nota técnica'],
     ];
 @endphp
 
@@ -147,8 +148,8 @@
             Voltar para processos
         </a>
         <div class="space-y-2">
-            <h1 class="text-3xl font-semibold text-gray-900">Parecer Técnico</h1>
-            <p class="text-gray-600">Edite os dados do parecer técnico do processo {{ $originalProtocolo }}.</p>
+            <h1 class="text-3xl font-semibold text-gray-900">Nota Técnica</h1>
+            <p class="text-gray-600">Edite os dados da nota técnica do processo {{ $originalProtocolo }}.</p>
         </div>
     </div>
 
@@ -177,7 +178,7 @@
         </div>
     </section>
 
-    <form method="POST" action="{{ route('base-externa.analise-processo.parecer.update') }}" class="space-y-6">
+    <form method="POST" action="{{ route('base-externa.analise-processo.nota-tecnica.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
         <input type="hidden" name="original_protocolo" value="{{ $originalProtocolo }}">
@@ -192,7 +193,7 @@
                     </div>
                     <div>
                         <h2 id="informacoes-title" class="text-lg font-semibold text-gray-900">Informações do Processo</h2>
-                        <p class="text-sm text-gray-600">Dados básicos do parecer técnico</p>
+                        <p class="text-sm text-gray-600">Dados básicos da nota técnica</p>
                     </div>
                 </div>
             </div>
@@ -216,7 +217,7 @@
         @foreach ($sections as $section)
             @php
                 $sectionTitle = $section['title'];
-                $style = $sectionStyles[$section['title']] ?? ['iconBg' => 'bg-blue-600', 'header' => 'border-blue-200 bg-blue-50', 'subtitle' => 'Campos do parecer técnico'];
+                $style = $sectionStyles[$section['title']] ?? ['iconBg' => 'bg-blue-600', 'header' => 'border-blue-200 bg-blue-50', 'subtitle' => 'Campos da nota técnica'];
             @endphp
             <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm" aria-labelledby="section-{{ $loop->index }}-title">
                 <div class="border-b px-6 py-4 {{ $style['header'] }}">
@@ -263,7 +264,7 @@
                                                 @endphp
                                                 <div class="{{ $fieldClass }}">
                                                     <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
-                                                    @include('base-externa.analise-processo.parecer._field', ['field' => $field])
+                                                    @include('base-externa.analise-processo.nota-tecnica._field', ['field' => $field])
                                                 </div>
                                             @endforeach
                                         </div>
@@ -272,7 +273,7 @@
                             @endforeach
 
                             <div class="flex items-center gap-3 {{ $visibleActivities >= count($offerRomanNumerals) ? 'hidden' : '' }}" data-add-activity-wrapper>
-    
+
                                 <button type="button"
                                         class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                         data-add-activity>
@@ -286,7 +287,7 @@
                             @foreach (array_diff($section['fields'], $activityFields) as $field)
                                 <div>
                                     <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
-                                    @include('base-externa.analise-processo.parecer._field', ['field' => $field])
+                                    @include('base-externa.analise-processo.nota-tecnica._field', ['field' => $field])
                                 </div>
                             @endforeach
                         </div>
@@ -308,15 +309,15 @@
                                     $hideRejectionReasons = $field === 'MOTIVO_INDEFERIMENTO'
                                         && old('DECISAO_PARECER', $processo['DECISAO_PARECER'] ?? '') !== 'INDEFERIDO';
                                     $wideFields = $isGratuidadeSection
-                                        ? ['GRATUIDADE_PARECER', 'ORGAO_ENCAMINHAMENTO']
-                                        : ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'JUSTIFICATIVA_INDEFERIMENTO'];
+                                        ? ['GRATUIDADE_PARECER', 'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO', 'ORGAO_ENCAMINHAMENTO']
+                                        : ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'JUSTIFICATIVA_INDEFERIMENTO_NT'];
                                     $wideClass = in_array($field, $wideFields, true)
                                         ? ($isGratuidadeSection ? 'md:col-span-2' : 'md:col-span-2 xl:col-span-3')
                                         : '';
                                 @endphp
                                 <div class="{{ $wideClass }} {{ $hidePendingDocuments || $hideRejectionReasons ? 'hidden' : '' }}" @if($field === 'DOCUMENTOS_PENDENTES') data-pending-documents-wrapper @endif @if($field === 'MOTIVO_INDEFERIMENTO') data-rejection-reasons-wrapper @endif>
                                     <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
-                                    @include('base-externa.analise-processo.parecer._field', ['field' => $field])
+                                    @include('base-externa.analise-processo.nota-tecnica._field', ['field' => $field])
                                 </div>
                             @endforeach
                         </div>
@@ -326,11 +327,11 @@
         @endforeach
 
         @php
-            $logUsers = collect($parecerLogs)->pluck('user')->filter()->unique()->values();
+            $logUsers = collect($notaTecnicaLogs)->pluck('user')->filter()->unique()->values();
         @endphp
         @if ($logUsers->isNotEmpty())
             <div class="pt-2 text-sm text-gray-600">
-                Atualizado por:
+                Atualizada por:
                 <button type="button" class="font-semibold text-blue-600 hover:text-blue-700 hover:underline" data-open-log-modal>
                     {{ $logUsers->join(', ') }}
                 </button>
@@ -344,24 +345,24 @@
         </div>
     </form>
 
-    @if (! empty($parecerLogs))
+    @if (! empty($notaTecnicaLogs))
     <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4" data-log-modal>
         <div class="flex w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm" style="max-height: 60vh;">
-            
+
             <div class="flex shrink-0 items-center justify-between bg-blue-600 px-6 py-4 text-white">
                 <div class="flex items-center gap-2">
                     <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <h2 class="text-lg font-bold text-white">Histórico de alterações do parecer</h2>
+                    <h2 class="text-lg font-bold text-white">Histórico de alterações da nota técnica</h2>
                 </div>
                 <button type="button" class="cursor-pointer text-xl leading-none text-blue-100 hover:text-white" data-close-log-modal>&times;</button>
             </div>
 
             <div class="min-h-0 flex-1 space-y-3 overflow-y-auto bg-white p-4">
-                @foreach ($parecerLogs as $log)
+                @foreach ($notaTecnicaLogs as $log)
                     <div class="rounded-xl border border-gray-200 p-4 text-sm shadow-xs">
                         <div class="flex items-center justify-between gap-4 mb-2">
                             <div class="font-bold text-gray-800">{{ $log['date_created'] }} — {{ $log['user'] }}</div>
-                            <div class="text-xs font-semibold text-blue-600 shrink-0">{{ $log['area'] === 'nota_tecnica' ? 'Salvou nota técnica' : 'Salvou parecer' }}</div>
+                            <div class="text-xs font-semibold text-blue-600 shrink-0">{{ $log['area'] === 'parecer_tecnico' ? 'Salvou parecer' : 'Salvou nota técnica' }}</div>
                         </div>
                         <div class="text-gray-500 leading-relaxed">
                             <strong class="font-semibold text-gray-700">Campos alterados:</strong> {{ collect($log['campos'])->map(fn ($field) => $repository->parecerTecnicoLabel($field))->join('; ') ?: 'Não informado' }}

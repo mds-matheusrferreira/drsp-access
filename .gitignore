@@ -30,3 +30,5 @@ fortinet.cer
 .docker/nginx/*
 .docker/nginx/conf.d/*
 package-lock.json
+.openclaude-profile.json
+/.venv

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class AccessProcessRepository
 {
-    private const TABLE = 'access';
+    private const TABLE = 'processos_sei';
 
     /**
      * @var array<int, string>
@@ -38,36 +38,100 @@ class AccessProcessRepository
      * @var array<int, string>
      */
     private const TEXTAREA_KEYWORDS = [
-        'OBS',
-        'JUSTIFICATIVA',
-        'DOCUMENTOS',
-        'ATIVIDADES',
-        'CARACTERISTICA',
-        'CARACTERISITICAS',
-        'OFERTA',
-        'USUARIO',
-        'MOTIVO',
-        'PARECER',
-        'NOTA_TECNICA',
+        'obs',
+        'justificativa',
+        'documentos',
+        'atividades',
+        'caracteristica',
+        'caracteristicas',
+        'oferta',
+        'usuario',
+        'motivo',
+        'parecer',
+        'nota_tecnica',
     ];
 
     /**
      * @var array<int, string>
      */
     private const PARECER_HEADER_COLUMNS = [
+        'ENTIDADE',
         'PROTOCOLO',
         'PROTOCOLO_SEI',
         'TIPO_PROCESSO',
         'CNPJ',
         'DT_PROTOCOLO',
         'SITUAÇÃO_CNEAS',
-        'ENTIDADE',
         'MUNICIPIO',
         'UF',
         'DT_CERTIFICACAO_ANTERIOR_INICIO',
         'DT_CERTIFICACAO_ANTERIOR_FIM',
         'FASE_PROCESSO',
         'STATUS_PROCESSO',
+    ];
+
+    /**
+     * @var array<string, array<int, string>>
+     */
+    private const NOTA_TECNICA_SECTION_DEFINITIONS = [
+        'Análise técnica' => [
+            'DOCUMENTOS_OBRIGATORIOS',
+            'DOCUMENTOS_PENDENTES',
+            'COMPATIBILIDADE_ESTATUTO_LOAS',
+            'DESTINO_PATRIMONIO_CASO_DISSOLUCAO',
+        ],
+        'Atividades do relatório' => [
+            'OFERTA_I',
+            'VAGAS_I',
+            'USUARIO_I',
+            'QUALIFICACAO_USUARIO_I',
+            'OFERTA_II',
+            'VAGAS_II',
+            'USUARIO_II',
+            'QUALIFICACAO_USUARIO_II',
+            'OFERTA_III',
+            'VAGAS_III',
+            'USUARIO_III',
+            'QUALIFICACAO_USUARIO_III',
+            'OFERTA_IV',
+            'VAGAS_IV',
+            'USUARIO_IV',
+            'QUALIFICACAO_USUARIO_Iv',
+            'OFERTA_V',
+            'VAGAS_V',
+            'USUARIO_V',
+            'QUALIFICACAO_USUARIO_V',
+            'OFERTA_VI',
+            'VAGAS_VI',
+            'USUARIO_VI',
+            'QUALIFICACAO_USUARIO_VI',
+            'OFERTA_VII',
+            'VAGAS_VII',
+            'USUARIO_VII',
+            'QUALIFICACAO_USUARIO_VII',
+            'OUTRAS_ATIVIDADES',
+        ],
+        'Gratuidade e manifestações' => [
+            'GRATUIDADE_PARECER',
+            'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO',
+            'ORGAO_ENCAMINHAMENTO',
+            'NOTA_TECNICA_OUTRO_ORGAO',
+            'OFERTAS_OUTRAS_AREAS',
+        ],
+        'Princípios de Atendimento da Assistência Social' => [
+            'CONTINUIDADE',
+            'PLANEJAMENTO',
+            'UNIVERSALIDADE',
+        ],
+        'Conclusão do parecer' => [
+            'DECISAO_PARECER',
+            'MOTIVO_INDEFERIMENTO',
+            'JUSTIFICATIVA_INDEFERIMENTO_NT',
+        ],
+        'Assinaturas' => [
+            'CGCEB_PARECER',
+            'DRSP_PARECER',
+        ],
     ];
 
     /**
@@ -115,10 +179,9 @@ class AccessProcessRepository
             'GRATUIDADE_PARECER',
             'ORGAO_ENCAMINHAMENTO',
             'NOTA_TECNICA_OUTRO_ORGAO',
-            'MANIFESTACAO_OUTRO_MINISTERIO',
             'OFERTAS_OUTRAS_AREAS',
         ],
-        'Art. 18 da Lei 12.101/2009' => [
+        'Princípios de Atendimento da Assistência Social' => [
             'CONTINUIDADE',
             'PLANEJAMENTO',
             'UNIVERSALIDADE',
@@ -145,7 +208,7 @@ class AccessProcessRepository
         'DT_PROTOCOLO' => 'Data de Protocolo',
         'ENTIDADE' => 'Entidade',
         'MUNICIPIO' => 'Município',
-        'UF' => 'UF',
+        'UF' => 'uf',
         'DT_CERTIFICACAO_ANTERIOR_INICIO' => 'Última Certificação (início)',
         'DT_CERTIFICACAO_ANTERIOR_FIM' => 'Última Certificação (fim)',
         'DOCUMENTOS_OBRIGATORIOS' => 'Documentos Obrigatórios',
@@ -154,6 +217,7 @@ class AccessProcessRepository
         'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => 'Destino do patrimônio em caso de dissolução',
         'OUTRAS_ATIVIDADES' => 'Atividades de outras áreas não certificáveis',
         'GRATUIDADE_PARECER' => 'Gratuidade',
+        'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO' => 'Tipo de encaminhamento',
         'ORGAO_ENCAMINHAMENTO' => 'Manifestação de outro órgão',
         'NOTA_TECNICA_OUTRO_ORGAO' => 'Número(s)',
         'MANIFESTACAO_OUTRO_MINISTERIO' => 'Manifestação de outro ministério',
@@ -164,7 +228,7 @@ class AccessProcessRepository
         'DECISAO_PARECER' => 'Conclusão do parecer',
         'MOTIVO_INDEFERIMENTO' => 'Motivos de indeferimento',
         'JUSTIFICATIVA_INDEFERIMENTO' => 'Exposição de motivos',
-        'JUSTIFICATIVA_INDEFERIMENTO_NT' => 'Motivos de indeferimento',
+        'JUSTIFICATIVA_INDEFERIMENTO_NT' => 'Observações',
         'ANALISTA_PARECER' => 'Analista',
         'CGCEB_PARECER' => 'CGCEB/DRSP/SNAS/MDS',
         'DRSP_PARECER' => 'DRSP/SNAS/MDS',
@@ -227,9 +291,14 @@ class AccessProcessRepository
             ];
         }
 
-        $query = DB::table(self::TABLE)->where(function ($query) use ($searchColumns, $term) {
+        $strippedTerm = preg_replace('/[^0-9]/', '', $term);
+
+        $query = DB::table(self::TABLE)->where(function ($query) use ($searchColumns, $term, $strippedTerm) {
             foreach ($searchColumns as $column) {
                 $query->orWhere($column, 'like', '%'.$term.'%');
+                if ($column === 'CNPJ' && $strippedTerm !== '' && $strippedTerm !== $term) {
+                    $query->orWhere($column, 'like', '%'.$strippedTerm.'%');
+                }
             }
         });
 
@@ -324,8 +393,6 @@ class AccessProcessRepository
             $data['DOCUMENTOS_PENDENTES'] = null;
         }
 
-        unset($data['MOTIVO_INDEFERIMENTO']);
-
         foreach ($columns as $column) {
             if (! array_key_exists($column, $data)) {
                 continue;
@@ -346,6 +413,7 @@ class AccessProcessRepository
             }
 
             if (is_string($value)) {
+                $value = str_replace('_x000D_', "\n", $value);
                 $value = trim($value);
                 $value = $value === '' ? null : $value;
             }
@@ -455,6 +523,47 @@ class AccessProcessRepository
         return $sections;
     }
 
+    /**
+     * @return array<int, string>
+     */
+    public function notaTecnicaHeaderColumns(): array
+    {
+        return array_values(array_intersect(self::PARECER_HEADER_COLUMNS, $this->columns()));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function notaTecnicaColumns(): array
+    {
+        $columns = array_values(array_diff(self::PARECER_HEADER_COLUMNS, ['PROTOCOLO']));
+
+        foreach (self::NOTA_TECNICA_SECTION_DEFINITIONS as $fields) {
+            $columns = array_merge($columns, $fields);
+        }
+
+        return array_values(array_intersect(array_unique($columns), $this->columns()));
+    }
+
+    /**
+     * @return array<int, array{title: string, fields: array<int, string>}>
+     */
+    public function notaTecnicaSections(): array
+    {
+        $columns = $this->columns();
+        $sections = [];
+
+        foreach (self::NOTA_TECNICA_SECTION_DEFINITIONS as $title => $fields) {
+            $present = array_values(array_intersect($fields, $columns));
+
+            if ($present !== []) {
+                $sections[] = ['title' => $title, 'fields' => $present];
+            }
+        }
+
+        return $sections;
+    }
+
     public function parecerTecnicoLabel(string $field): string
     {
         return self::PARECER_LABELS[$field] ?? $this->fieldLabel($field);
@@ -483,8 +592,9 @@ class AccessProcessRepository
             return 'date';
         }
 
+        $fieldLower = strtolower($field);
         foreach (self::TEXTAREA_KEYWORDS as $keyword) {
-            if (str_contains($field, $keyword)) {
+            if (str_contains($fieldLower, $keyword)) {
                 return 'textarea';
             }
         }

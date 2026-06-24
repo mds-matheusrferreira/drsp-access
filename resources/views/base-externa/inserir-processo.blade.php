@@ -84,57 +84,57 @@
             <div class="p-6">
                 <div class="grid gap-5 lg:grid-cols-3">
                     <div>
-                        <label for="TIPO_PROCESSO" class="{{ $labelClass }}">Tipo do Processo</label>
-                        <select id="TIPO_PROCESSO" name="TIPO_PROCESSO" class="{{ $inputClass }}" required>
+                        <label for="tipo_processo" class="{{ $labelClass }}">Tipo do Processo</label>
+                        <select id="tipo_processo" name="tipo_processo" class="{{ $inputClass }}" required>
                             <option value="">Selecione</option>
                             @foreach ($tiposProcesso as $tipoProcesso)
-                                <option value="{{ $tipoProcesso }}" @selected(old('TIPO_PROCESSO') === $tipoProcesso)>{{ $tipoProcesso }}</option>
+                                <option value="{{ $tipoProcesso }}" @selected(old('tipo_processo') === $tipoProcesso)>{{ $tipoProcesso }}</option>
                             @endforeach
                         </select>
-                        @error('TIPO_PROCESSO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        @error('tipo_processo') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="PROTOCOLO" class="{{ $labelClass }}">Protocolo</label>
-                        <input id="PROTOCOLO" name="PROTOCOLO" type="text" value="{{ old('PROTOCOLO') }}" class="{{ $inputClass }}" placeholder="Número do protocolo">
-                        @error('PROTOCOLO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="protocolo" class="{{ $labelClass }}">Protocolo</label>
+                        <input id="protocolo" name="protocolo" type="text" value="{{ old('protocolo') }}" class="{{ $inputClass }}" placeholder="Número do protocolo">
+                        @error('protocolo') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="PROTOCOLO_SEI" class="{{ $labelClass }}">Protocolo SEI</label>
-                        <input id="PROTOCOLO_SEI" name="PROTOCOLO_SEI" type="text" value="{{ old('PROTOCOLO_SEI') }}" class="{{ $inputClass }}" placeholder="Número SEI">
-                        @error('PROTOCOLO_SEI') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="protocolo_sei" class="{{ $labelClass }}">Protocolo SEI</label>
+                        <input id="protocolo_sei" name="protocolo_sei" type="text" value="{{ old('protocolo_sei') }}" class="{{ $inputClass }}" placeholder="Número SEI">
+                        @error('protocolo_sei') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="CNPJ" class="{{ $labelClass }}">CNPJ</label>
-                        <input id="CNPJ" name="CNPJ" type="text" inputmode="numeric" value="{{ old('CNPJ') }}" class="{{ $inputClass }}" placeholder="00.000.000/0000-00" required>
-                        @error('CNPJ') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="cnpj" class="{{ $labelClass }}">cnpj</label>
+                        <input id="cnpj" name="cnpj" type="text" inputmode="numeric" value="{{ old('cnpj') }}" class="{{ $inputClass }}" placeholder="00.000.000/0000-00" required>
+                        @error('cnpj') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="DT_PROTOCOLO" class="{{ $labelClass }}">Data do Protocolo</label>
-                        <input id="DT_PROTOCOLO" name="DT_PROTOCOLO" type="date" value="{{ old('DT_PROTOCOLO') }}" class="{{ $inputClass }}" required>
-                        @error('DT_PROTOCOLO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="dt_protocolo" class="{{ $labelClass }}">Data do Protocolo</label>
+                        <input id="dt_protocolo" name="dt_protocolo" type="date" value="{{ old('dt_protocolo') }}" class="{{ $inputClass }}" required>
+                        @error('dt_protocolo') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="TEMPESTIVIDADE" class="{{ $labelClass }}">Tempestividade</label>
-                        <select id="TEMPESTIVIDADE" name="TEMPESTIVIDADE" class="{{ $inputClass }} bg-white">
+                        <label for="tempestividade" class="{{ $labelClass }}">Tempestividade</label>
+                        <select id="tempestividade" name="tempestividade" class="{{ $inputClass }} bg-white">
                             <option value="">Selecione</option>
-                            <option value="Tempestivo" @selected(old('TEMPESTIVIDADE') === 'Tempestivo')>Tempestivo</option>
+                            <option value="Tempestivo" @selected(old('tempestividade') === 'Tempestivo')>Tempestivo</option>
                         </select>
-                        @error('TEMPESTIVIDADE') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        @error('tempestividade') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="DT_CERTIFICACAO_ANTERIOR_INICIO" class="{{ $labelClass }}">Início da Certificação Anterior</label>
-                        <input id="DT_CERTIFICACAO_ANTERIOR_INICIO" name="DT_CERTIFICACAO_ANTERIOR_INICIO" type="date" value="{{ old('DT_CERTIFICACAO_ANTERIOR_INICIO') }}" class="{{ $inputClass }}">
-                        @error('DT_CERTIFICACAO_ANTERIOR_INICIO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="dt_certificacao_anterior_inicio" class="{{ $labelClass }}">Início da Certificação Anterior</label>
+                        <input id="dt_certificacao_anterior_inicio" name="dt_certificacao_anterior_inicio" type="date" value="{{ old('dt_certificacao_anterior_inicio') }}" class="{{ $inputClass }}">
+                        @error('dt_certificacao_anterior_inicio') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="DT_CERTIFICACAO_ANTERIOR_FIM" class="{{ $labelClass }}">Fim da Certificação Anterior</label>
-                        <input id="DT_CERTIFICACAO_ANTERIOR_FIM" name="DT_CERTIFICACAO_ANTERIOR_FIM" type="date" value="{{ old('DT_CERTIFICACAO_ANTERIOR_FIM') }}" class="{{ $inputClass }}">
-                        @error('DT_CERTIFICACAO_ANTERIOR_FIM') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="dt_certificacao_anterior_fim" class="{{ $labelClass }}">Fim da Certificação Anterior</label>
+                        <input id="dt_certificacao_anterior_fim" name="dt_certificacao_anterior_fim" type="date" value="{{ old('dt_certificacao_anterior_fim') }}" class="{{ $inputClass }}">
+                        @error('dt_certificacao_anterior_fim') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU" class="{{ $labelClass }}">Publicação Certificação Anterior DOU</label>
-                        <input id="DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU" name="DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU" type="date" value="{{ old('DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU') }}" class="{{ $inputClass }}">
-                        @error('DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="dt_publicacao_certificacao_anterior_dou" class="{{ $labelClass }}">Publicação Certificação Anterior DOU</label>
+                        <input id="dt_publicacao_certificacao_anterior_dou" name="dt_publicacao_certificacao_anterior_dou" type="date" value="{{ old('dt_publicacao_certificacao_anterior_dou') }}" class="{{ $inputClass }}">
+                        @error('dt_publicacao_certificacao_anterior_dou') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -158,21 +158,21 @@
             <div class="p-6">
                 <div class="grid gap-5 lg:grid-cols-2">
                     <div>
-                        <label for="UF" class="{{ $labelClass }}">UF</label>
-                        <select id="UF" name="UF" class="{{ $inputClass }} bg-white" required>
+                        <label for="uf" class="{{ $labelClass }}">uf</label>
+                        <select id="uf" name="uf" class="{{ $inputClass }} bg-white" required>
                             <option value="">Selecione</option>
                             @foreach ($ufs as $uf)
-                                <option value="{{ $uf }}" @selected(old('UF') === $uf)>{{ $uf }}</option>
+                                <option value="{{ $uf }}" @selected(old('uf') === $uf)>{{ $uf }}</option>
                             @endforeach
                         </select>
-                        @error('UF') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        @error('uf') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="MUNICIPIO" class="{{ $labelClass }}">Município</label>
-                        <select id="MUNICIPIO" name="MUNICIPIO" class="{{ $inputClass }} bg-white" data-selected-municipio="{{ old('MUNICIPIO') }}" disabled required>
-                            <option value="">Selecione a UF primeiro</option>
+                        <label for="municipio" class="{{ $labelClass }}">Município</label>
+                        <select id="municipio" name="municipio" class="{{ $inputClass }} bg-white" data-selected-municipio="{{ old('municipio') }}" disabled required>
+                            <option value="">Selecione a uf primeiro</option>
                         </select>
-                        @error('MUNICIPIO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        @error('municipio') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -195,31 +195,31 @@
             <div class="space-y-5 p-6">
                 <div class="grid gap-5 lg:grid-cols-3">
                     <div>
-                        <label for="ORGAO_ORIGEM" class="{{ $labelClass }}">Órgão de Origem</label>
-                        <select id="ORGAO_ORIGEM" name="ORGAO_ORIGEM" class="{{ $inputClass }} bg-white" required>
+                        <label for="orgao_origem" class="{{ $labelClass }}">Órgão de Origem</label>
+                        <select id="orgao_origem" name="orgao_origem" class="{{ $inputClass }} bg-white" required>
                             <option value="">Selecione</option>
                             @foreach ($orgaosOrigem as $orgaoOrigem)
-                                <option value="{{ $orgaoOrigem }}" @selected(old('ORGAO_ORIGEM') === $orgaoOrigem)>{{ $orgaoOrigem }}</option>
+                                <option value="{{ $orgaoOrigem }}" @selected(old('orgao_origem') === $orgaoOrigem)>{{ $orgaoOrigem }}</option>
                             @endforeach
                         </select>
-                        @error('ORGAO_ORIGEM') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        @error('orgao_origem') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="DT_RECEBIMENTO_MDS" class="{{ $labelClass }}">Data de Recebimento no MDS</label>
-                        <input id="DT_RECEBIMENTO_MDS" name="DT_RECEBIMENTO_MDS" type="date" value="{{ old('DT_RECEBIMENTO_MDS') }}" class="{{ $inputClass }}" required>
-                        @error('DT_RECEBIMENTO_MDS') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="dt_recebimento_mds" class="{{ $labelClass }}">Data de Recebimento no MDS</label>
+                        <input id="dt_recebimento_mds" name="dt_recebimento_mds" type="date" value="{{ old('dt_recebimento_mds') }}" class="{{ $inputClass }}" required>
+                        @error('dt_recebimento_mds') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div class="grid gap-5 lg:grid-cols-3">
                     <div>
-                        <label for="MOTIVO_RECEBIMENTO" class="{{ $labelClass }}">Motivo do Recebimento</label>
-                        <select id="MOTIVO_RECEBIMENTO" name="MOTIVO_RECEBIMENTO" class="{{ $inputClass }} bg-white" required>
+                        <label for="motivo_recebimento" class="{{ $labelClass }}">Motivo do Recebimento</label>
+                        <select id="motivo_recebimento" name="motivo_recebimento" class="{{ $inputClass }} bg-white" required>
                             <option value="">Selecione</option>
                             @foreach ($motivosRecebimento as $motivoRecebimento)
-                                <option value="{{ $motivoRecebimento }}" @selected(old('MOTIVO_RECEBIMENTO') === $motivoRecebimento)>{{ $motivoRecebimento }}</option>
+                                <option value="{{ $motivoRecebimento }}" @selected(old('motivo_recebimento') === $motivoRecebimento)>{{ $motivoRecebimento }}</option>
                             @endforeach
                         </select>
-                        @error('MOTIVO_RECEBIMENTO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        @error('motivo_recebimento') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -242,19 +242,19 @@
             <div class="p-6">
                 <div class="grid gap-5 lg:grid-cols-2">
                     <div>
-                        <label for="FASE_PROCESSO" class="{{ $labelClass }}">Fase do Processo</label>
-                        <select id="FASE_PROCESSO" name="FASE_PROCESSO" class="{{ $inputClass }} bg-white" required>
+                        <label for="fase_processo" class="{{ $labelClass }}">Fase do Processo</label>
+                        <select id="fase_processo" name="fase_processo" class="{{ $inputClass }} bg-white" required>
                             <option value="">Selecione</option>
                             @foreach ($fasesProcesso as $faseProcesso)
-                                <option value="{{ $faseProcesso }}" @selected(old('FASE_PROCESSO') === $faseProcesso)>{{ $faseProcesso }}</option>
+                                <option value="{{ $faseProcesso }}" @selected(old('fase_processo') === $faseProcesso)>{{ $faseProcesso }}</option>
                             @endforeach
                         </select>
-                        @error('FASE_PROCESSO') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        @error('fase_processo') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="SITUACAO_CNEAS" class="{{ $labelClass }}">Situação CNEAS</label>
-                        <input id="SITUACAO_CNEAS" name="SITUACAO_CNEAS" type="text" value="{{ old('SITUACAO_CNEAS') }}" class="{{ $inputClass }}" placeholder="Concluído em..." required>
-                        @error('SITUACAO_CNEAS') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
+                        <label for="situacao_cneas" class="{{ $labelClass }}">Situação CNEAS</label>
+                        <input id="situacao_cneas" name="situacao_cneas" type="text" value="{{ old('situacao_cneas') }}" class="{{ $inputClass }}" placeholder="Concluído em..." required>
+                        @error('situacao_cneas') <p class="{{ $errorClass }}">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>

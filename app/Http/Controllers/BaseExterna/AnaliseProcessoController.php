@@ -56,10 +56,10 @@ class AnaliseProcessoController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'ORIGINAL_PROTOCOLO' => ['required', 'string', 'max:255'],
+            'original_protocolo' => ['required', 'string', 'max:255'],
         ]);
 
-        $originalProtocolo = trim($validated['ORIGINAL_PROTOCOLO']);
+        $originalProtocolo = trim($validated['original_protocolo']);
         $count = $this->accessProcesses->protocolCount($originalProtocolo);
 
         if ($count !== 1) {
@@ -68,7 +68,7 @@ class AnaliseProcessoController extends Controller
                 ->with('error', $this->blockedMessage($count));
         }
 
-        $newProtocolo = trim((string) $request->input('PROTOCOLO', $originalProtocolo));
+        $newProtocolo = trim((string) $request->input('protocolo', $originalProtocolo));
 
         if ($newProtocolo === '') {
             return redirect()
@@ -84,7 +84,7 @@ class AnaliseProcessoController extends Controller
                 ->with('error', 'Edição bloqueada: o novo protocolo informado já existe em outro registro.');
         }
 
-        $this->accessProcesses->updateByProtocolo($originalProtocolo, $request->except(['_token', '_method', 'ORIGINAL_PROTOCOLO']));
+        $this->accessProcesses->updateByProtocolo($originalProtocolo, $request->except(['_token', '_method', 'original_protocolo']));
 
         return redirect()
             ->route('base-externa.analise-processo.edit', ['protocolo' => $newProtocolo])
@@ -98,14 +98,13 @@ class AnaliseProcessoController extends Controller
     {
         return [
             'PROTOCOLO',
+            'DT_PROTOCOLO',
             'PROTOCOLO_SEI',
             'ENTIDADE',
             'CNPJ',
             'MUNICIPIO',
             'UF',
-            'TIPO_PROCESSO',
-            'FASE_PROCESSO',
-            'STATUS_PROCESSO',
+            'ORGAO_ORIGEM',
         ];
     }
 

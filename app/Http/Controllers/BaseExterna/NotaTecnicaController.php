@@ -13,7 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class ParecerTecnicoController extends Controller
+class NotaTecnicaController extends Controller
 {
     public function __construct(private readonly AccessProcessRepository $accessProcesses) {}
 
@@ -30,7 +30,7 @@ class ParecerTecnicoController extends Controller
             return $this->blockedRedirect($protocolo, $count);
         }
 
-        return view('base-externa.analise-processo.parecer.edit', $this->viewData($protocolo));
+        return view('base-externa.analise-processo.nota-tecnica.edit', $this->viewData($protocolo));
     }
 
     public function update(Request $request): RedirectResponse
@@ -47,7 +47,7 @@ class ParecerTecnicoController extends Controller
             return $this->blockedRedirect($originalProtocolo, $count);
         }
 
-        $payload = $request->only($this->accessProcesses->parecerTecnicoColumns());
+        $payload = $request->only($this->accessProcesses->notaTecnicaColumns());
         $payload['legislacao_parecer'] = $request->input('legislacao_parecer');
         $original = $this->accessProcesses->findByProtocolo($originalProtocolo) ?? [];
         $sanitized = $this->accessProcesses->sanitizeForUpdate($payload);
@@ -55,18 +55,18 @@ class ParecerTecnicoController extends Controller
         $this->accessProcesses->updateByProtocolo($originalProtocolo, $payload);
 
         if (($validated['_action'] ?? 'save') === 'save' && $changedFields !== []) {
-            $this->logParecerSave($request, $originalProtocolo, $changedFields);
+            $this->logNotaTecnicaSave($request, $originalProtocolo, $changedFields);
         }
 
         if (($validated['_action'] ?? 'save') === 'save_pdf') {
             return redirect()
-                ->route('base-externa.analise-processo.parecer.pdf', ['protocolo' => $originalProtocolo])
-                ->with('success', 'Parecer técnico atualizado com sucesso.');
+                ->route('base-externa.analise-processo.nota-tecnica.pdf', ['protocolo' => $originalProtocolo])
+                ->with('success', 'Nota técnica atualizada com sucesso.');
         }
 
         return redirect()
-            ->route('base-externa.analise-processo.parecer.edit', ['protocolo' => $originalProtocolo])
-            ->with('success', 'Parecer técnico atualizado com sucesso.');
+            ->route('base-externa.analise-processo.nota-tecnica.edit', ['protocolo' => $originalProtocolo])
+            ->with('success', 'Nota técnica atualizada com sucesso.');
     }
 
     public function pdf(Request $request): Response|RedirectResponse
@@ -82,10 +82,10 @@ class ParecerTecnicoController extends Controller
             return $this->blockedRedirect($protocolo, $count);
         }
 
-        $pdf = Pdf::loadView('base-externa.analise-processo.parecer.pdf', $this->viewData($protocolo))
+        $pdf = Pdf::loadView('base-externa.analise-processo.nota-tecnica.pdf', $this->viewData($protocolo))
             ->setPaper('a4');
 
-        return $pdf->download('parecer-tecnico-'.$this->safeFilename($protocolo).'.pdf');
+        return $pdf->download('nota-tecnica-'.$this->safeFilename($protocolo).'.pdf');
     }
 
     /**
@@ -96,7 +96,6 @@ class ParecerTecnicoController extends Controller
         $processo = $this->accessProcesses->findByProtocolo($protocolo);
         $processo['legislacao_parecer'] = $this->legislacaoByDataProtocolo($processo['DT_PROTOCOLO'] ?? null);
 
-        // Adiciona aliases em lowercase para compatibilidade do template com colunas UPPERCASE do banco
         foreach (array_keys($processo) as $key) {
             $lower = strtolower($key);
             if ($lower !== $key && ! array_key_exists($lower, $processo)) {
@@ -107,12 +106,12 @@ class ParecerTecnicoController extends Controller
 
         return [
             'processo' => $processo,
-            'headerColumns' => $this->accessProcesses->parecerTecnicoHeaderColumns(),
-            'sections' => $this->accessProcesses->parecerTecnicoSections(),
+            'headerColumns' => $this->accessProcesses->notaTecnicaHeaderColumns(),
+            'sections' => $this->accessProcesses->notaTecnicaSections(),
             'columnTypes' => $this->accessProcesses->columnTypes(),
             'repository' => $this->accessProcesses,
             'originalProtocolo' => $protocolo,
-            'parecerLogs' => $this->parecerLogs($protocolo),
+            'notaTecnicaLogs' => $this->notaTecnicaLogs($protocolo),
             'offerRomanNumerals' => ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'],
         ];
     }
@@ -136,14 +135,14 @@ class ParecerTecnicoController extends Controller
         return trim(str_replace('_x000D_', "\n", (string) $value));
     }
 
-    private function logParecerSave(Request $request, string $protocolo, array $campos): void
+    private function logNotaTecnicaSave(Request $request, string $protocolo, array $campos): void
     {
         $user = $request->user();
         $userName = trim((string) ($user?->name ?: $user?->user ?: 'Usuário desconhecido'));
 
         DB::table('logs')->insert([
             'log' => json_encode([
-                'area' => 'parecer_tecnico',
+                'area' => 'nota_tecnica',
                 'acao' => 'salvar',
                 'protocolo' => $protocolo,
                 'campos_alterados' => array_values($campos),
@@ -156,12 +155,12 @@ class ParecerTecnicoController extends Controller
     /**
      * @return array<int, array{user: string, date_created: string|null, campos: array<int, string>}>
      */
-    private function parecerLogs(string $protocolo): array
+    private function notaTecnicaLogs(string $protocolo): array
     {
         return DB::table('logs')
             ->where(function ($q) {
-                $q->where('log', 'like', '%"area":"parecer_tecnico"%')
-                  ->orWhere('log', 'like', '%"area":"nota_tecnica"%');
+                $q->where('log', 'like', '%"area":"nota_tecnica"%')
+                  ->orWhere('log', 'like', '%"area":"parecer_tecnico"%');
             })
             ->where('log', 'like', '%'.$protocolo.'%')
             ->orderByDesc('date_created')
@@ -173,7 +172,7 @@ class ParecerTecnicoController extends Controller
                     'user' => (string) $row->user,
                     'date_created' => $row->date_created ? Carbon::parse($row->date_created)->format('d/m/Y H:i') : null,
                     'campos' => $data['campos_alterados'] ?? [],
-                    'area' => $data['area'] ?? 'parecer_tecnico',
+                    'area' => $data['area'] ?? 'nota_tecnica',
                 ];
             })
             ->all();
@@ -200,10 +199,10 @@ class ParecerTecnicoController extends Controller
     private function blockedMessage(int $count): string
     {
         if ($count > 1) {
-            return 'Parecer técnico bloqueado: este protocolo aparece em mais de um registro.';
+            return 'Nota técnica bloqueada: este protocolo aparece em mais de um registro.';
         }
 
-        return 'Parecer técnico bloqueado: protocolo não encontrado ou vazio.';
+        return 'Nota técnica bloqueada: protocolo não encontrado ou vazio.';
     }
 
     private function safeFilename(string $protocolo): string

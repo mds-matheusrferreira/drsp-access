@@ -1,3 +1,4 @@
+{{-- update-test --}}
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -11,13 +12,28 @@
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <title>@yield('title', config('app.name', 'DRSP'))</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta name="app-version" content="{{ $appVersion ?? '' }}">
 </head>
 
 <body class="min-h-screen bg-gray-50 font-sans antialiased text-gray-800">
     @php
+        $appVersion = cache()->remember('_app_version', 30, function () {
+            $latest = 0;
+            foreach ([app_path(), resource_path('views')] as $dir) {
+                if (! is_dir($dir)) continue;
+                $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
+                foreach ($it as $f) {
+                    if ($f->isFile()) $latest = max($latest, $f->getMTime());
+                }
+            }
+            return substr(md5((string) $latest), 0, 8);
+        });
+
         $user = auth()->user();
         $displayName = $user?->name ?: $user?->email ?: 'Usuário';
         $initial = mb_strtoupper(mb_substr($displayName, 0, 1));
+        $hasCoordenacaoPermission = in_array((string) ($user?->permission ?? ''), ['1', '2'], true);
+        $canInsertBaseExterna = in_array((string) ($user?->permission ?? ''), ['1', '2'], true);
         $menuItems = [
             [
                 'label' => 'Principal',
@@ -88,6 +104,18 @@
                 ],
             ],
         ];
+
+        if ($hasCoordenacaoPermission) {
+            $menuItems[] = ['label' => 'Coordenação', 'active' => request()->routeIs('coordenacao.*'), 'icon' => 'folder', 'href' => route('coordenacao.index')];
+        }
+
+        $menuItems[] = ['label' => 'Emissor de Certificado', 'active' => false, 'icon' => 'file', 'href' => 'https://aplicacoes.mds.gov.br/snas/redeprivada/eccebas/', 'external' => true];
+        $menuItems[] = ['label' => 'Plataformas', 'active' => false, 'icon' => 'layers', 'children' => [
+            ['label' => 'Lecom', 'href' => 'https://cidadania.servicos.gov.br/bpm/pesquisa_processo', 'external' => true],
+            ['label' => 'SEI', 'href' => 'https://sei.cidadania.gov.br/sei/controlador.php?acao=procedimento_controlar&acao_origem=principal&acao_retorno=principal&inicializando=1&infra_sistema=100000100&infra_unidade_atual=110000221&infra_hash=8cb6c25c95791024313862d3229b5a82cd9b808c004770caeebd59464ba6f74b', 'external' => true],
+            ['label' => 'CNEAS', 'href' => 'https://aplicacoes.mds.gov.br/saa-web/login.action?url=https://aplicacoes.mds.gov.br/cneas&mensagemSaa=Sess%E3o+encerrada.', 'external' => true],
+            ['label' => 'Protocolo Digital', 'href' => 'https://app.anm.gov.br/SCA/Site/Login.aspx?ReturnUrl=https%3A%2F%2Fapp.anm.gov.br%2Fprotocolo', 'external' => true],
+        ]];
     @endphp
 
     <div class="min-h-screen lg:flex">
@@ -242,11 +270,75 @@
                 </div>
             </header>
 
+            <div id="update-banner" hidden class="border-b border-blue-200 bg-blue-50 px-4 py-3 sm:px-6 lg:px-8" role="status" aria-live="polite">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 01-9.201 2.466l-.312-.311h2.433a.75.75 0 000-1.5H3.989a.75.75 0 00-.75.75v4.242a.75.75 0 001.5 0v-2.43l.31.31a7 7 0 0011.712-3.138.75.75 0 00-1.449-.39zm1.23-3.723a.75.75 0 00.219-.53V2.929a.75.75 0 00-1.5 0V5.36l-.31-.31A7 7 0 003.239 8.188a.75.75 0 101.448.389A5.5 5.5 0 0113.89 6.11l.311.31h-2.432a.75.75 0 000 1.5h4.243a.75.75 0 00.53-.219z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <p class="text-sm font-medium text-blue-900">
+                            Nova versão disponível — atualize para ver as últimas mudanças.
+                        </p>
+                    </div>
+                    <div class="flex shrink-0 items-center gap-2">
+                        <button id="update-banner-reload" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Atualizar agora
+                        </button>
+                        <button id="update-banner-dismiss" type="button" class="flex h-8 w-8 items-center justify-center rounded-lg text-blue-600 transition-colors hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Dispensar aviso">
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <main class="px-4 py-6 sm:px-6 lg:px-8">
                 @yield('content')
             </main>
         </div>
     </div>
+    <script>
+    (function () {
+        var initial = (document.querySelector('meta[name="app-version"]') || {}).content || '';
+        if (!initial) return;
+
+        var banner = document.getElementById('update-banner');
+        var dismissedVersion = sessionStorage.getItem('update_dismissed') || '';
+        var latestVersion = '';
+
+        function showBanner() {
+            if (banner) banner.removeAttribute('hidden');
+        }
+
+        function poll() {
+            fetch('/_version', { cache: 'no-store' })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.v || data.v === initial) return;
+                    latestVersion = data.v;
+                    if (latestVersion !== dismissedVersion) showBanner();
+                })
+                .catch(function () {});
+        }
+
+        setInterval(poll, 60000);
+
+        var reloadBtn = document.getElementById('update-banner-reload');
+        if (reloadBtn) reloadBtn.addEventListener('click', function () {
+            window.location.reload();
+        });
+
+        var dismissBtn = document.getElementById('update-banner-dismiss');
+        if (dismissBtn) dismissBtn.addEventListener('click', function () {
+            dismissedVersion = latestVersion;
+            sessionStorage.setItem('update_dismissed', dismissedVersion);
+            if (banner) banner.setAttribute('hidden', '');
+        });
+    })();
+    </script>
 </body>
 
 </html>

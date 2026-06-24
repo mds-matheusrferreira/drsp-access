@@ -12,7 +12,7 @@
             'items' => [
                 ['label' => 'Relatório de Análises', 'href' => '#', 'disabled' => true, 'icon' => 'clipboard'],
                 ['label' => 'Inserir Processo(s)', 'href' => route('base-externa.processos.create'), 'icon' => 'plus'],
-                ['label' => 'Processos de access', 'href' => route('base-externa.analise-processo.index'), 'icon' => 'folder'],
+                ['label' => 'Processos de processos_sei', 'href' => route('base-externa.analise-processo.index'), 'icon' => 'folder'],
                 ['label' => 'Levantamentos', 'href' => '#', 'disabled' => true, 'icon' => 'trend'],
             ],
         ],
@@ -58,10 +58,18 @@
             'icon' => 'table',
             'theme' => 'indigo',
             'items' => [
+                ['label' => 'CNEAS', 'href' => '#', 'disabled' => true, 'icon' => 'table'],
+                ['label' => 'EXTERNO (SEI)', 'href' => route('coordenacao.planilhas.externo'), 'icon' => 'table'],
+                ['label' => 'PROCESSOS', 'href' => '#', 'disabled' => true, 'icon' => 'table'],
                 ['label' => 'VISDATA (CEBAS)', 'href' => route('coordenacao.planilhas.visdata-cebas'), 'icon' => 'table'],
-                ['label' => 'PROCESSOS', 'href' => route('coordenacao.planilhas.processos'), 'icon' => 'table'],
-                ['label' => 'CNEAS', 'href' => route('coordenacao.planilhas.cneas'), 'icon' => 'table'],
-                ['label' => 'EXTERNO', 'href' => route('coordenacao.planilhas.externo'), 'icon' => 'table'],
+            ],
+        ],
+        [
+            'title' => 'Automações',
+            'icon' => 'activity',
+            'theme' => 'blue',
+            'items' => [
+                ['label' => 'AUTOMAÇÃO CNEAS', 'href' => route('coordenacao.automacoes.cneas'), 'icon' => 'activity'],
             ],
         ],
     ];

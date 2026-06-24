@@ -14,7 +14,7 @@
         'Parecer/decisão' => ['icon' => 'check', 'iconBg' => 'bg-green-600', 'header' => 'border-green-200 bg-green-50', 'subtitle' => 'Pareceres, decisões e portarias'],
         'Requisitos legais' => ['icon' => 'shield', 'iconBg' => 'bg-orange-600', 'header' => 'border-orange-200 bg-orange-50', 'subtitle' => 'Documentos e requisitos legais'],
         'Ofertas/usuários/vagas' => ['icon' => 'users', 'iconBg' => 'bg-purple-600', 'header' => 'border-purple-200 bg-purple-50', 'subtitle' => 'Ofertas, usuários e capacidade de atendimento'],
-        'Campos adicionais' => ['icon' => 'dots', 'iconBg' => 'bg-blue-600', 'header' => 'border-blue-200 bg-blue-50', 'subtitle' => 'Demais campos da tabela access'],
+        'Campos adicionais' => ['icon' => 'dots', 'iconBg' => 'bg-blue-600', 'header' => 'border-blue-200 bg-blue-50', 'subtitle' => 'Demais campos da tabela processos_sei'],
     ];
 @endphp
 
@@ -45,7 +45,7 @@
     <form method="POST" action="{{ route('base-externa.analise-processo.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
-        <input type="hidden" name="ORIGINAL_PROTOCOLO" value="{{ $originalProtocolo }}">
+        <input type="hidden" name="original_protocolo" value="{{ $originalProtocolo }}">
 
         @foreach ($sections as $section)
             @php

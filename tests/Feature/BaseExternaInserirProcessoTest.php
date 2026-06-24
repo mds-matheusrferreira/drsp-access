@@ -28,29 +28,29 @@ class BaseExternaInserirProcessoTest extends TestCase
         $response->assertSee('Base externa - Inserir Processo');
         $response->assertSee('Tipo do Processo');
         $response->assertSee('Protocolo');
-        $response->assertSee('CNPJ');
+        $response->assertSee('cnpj');
     }
 
     public function test_insert_process_validation_rejects_invalid_payload(): void
     {
         $response = $this->actingAs(User::factory()->create())->post('/base-externa/inserir-processo', [
-            'CNPJ' => '123',
-            'UF' => 'XX',
+            'cnpj' => '123',
+            'uf' => 'XX',
         ]);
 
         $response->assertSessionHasErrors([
-            'TIPO_PROCESSO',
-            'PROTOCOLO',
-            'PROTOCOLO_SEI',
-            'CNPJ',
-            'UF',
-            'MUNICIPIO',
-            'ORGAO_ORIGEM',
-            'DT_PROTOCOLO',
-            'DT_RECEBIMENTO_MDS',
-            'MOTIVO_RECEBIMENTO',
-            'FASE_PROCESSO',
-            'SITUACAO_CNEAS',
+            'tipo_processo',
+            'protocolo',
+            'protocolo_sei',
+            'cnpj',
+            'uf',
+            'municipio',
+            'orgao_origem',
+            'dt_protocolo',
+            'dt_recebimento_mds',
+            'motivo_recebimento',
+            'fase_processo',
+            'situacao_cneas',
         ]);
     }
 
@@ -63,67 +63,67 @@ class BaseExternaInserirProcessoTest extends TestCase
         $response->assertRedirect(route('base-externa.processos.create'));
         $response->assertSessionHas('success', 'Processo inserido com sucesso.');
         $this->assertDatabaseHas('access', [
-            'TIPO_PROCESSO' => 'Concessão',
-            'PROTOCOLO' => '12345',
-            'PROTOCOLO_SEI' => 'SEI-12345',
-            'CNPJ' => '12345678000190',
-            'UF' => 'DF',
-            'MUNICIPIO' => 'BRASILIA',
-            'ORGAO_ORIGEM' => 'MS',
-            'DT_PROTOCOLO' => '2026-05-20',
-            'DT_RECEBIMENTO_MDS' => '2026-05-27',
-            'MOTIVO_RECEBIMENTO' => 'Manifestação',
-            'DT_CERTIFICACAO_ANTERIOR_INICIO' => '2025-01-01',
-            'DT_CERTIFICACAO_ANTERIOR_FIM' => '2025-12-31',
-            'DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU' => '2025-02-01',
-            'TEMPESTIVIDADE' => 'Tempestivo',
-            'FASE_PROCESSO' => 'ANÁLISE TÉCNICA',
-            'SITUAÇÃO_CNEAS' => 'Regular',
+            'tipo_processo' => 'Concessão',
+            'protocolo' => '12345',
+            'protocolo_sei' => 'SEI-12345',
+            'cnpj' => '12345678000190',
+            'uf' => 'DF',
+            'municipio' => 'BRASILIA',
+            'orgao_origem' => 'MS',
+            'dt_protocolo' => '2026-05-20',
+            'dt_recebimento_mds' => '2026-05-27',
+            'motivo_recebimento' => 'Manifestação',
+            'dt_certificacao_anterior_inicio' => '2025-01-01',
+            'dt_certificacao_anterior_fim' => '2025-12-31',
+            'dt_publicacao_certificacao_anterior_dou' => '2025-02-01',
+            'tempestividade' => 'Tempestivo',
+            'fase_processo' => 'ANÁLISE TÉCNICA',
+            'situacao_cneas' => 'Regular',
         ]);
     }
 
     public function test_insert_process_normalizes_cnpj_uf_and_municipio(): void
     {
         $payload = array_merge($this->validPayload(), [
-            'CNPJ' => '12.345.678/0001-90',
-            'UF' => 'df',
-            'MUNICIPIO' => 'São José do Rio Preto',
+            'cnpj' => '12.345.678/0001-90',
+            'uf' => 'df',
+            'municipio' => 'São José do Rio Preto',
         ]);
 
         $this->actingAs(User::factory()->create())->post('/base-externa/inserir-processo', $payload);
 
         $this->assertDatabaseHas('access', [
-            'PROTOCOLO' => '12345',
-            'CNPJ' => '12345678000190',
-            'UF' => 'DF',
-            'MUNICIPIO' => 'SAO JOSE DO RIO PRETO',
+            'protocolo' => '12345',
+            'cnpj' => '12345678000190',
+            'uf' => 'DF',
+            'municipio' => 'SAO JOSE DO RIO PRETO',
         ]);
     }
 
     public function test_insert_process_allows_empty_tempestividade(): void
     {
         $payload = array_merge($this->validPayload(), [
-            'PROTOCOLO' => '12346',
-            'TEMPESTIVIDADE' => '',
+            'protocolo' => '12346',
+            'tempestividade' => '',
         ]);
 
         $this->actingAs(User::factory()->create())->post('/base-externa/inserir-processo', $payload);
 
         $this->assertDatabaseHas('access', [
-            'PROTOCOLO' => '12346',
-            'TEMPESTIVIDADE' => null,
+            'protocolo' => '12346',
+            'tempestividade' => null,
         ]);
     }
 
     public function test_insert_process_rejects_invalid_tempestividade(): void
     {
         $payload = array_merge($this->validPayload(), [
-            'TEMPESTIVIDADE' => 'Intempestivo',
+            'tempestividade' => 'Intempestivo',
         ]);
 
         $response = $this->actingAs(User::factory()->create())->post('/base-externa/inserir-processo', $payload);
 
-        $response->assertSessionHasErrors('TEMPESTIVIDADE');
+        $response->assertSessionHasErrors('tempestividade');
     }
 
     /**
@@ -132,22 +132,22 @@ class BaseExternaInserirProcessoTest extends TestCase
     private function validPayload(): array
     {
         return [
-            'TIPO_PROCESSO' => 'Concessão',
-            'PROTOCOLO' => '12345',
-            'PROTOCOLO_SEI' => 'SEI-12345',
-            'CNPJ' => '12345678000190',
-            'UF' => 'DF',
-            'MUNICIPIO' => 'BRASILIA',
-            'ORGAO_ORIGEM' => 'MS',
-            'DT_PROTOCOLO' => '2026-05-20',
-            'DT_RECEBIMENTO_MDS' => '2026-05-27',
-            'MOTIVO_RECEBIMENTO' => 'Manifestação',
-            'DT_CERTIFICACAO_ANTERIOR_INICIO' => '2025-01-01',
-            'DT_CERTIFICACAO_ANTERIOR_FIM' => '2025-12-31',
-            'DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU' => '2025-02-01',
-            'TEMPESTIVIDADE' => 'Tempestivo',
-            'FASE_PROCESSO' => 'ANÁLISE TÉCNICA',
-            'SITUACAO_CNEAS' => 'Regular',
+            'tipo_processo' => 'Concessão',
+            'protocolo' => '12345',
+            'protocolo_sei' => 'SEI-12345',
+            'cnpj' => '12345678000190',
+            'uf' => 'DF',
+            'municipio' => 'BRASILIA',
+            'orgao_origem' => 'MS',
+            'dt_protocolo' => '2026-05-20',
+            'dt_recebimento_mds' => '2026-05-27',
+            'motivo_recebimento' => 'Manifestação',
+            'dt_certificacao_anterior_inicio' => '2025-01-01',
+            'dt_certificacao_anterior_fim' => '2025-12-31',
+            'dt_publicacao_certificacao_anterior_dou' => '2025-02-01',
+            'tempestividade' => 'Tempestivo',
+            'fase_processo' => 'ANÁLISE TÉCNICA',
+            'situacao_cneas' => 'Regular',
         ];
     }
 }

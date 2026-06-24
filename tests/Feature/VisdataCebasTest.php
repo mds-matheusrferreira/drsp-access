@@ -31,9 +31,10 @@ class VisdataCebasTest extends TestCase
             ->get('/coordenacao/planilhas/visdata-cebas')
             ->assertOk()
             ->assertSee('Planilha Visdata - Upload e download de Dados')
+            ->assertSee('Selecione o arquivo Excel:')
             ->assertSee('Enviar CEBAS')
-            ->assertSee('Baixar Modelo de Planilha')
-            ->assertSee('Baixar backup atual');
+            ->assertDontSee('Baixar Modelo de Planilha')
+            ->assertSee('Baixar tabela atual');
     }
 
     public function test_backup_downloads_current_cebas_suas_data(): void
@@ -75,14 +76,25 @@ class VisdataCebasTest extends TestCase
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.inserted_rows', 1);
 
-        $this->assertDatabaseMissing('cebas_suas', ['protocolo' => 'antigo']);
-        $this->assertDatabaseHas('cebas_suas', [
-            'protocolo' => 'novo',
-            'entidade' => 'Nova Entidade',
-            'uf' => 'DF',
-            'dt_referencia' => '2026-05-29',
-            'receita_bruta' => '1234.56',
+        $this->assertImportedRow();
+    }
+
+    public function test_valid_import_works_without_javascript(): void
+    {
+        $this->createCebasSuasTable();
+        $this->app['db']->table('cebas_suas')->insert($this->row(['protocolo' => 'antigo', 'entidade' => 'Antiga']));
+
+        $file = $this->xlsxUpload([
+            VisdataCebasService::HEADERS,
+            ['novo', '123', 'Nova Entidade', 'Brasília', 'DF', '1', 'Certificada', '5300108', '999', 'Sim', '2024', '01/01/2024', '31/12/2024', 'R$ 1.234,56', '2026-05-29', 'Serviço'],
         ]);
+
+        $this->actingAs(User::factory()->create())
+            ->post('/coordenacao/planilhas/visdata-cebas/import', ['excelFile' => $file])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertImportedRow();
     }
 
     public function test_invalid_header_does_not_delete_existing_rows(): void
@@ -101,6 +113,18 @@ class VisdataCebasTest extends TestCase
             ->assertJsonPath('success', false);
 
         $this->assertDatabaseHas('cebas_suas', ['protocolo' => 'antigo', 'entidade' => 'Antiga']);
+    }
+
+    private function assertImportedRow(): void
+    {
+        $this->assertDatabaseMissing('cebas_suas', ['protocolo' => 'antigo']);
+        $this->assertDatabaseHas('cebas_suas', [
+            'protocolo' => 'novo',
+            'entidade' => 'Nova Entidade',
+            'uf' => 'DF',
+            'dt_referencia' => '2026-05-29',
+            'receita_bruta' => '1234.56',
+        ]);
     }
 
     private function createCebasSuasTable(): void
