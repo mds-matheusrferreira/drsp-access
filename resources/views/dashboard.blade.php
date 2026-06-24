@@ -106,7 +106,7 @@
                         ['CEBAS', 'STATUS DA CERTIFICAÇÃO'],
                         ['TIPO_PROCESSO', 'TIPO DE PROCESSO'],
                         ['PORTARIAS_SNAS', 'PORTARIA SNAS'],
-                        ['DT_PUBLICACAO_PORTARIA_SNAS_DOU', 'DT_PUBLICACAO_PORTARIA_SNAS_DOU'],
+                        ['DT_PUBICACAO_PORTARIA_SNAS_DOU', 'DT_PUBICACAO_PORTARIA_SNAS_DOU'],
                         ['PORTARIA_DECISAO_RECURSO_SNAS', 'PORTARIA DECISÃO RECURSO SNAS'],
                         ['OFERTAS', 'OFERTAS'],
                         ['DT_CERTIFICACAO_ANTERIOR_FIM', 'DATA DE CERTIFICAÇÃO ANTERIOR FIM'],

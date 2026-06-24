@@ -3,12 +3,34 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BaseExterna\AnaliseProcessoController;
 use App\Http\Controllers\BaseExterna\InserirProcessoController;
+use App\Http\Controllers\BaseExterna\NotaTecnicaController;
 use App\Http\Controllers\BaseExterna\ParecerTecnicoController;
 use App\Http\Controllers\Coordenacao\Automacoes\CneasController;
 use App\Http\Controllers\Coordenacao\Planilhas\ExternoController;
 use App\Http\Controllers\Coordenacao\Planilhas\VisdataCebasController;
 use App\Http\Controllers\PrincipalController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/_version', function () {
+    $v = cache()->remember('_app_version', 30, function () {
+        $latest = 0;
+        foreach ([app_path(), resource_path('views')] as $dir) {
+            if (! is_dir($dir)) {
+                continue;
+            }
+            $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
+            foreach ($it as $f) {
+                if ($f->isFile()) {
+                    $latest = max($latest, $f->getMTime());
+                }
+            }
+        }
+
+        return substr(md5((string) $latest), 0, 8);
+    });
+
+    return response()->json(['v' => $v]);
+})->middleware('throttle:30,1');
 
 Route::get('/', function () {
     return auth()->check()
@@ -41,6 +63,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/base-externa/analise-processo/parecer-tecnico', [ParecerTecnicoController::class, 'edit'])->name('base-externa.analise-processo.parecer.edit');
     Route::put('/base-externa/analise-processo/parecer-tecnico', [ParecerTecnicoController::class, 'update'])->name('base-externa.analise-processo.parecer.update');
     Route::get('/base-externa/analise-processo/parecer-tecnico/pdf', [ParecerTecnicoController::class, 'pdf'])->name('base-externa.analise-processo.parecer.pdf');
+    Route::get('/base-externa/analise-processo/nota-tecnica', [NotaTecnicaController::class, 'edit'])->name('base-externa.analise-processo.nota-tecnica.edit');
+    Route::put('/base-externa/analise-processo/nota-tecnica', [NotaTecnicaController::class, 'update'])->name('base-externa.analise-processo.nota-tecnica.update');
+    Route::get('/base-externa/analise-processo/nota-tecnica/pdf', [NotaTecnicaController::class, 'pdf'])->name('base-externa.analise-processo.nota-tecnica.pdf');
 
     Route::middleware('coordenacao.permission')->group(function () {
         // Coordenação e Planilhas

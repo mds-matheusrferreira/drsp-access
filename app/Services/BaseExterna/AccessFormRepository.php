@@ -14,22 +14,22 @@ class AccessFormRepository
     public function create(array $data): void
     {
         DB::table(self::TABLE)->insert([
-            'tipo_processo' => $data['tipo_processo'] ?? null,
-            'protocolo' => $data['protocolo'] ?? null,
-            'protocolo_sei' => $data['protocolo_sei'] ?? null,
-            'cnpj' => $data['cnpj'] ?? null,
-            'uf' => $data['uf'] ?? null,
-            'municipio' => $data['municipio'] ?? null,
-            'orgao_origem' => $data['orgao_origem'] ?? null,
-            'dt_protocolo' => $data['dt_protocolo'] ?? null,
-            'dt_recebimento_mds' => $data['dt_recebimento_mds'] ?? null,
-            'motivo_recebimento' => $data['motivo_recebimento'] ?? null,
-            'dt_certificacao_anterior_inicio' => $data['dt_certificacao_anterior_inicio'] ?? null,
-            'dt_certificacao_anterior_fim' => $data['dt_certificacao_anterior_fim'] ?? null,
-            'dt_publicacao_certificacao_anterior_dou' => $data['dt_publicacao_certificacao_anterior_dou'] ?? null,
-            'tempestividade' => $data['tempestividade'] ?? null,
-            'fase_processo' => $data['fase_processo'] ?? null,
-            'situacao_cneas' => $data['situacao_cneas'] ?? null,
+            'TIPO_PROCESSO' => $data['tipo_processo'] ?? null,
+            'PROTOCOLO' => $data['protocolo'] ?? null,
+            'PROTOCOLO_SEI' => $data['protocolo_sei'] ?? null,
+            'CNPJ' => $data['cnpj'] ?? null,
+            'UF' => $data['uf'] ?? null,
+            'MUNICIPIO' => $data['municipio'] ?? null,
+            'ORGAO_ORIGEM' => $data['orgao_origem'] ?? null,
+            'DT_PROTOCOLO' => $data['dt_protocolo'] ?? null,
+            'DT_RECEBIMENTO_MDS' => $data['dt_recebimento_mds'] ?? null,
+            'MOTIVO_RECEBIMENTO' => $data['motivo_recebimento'] ?? null,
+            'DT_CERTIFICACAO_ANTERIOR_INICIO' => $data['dt_certificacao_anterior_inicio'] ?? null,
+            'DT_CERTIFICACAO_ANTERIOR_FIM' => $data['dt_certificacao_anterior_fim'] ?? null,
+            'DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU' => $data['dt_publicacao_certificacao_anterior_dou'] ?? null,
+            'TEMPESTIVIDADE' => $data['tempestividade'] ?? null,
+            'FASE_PROCESSO' => $data['fase_processo'] ?? null,
+            'SITUAÇÃO_CNEAS' => $data['situacao_cneas'] ?? null,
         ]);
     }
 }

@@ -27,7 +27,7 @@ return new class extends Migration
         'dt_publicacao_certificacao_anterior_dou' => 'date',
         'tempestividade' => 'string',
         'fase_processo' => 'string',
-        'situacao_cneas' => 'text',
+        'SITUAÇÃO_CNEAS' => 'text',
     ];
 
     public function up(): void

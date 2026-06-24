@@ -14,7 +14,7 @@ class AccessProcessRepository
     /**
      * @var array<int, string>
      */
-    private const SEARCH_COLUMNS = ['protocolo', 'protocolo_sei', 'entidade', 'cnpj', 'municipio', 'uf'];
+    private const SEARCH_COLUMNS = ['PROTOCOLO', 'PROTOCOLO_SEI', 'ENTIDADE', 'CNPJ', 'MUNICIPIO', 'UF'];
 
     /**
      * @var array<int, string>
@@ -25,13 +25,13 @@ class AccessProcessRepository
      * @var array<int, string>
      */
     private const BOOLEAN_COLUMNS = [
-        'comprovante_inscricao_cnpj',
-        'estatuto_legal',
-        'ata_eleicao',
-        'comprovante_inscricao_cmas',
-        'relatorio_atividades',
-        'acolhimento_idosos',
-        'diligencia_email',
+        'COMPROVANTE_INSCRICAO_CNPJ',
+        'ESTATUTO_LEGAL',
+        'ATA_ELEICAO',
+        'COMPROVANTE_INSCRICAO_CMAS',
+        'RELATORIO_ATIVIDADES',
+        'ACOLHIMENTO_IDOSOS',
+        'DILIGENCIA_EMAIL',
     ];
 
     /**
@@ -55,19 +55,83 @@ class AccessProcessRepository
      * @var array<int, string>
      */
     private const PARECER_HEADER_COLUMNS = [
-        'entidade',
-        'protocolo',
-        'protocolo_sei',
-        'tipo_processo',
-        'cnpj',
-        'dt_protocolo',
-        'situacao_cneas',
-        'municipio',
-        'uf',
-        'dt_certificacao_anterior_inicio',
-        'dt_certificacao_anterior_fim',
-        'fase_processo',
-        'status_processo',
+        'ENTIDADE',
+        'PROTOCOLO',
+        'PROTOCOLO_SEI',
+        'TIPO_PROCESSO',
+        'CNPJ',
+        'DT_PROTOCOLO',
+        'SITUAÇÃO_CNEAS',
+        'MUNICIPIO',
+        'UF',
+        'DT_CERTIFICACAO_ANTERIOR_INICIO',
+        'DT_CERTIFICACAO_ANTERIOR_FIM',
+        'FASE_PROCESSO',
+        'STATUS_PROCESSO',
+    ];
+
+    /**
+     * @var array<string, array<int, string>>
+     */
+    private const NOTA_TECNICA_SECTION_DEFINITIONS = [
+        'Análise técnica' => [
+            'DOCUMENTOS_OBRIGATORIOS',
+            'DOCUMENTOS_PENDENTES',
+            'COMPATIBILIDADE_ESTATUTO_LOAS',
+            'DESTINO_PATRIMONIO_CASO_DISSOLUCAO',
+        ],
+        'Atividades do relatório' => [
+            'OFERTA_I',
+            'VAGAS_I',
+            'USUARIO_I',
+            'QUALIFICACAO_USUARIO_I',
+            'OFERTA_II',
+            'VAGAS_II',
+            'USUARIO_II',
+            'QUALIFICACAO_USUARIO_II',
+            'OFERTA_III',
+            'VAGAS_III',
+            'USUARIO_III',
+            'QUALIFICACAO_USUARIO_III',
+            'OFERTA_IV',
+            'VAGAS_IV',
+            'USUARIO_IV',
+            'QUALIFICACAO_USUARIO_Iv',
+            'OFERTA_V',
+            'VAGAS_V',
+            'USUARIO_V',
+            'QUALIFICACAO_USUARIO_V',
+            'OFERTA_VI',
+            'VAGAS_VI',
+            'USUARIO_VI',
+            'QUALIFICACAO_USUARIO_VI',
+            'OFERTA_VII',
+            'VAGAS_VII',
+            'USUARIO_VII',
+            'QUALIFICACAO_USUARIO_VII',
+            'OUTRAS_ATIVIDADES',
+        ],
+        'Gratuidade e manifestações' => [
+            'GRATUIDADE_PARECER',
+            'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO',
+            'ORGAO_ENCAMINHAMENTO',
+            'NOTA_TECNICA_OUTRO_ORGAO',
+            'OFERTAS_OUTRAS_AREAS',
+        ],
+        'Princípios de Atendimento da Assistência Social' => [
+            'CONTINUIDADE',
+            'PLANEJAMENTO',
+            'UNIVERSALIDADE',
+        ],
+        'Conclusão do parecer' => [
+            'DECISAO_PARECER',
+            'MOTIVO_INDEFERIMENTO',
+            'JUSTIFICATIVA_INDEFERIMENTO_NT',
+        ],
+        'Assinaturas' => [
+            'CGCEB_PARECER',
+            'DRSP_PARECER',
+        ],
     ];
 
     /**
@@ -75,62 +139,61 @@ class AccessProcessRepository
      */
     private const PARECER_SECTION_DEFINITIONS = [
         'Análise técnica' => [
-            'documentos_obrigatorios',
-            'documentos_pendentes',
-            'compatibilidade_estatuto_loas',
-            'destino_patrimonio_caso_dissolucao',
+            'DOCUMENTOS_OBRIGATORIOS',
+            'DOCUMENTOS_PENDENTES',
+            'COMPATIBILIDADE_ESTATUTO_LOAS',
+            'DESTINO_PATRIMONIO_CASO_DISSOLUCAO',
         ],
         'Atividades do relatório' => [
-            'oferta_i',
-            'vagas_i',
-            'usuario_i',
-            'qualificacao_usuario_i',
-            'oferta_ii',
-            'vagas_ii',
-            'usuario_ii',
-            'qualificacao_usuario_ii',
-            'oferta_iii',
-            'vagas_iii',
-            'usuario_iii',
-            'qualificacao_usuario_iii',
-            'oferta_iv',
-            'vagas_iv',
-            'usuario_iv',
-            'qualificacao_usuario_iv',
-            'oferta_v',
-            'vagas_v',
-            'usuario_v',
-            'qualificacao_usuario_v',
-            'oferta_vi',
-            'vagas_vi',
-            'usuario_vi',
-            'qualificacao_usuario_vi',
-            'oferta_vii',
-            'vagas_vii',
-            'usuario_vii',
-            'qualificacao_usuario_vii',
-            'outras_atividades',
+            'OFERTA_I',
+            'VAGAS_I',
+            'USUARIO_I',
+            'QUALIFICACAO_USUARIO_I',
+            'OFERTA_II',
+            'VAGAS_II',
+            'USUARIO_II',
+            'QUALIFICACAO_USUARIO_II',
+            'OFERTA_III',
+            'VAGAS_III',
+            'USUARIO_III',
+            'QUALIFICACAO_USUARIO_III',
+            'OFERTA_IV',
+            'VAGAS_IV',
+            'USUARIO_IV',
+            'QUALIFICACAO_USUARIO_Iv',
+            'OFERTA_V',
+            'VAGAS_V',
+            'USUARIO_V',
+            'QUALIFICACAO_USUARIO_V',
+            'OFERTA_VI',
+            'VAGAS_VI',
+            'USUARIO_VI',
+            'QUALIFICACAO_USUARIO_VI',
+            'OFERTA_VII',
+            'VAGAS_VII',
+            'USUARIO_VII',
+            'QUALIFICACAO_USUARIO_VII',
+            'OUTRAS_ATIVIDADES',
         ],
         'Gratuidade e manifestações' => [
-            'gratuidade_parecer',
-            'orgao_encaminhamento',
-            'nota_tecnica_outro_orgao',
-            'manifestacao_outro_ministerio',
-            'ofertas_outras_areas',
+            'GRATUIDADE_PARECER',
+            'ORGAO_ENCAMINHAMENTO',
+            'NOTA_TECNICA_OUTRO_ORGAO',
+            'OFERTAS_OUTRAS_AREAS',
         ],
         'Princípios de Atendimento da Assistência Social' => [
-            'continuidade',
-            'planejamento',
-            'universalidade',
+            'CONTINUIDADE',
+            'PLANEJAMENTO',
+            'UNIVERSALIDADE',
         ],
         'Conclusão do parecer' => [
-            'decisao_parecer',
-            'motivo_indeferimento',
-            'justificativa_indeferimento',
+            'DECISAO_PARECER',
+            'MOTIVO_INDEFERIMENTO',
+            'JUSTIFICATIVA_INDEFERIMENTO',
         ],
         'Assinaturas' => [
-            'cgceb_parecer',
-            'drsp_parecer',
+            'CGCEB_PARECER',
+            'DRSP_PARECER',
         ],
     ];
 
@@ -138,37 +201,38 @@ class AccessProcessRepository
      * @var array<string, string>
      */
     private const PARECER_LABELS = [
-        'protocolo' => 'Protocolo',
-        'protocolo_sei' => 'Protocolo SEI',
-        'tipo_processo' => 'Tipo de Processo',
-        'cnpj' => 'C.N.P.J.',
-        'dt_protocolo' => 'Data de Protocolo',
-        'entidade' => 'Entidade',
-        'municipio' => 'Município',
-        'uf' => 'uf',
-        'dt_certificacao_anterior_inicio' => 'Última Certificação (início)',
-        'dt_certificacao_anterior_fim' => 'Última Certificação (fim)',
-        'documentos_obrigatorios' => 'Documentos Obrigatórios',
-        'documentos_pendentes' => 'Documentos pendentes',
-        'compatibilidade_estatuto_loas' => 'Compatibilidade do estatuto com LOAS',
-        'destino_patrimonio_caso_dissolucao' => 'Destino do patrimônio em caso de dissolução',
-        'outras_atividades' => 'Atividades de outras áreas não certificáveis',
-        'gratuidade_parecer' => 'Gratuidade',
-        'orgao_encaminhamento' => 'Manifestação de outro órgão',
-        'nota_tecnica_outro_orgao' => 'Número(s)',
-        'manifestacao_outro_ministerio' => 'Manifestação de outro ministério',
-        'ofertas_outras_areas' => 'Outras atividades (saúde e/ou educação)',
-        'continuidade' => 'Continuidade',
-        'planejamento' => 'Planejamento',
-        'universalidade' => 'Universalidade',
-        'decisao_parecer' => 'Conclusão do parecer',
-        'motivo_indeferimento' => 'Motivos de indeferimento',
-        'justificativa_indeferimento' => 'Exposição de motivos',
-        'justificativa_indeferimento_nt' => 'Motivos de indeferimento',
-        'analista_parecer' => 'Analista',
-        'cgceb_parecer' => 'CGCEB/DRSP/SNAS/MDS',
-        'drsp_parecer' => 'DRSP/SNAS/MDS',
-        'responsavel_nota_tecnica' => 'Responsável Nota Técnica',
+        'PROTOCOLO' => 'Protocolo',
+        'PROTOCOLO_SEI' => 'Protocolo SEI',
+        'TIPO_PROCESSO' => 'Tipo de Processo',
+        'CNPJ' => 'C.N.P.J.',
+        'DT_PROTOCOLO' => 'Data de Protocolo',
+        'ENTIDADE' => 'Entidade',
+        'MUNICIPIO' => 'Município',
+        'UF' => 'uf',
+        'DT_CERTIFICACAO_ANTERIOR_INICIO' => 'Última Certificação (início)',
+        'DT_CERTIFICACAO_ANTERIOR_FIM' => 'Última Certificação (fim)',
+        'DOCUMENTOS_OBRIGATORIOS' => 'Documentos Obrigatórios',
+        'DOCUMENTOS_PENDENTES' => 'Documentos pendentes',
+        'COMPATIBILIDADE_ESTATUTO_LOAS' => 'Compatibilidade do estatuto com LOAS',
+        'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => 'Destino do patrimônio em caso de dissolução',
+        'OUTRAS_ATIVIDADES' => 'Atividades de outras áreas não certificáveis',
+        'GRATUIDADE_PARECER' => 'Gratuidade',
+        'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO' => 'Tipo de encaminhamento',
+        'ORGAO_ENCAMINHAMENTO' => 'Manifestação de outro órgão',
+        'NOTA_TECNICA_OUTRO_ORGAO' => 'Número(s)',
+        'MANIFESTACAO_OUTRO_MINISTERIO' => 'Manifestação de outro ministério',
+        'OFERTAS_OUTRAS_AREAS' => 'Outras atividades (saúde e/ou educação)',
+        'CONTINUIDADE' => 'Continuidade',
+        'PLANEJAMENTO' => 'Planejamento',
+        'UNIVERSALIDADE' => 'Universalidade',
+        'DECISAO_PARECER' => 'Conclusão do parecer',
+        'MOTIVO_INDEFERIMENTO' => 'Motivos de indeferimento',
+        'JUSTIFICATIVA_INDEFERIMENTO' => 'Exposição de motivos',
+        'JUSTIFICATIVA_INDEFERIMENTO_NT' => 'Observações',
+        'ANALISTA_PARECER' => 'Analista',
+        'CGCEB_PARECER' => 'CGCEB/DRSP/SNAS/MDS',
+        'DRSP_PARECER' => 'DRSP/SNAS/MDS',
+        'RESPONSAVEL_NOTA_TECNICA' => 'Responsável Nota Técnica',
     ];
 
     public function tableExists(): bool
@@ -227,9 +291,14 @@ class AccessProcessRepository
             ];
         }
 
-        $query = DB::table(self::TABLE)->where(function ($query) use ($searchColumns, $term) {
+        $strippedTerm = preg_replace('/[^0-9]/', '', $term);
+
+        $query = DB::table(self::TABLE)->where(function ($query) use ($searchColumns, $term, $strippedTerm) {
             foreach ($searchColumns as $column) {
                 $query->orWhere($column, 'like', '%'.$term.'%');
+                if ($column === 'CNPJ' && $strippedTerm !== '' && $strippedTerm !== $term) {
+                    $query->orWhere($column, 'like', '%'.$strippedTerm.'%');
+                }
             }
         });
 
@@ -239,7 +308,7 @@ class AccessProcessRepository
             ->get()
             ->map(function ($row) {
                 $data = (array) $row;
-                $protocol = trim((string) ($data['protocolo'] ?? ''));
+                $protocol = trim((string) ($data['PROTOCOLO'] ?? ''));
                 $protocolCount = $protocol === '' ? 0 : $this->protocolCount($protocol);
 
                 $data['_can_edit'] = $protocol !== '' && $protocolCount === 1;
@@ -265,11 +334,11 @@ class AccessProcessRepository
     {
         $protocolo = trim($protocolo);
 
-        if (! $this->tableExists() || $protocolo === '' || ! Schema::hasColumn(self::TABLE, 'protocolo')) {
+        if (! $this->tableExists() || $protocolo === '' || ! Schema::hasColumn(self::TABLE, 'PROTOCOLO')) {
             return 0;
         }
 
-        return DB::table(self::TABLE)->where('protocolo', $protocolo)->count();
+        return DB::table(self::TABLE)->where('PROTOCOLO', $protocolo)->count();
     }
 
     /**
@@ -283,7 +352,7 @@ class AccessProcessRepository
             return null;
         }
 
-        $row = DB::table(self::TABLE)->where('protocolo', $protocolo)->first();
+        $row = DB::table(self::TABLE)->where('PROTOCOLO', $protocolo)->first();
 
         return $row ? (array) $row : null;
     }
@@ -306,7 +375,7 @@ class AccessProcessRepository
         }
 
         return DB::table(self::TABLE)
-            ->where('protocolo', $originalProtocolo)
+            ->where('PROTOCOLO', $originalProtocolo)
             ->update($sanitized);
     }
 
@@ -320,8 +389,8 @@ class AccessProcessRepository
         $types = $this->columnTypes();
         $sanitized = [];
 
-        if (($data['documentos_obrigatorios'] ?? null) !== 'Não apresentou todos os documentos') {
-            $data['documentos_pendentes'] = null;
+        if (($data['DOCUMENTOS_OBRIGATORIOS'] ?? null) !== 'Não apresentou todos os documentos') {
+            $data['DOCUMENTOS_PENDENTES'] = null;
         }
 
         foreach ($columns as $column) {
@@ -331,11 +400,11 @@ class AccessProcessRepository
 
             $value = $data[$column];
 
-            if ($column === 'documentos_pendentes' && ($data['documentos_obrigatorios'] ?? null) !== 'Não apresentou todos os documentos') {
+            if ($column === 'DOCUMENTOS_PENDENTES' && ($data['DOCUMENTOS_OBRIGATORIOS'] ?? null) !== 'Não apresentou todos os documentos') {
                 $value = null;
             }
 
-            if ($column === 'motivo_indeferimento' && ($data['decisao_parecer'] ?? null) !== 'INDEFERIDO') {
+            if ($column === 'MOTIVO_INDEFERIMENTO' && ($data['DECISAO_PARECER'] ?? null) !== 'INDEFERIDO') {
                 $value = null;
             }
 
@@ -349,7 +418,7 @@ class AccessProcessRepository
                 $value = $value === '' ? null : $value;
             }
 
-            if ($value !== null && str_starts_with($column, 'dt_') && is_string($value) && preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $value)) {
+            if ($value !== null && str_starts_with($column, 'DT_') && is_string($value) && preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $value)) {
                 $value = Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
             }
 
@@ -387,12 +456,12 @@ class AccessProcessRepository
         }
 
         $automaticGroups = [
-            'Datas e recebimento' => fn (string $field) => str_starts_with($field, 'dt_') || str_contains($field, 'recebimento') || str_contains($field, 'tempestividade'),
-            'Encaminhamentos' => fn (string $field) => str_contains($field, 'encaminhamento') || str_contains($field, '_enc'),
-            'Diligências' => fn (string $field) => str_contains($field, 'diligencia') || str_contains($field, 'complementar'),
-            'Parecer/decisão' => fn (string $field) => str_contains($field, 'parecer') || str_contains($field, 'decisao') || str_contains($field, 'portaria') || str_contains($field, 'indefer'),
-            'Requisitos legais' => fn (string $field) => str_contains($field, 'cnpj') || str_contains($field, 'estatuto') || str_contains($field, 'ata_') || str_contains($field, 'cmas') || str_contains($field, 'relatorio') || str_contains($field, 'gratuidade') || str_contains($field, 'loas') || str_contains($field, 'cneas'),
-            'Ofertas/usuários/vagas' => fn (string $field) => str_contains($field, 'oferta') || str_contains($field, 'usuario') || str_contains($field, 'vagas') || str_contains($field, 'acolhimento') || str_contains($field, 'rede_assistencia'),
+            'Datas e recebimento' => fn (string $field) => str_starts_with($field, 'DT_') || str_contains($field, 'RECEBIMENTO') || str_contains($field, 'TEMPESTIVIDADE'),
+            'Encaminhamentos' => fn (string $field) => str_contains($field, 'ENCAMINHAMENTO') || str_contains($field, '_ENC'),
+            'Diligências' => fn (string $field) => str_contains($field, 'DILIGENCIA') || str_contains($field, 'COMPLEMENTAR'),
+            'Parecer/decisão' => fn (string $field) => str_contains($field, 'PARECER') || str_contains($field, 'DECISAO') || str_contains($field, 'PORTARIA') || str_contains($field, 'INDEFER'),
+            'Requisitos legais' => fn (string $field) => str_contains($field, 'CNPJ') || str_contains($field, 'ESTATUTO') || str_contains($field, 'ATA_') || str_contains($field, 'CMAS') || str_contains($field, 'RELATORIO') || str_contains($field, 'GRATUIDADE') || str_contains($field, 'LOAS') || str_contains($field, 'CNEAS'),
+            'Ofertas/usuários/vagas' => fn (string $field) => str_contains($field, 'OFERTA') || str_contains($field, 'USUARIO') || str_contains($field, 'VAGAS') || str_contains($field, 'ACOLHIMENTO') || str_contains($field, 'REDE_ASSISITENCIA'),
         ];
 
         foreach ($automaticGroups as $title => $matches) {
@@ -426,7 +495,7 @@ class AccessProcessRepository
      */
     public function parecerTecnicoColumns(): array
     {
-        $columns = array_values(array_diff(self::PARECER_HEADER_COLUMNS, ['protocolo']));
+        $columns = array_values(array_diff(self::PARECER_HEADER_COLUMNS, ['PROTOCOLO']));
 
         foreach (self::PARECER_SECTION_DEFINITIONS as $fields) {
             $columns = array_merge($columns, $fields);
@@ -444,6 +513,47 @@ class AccessProcessRepository
         $sections = [];
 
         foreach (self::PARECER_SECTION_DEFINITIONS as $title => $fields) {
+            $present = array_values(array_intersect($fields, $columns));
+
+            if ($present !== []) {
+                $sections[] = ['title' => $title, 'fields' => $present];
+            }
+        }
+
+        return $sections;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function notaTecnicaHeaderColumns(): array
+    {
+        return array_values(array_intersect(self::PARECER_HEADER_COLUMNS, $this->columns()));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function notaTecnicaColumns(): array
+    {
+        $columns = array_values(array_diff(self::PARECER_HEADER_COLUMNS, ['PROTOCOLO']));
+
+        foreach (self::NOTA_TECNICA_SECTION_DEFINITIONS as $fields) {
+            $columns = array_merge($columns, $fields);
+        }
+
+        return array_values(array_intersect(array_unique($columns), $this->columns()));
+    }
+
+    /**
+     * @return array<int, array{title: string, fields: array<int, string>}>
+     */
+    public function notaTecnicaSections(): array
+    {
+        $columns = $this->columns();
+        $sections = [];
+
+        foreach (self::NOTA_TECNICA_SECTION_DEFINITIONS as $title => $fields) {
             $present = array_values(array_intersect($fields, $columns));
 
             if ($present !== []) {
@@ -478,12 +588,13 @@ class AccessProcessRepository
             return 'number';
         }
 
-        if (str_starts_with($field, 'dt_')) {
+        if (str_starts_with($field, 'DT_')) {
             return 'date';
         }
 
+        $fieldLower = strtolower($field);
         foreach (self::TEXTAREA_KEYWORDS as $keyword) {
-            if (str_contains($field, $keyword)) {
+            if (str_contains($fieldLower, $keyword)) {
                 return 'textarea';
             }
         }
@@ -511,166 +622,166 @@ class AccessProcessRepository
     {
         return [
             'Identificação' => [
-                'protocolo',
-                'protocolo_sei',
-                'tipo_processo',
-                'entidade',
-                'cnpj',
-                'email_entidade',
-                'municipio',
-                'uf',
-                'cod_localizacao',
-                'processos_anexados',
-                'status_processo',
-                'fase_processo',
-                'fase_recurso',
-                'base_orgao',
-                'ativo',
-                'passivo',
-                'tipo_distribuicao',
+                'PROTOCOLO',
+                'PROTOCOLO_SEI',
+                'TIPO_PROCESSO',
+                'ENTIDADE',
+                'CNPJ',
+                'EMAIL_ENTIDADE',
+                'MUNICIPIO',
+                'UF',
+                'COD_LOCALIZACAO',
+                'PROCESSOS_ANEXADOS',
+                'STATUS_PROCESSO',
+                'FASE_PROCESSO',
+                'FASE_RECURSO',
+                'BASE_ORGAO',
+                'ATIVO',
+                'PASSIVO',
+                'TIPO_DISTRIBUICAO',
             ],
             'Datas e recebimento' => [
-                'dt_protocolo',
-                'orgao_origem',
-                'dt_recebimento_mds',
-                'motivo_recebimento',
-                'dt_certificacao_anterior_inicio',
-                'dt_certificacao_anterior_fim',
-                'tempestividade',
-                'dt_publicacao_certificacao_anterior_dou',
-                'orgao_certificacao_anterior',
-                'dt_inicio_certificacao_atual',
-                'dt_fim_certificacao_atual',
-                'dt_atualizacao',
-                'dt_distribuicao',
+                'DT_PROTOCOLO',
+                'ORGAO_ORIGEM',
+                'DT_RECEBIMENTO_MDS',
+                'MOTIVO_RECEBIMENTO',
+                'DT_CERTIFICACAO_ANTERIOR_INICIO',
+                'DT_CERTIFICACAO_ANTERIOR_FIM',
+                'TEMPESTIVIDADE',
+                'DT_PUBLICACAO_CERTIFICACAO_ANTERIOR_DOU',
+                'ORGAO_CERTIFICACAO_ANTERIOR',
+                'DT_INICIO_CERTIFICACAO_ATUAL',
+                'DT_FIM_CERTIFICACAO_ATUAL',
+                'DT_ATUALIZACAO',
+                'DT_DISTRIBUICAO',
             ],
             'Encaminhamentos' => [
-                'orgao_encaminhamento',
-                'oficio_encaminhamento',
-                'dt_encaminhamento',
-                'motivo_encaminhamento',
-                'dt_retorno_mds',
-                'oficio_retorno',
-                'pedido_manifestacao_encaminhamento',
-                'encaminhamento_manifestacao',
-                'responsavel_enc',
+                'ORGAO_ENCAMINHAMENTO',
+                'OFICIO_ENCAMINHAMENTO',
+                'DT_ENCAMINHAMENTO',
+                'MOTIVO_ENCAMINHAMENTO',
+                'DT_RETORNO_MDS',
+                'OFICIO_RETORNO',
+                'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO',
+                'ENCAMINHAMENTO_MANIFESTACAO',
+                'REPONSAVEL_ENC',
             ],
             'Diligências' => [
-                'oficio_diligencia',
-                'dt_oficio_diligencia',
-                'dt_envio_oficio',
-                'dt_recebimento_ar_diligencia',
-                'dt_protocolo_resposta_diligencia',
-                'oficio_complementar',
-                'dt_oficio_complementar',
-                'dt_envio_oficio_complementar',
-                'dt_recebimento_ar_complementar',
-                'dt_protocolo_resposta_complementar',
-                'diligencia_email',
-                'dt_envio_diligencia',
-                'dt_diligencia_email',
-                'obs_email_diligencia',
+                'OFICIO_DILIGENCIA',
+                'DT_OFICIO_DILIGENCIA',
+                'DT_ENVIO_OFICIO',
+                'DT_RECEBIMENTO_AR_DILIGENCIA',
+                'DT_PROTOCOLO_RESPOSTA_DILIGENCIA',
+                'OFICIO_COMPLEMENTAR',
+                'DT_OFICIO_COMPLEMENTAR',
+                'DT_ENVIO_OFICIO_COMPLEMENTAR',
+                'DT_RECEBIMENTO_AR_COMPLEMENTAR',
+                'DT_PROTOCOLO_RESPOSTA_COMPLEMENTAR',
+                'DILIGENCIA_EMAIL',
+                'DT_ENVIO_DILIGENCIA',
+                'DT_DILIGENCIA_EMAIL',
+                'OBS_EMAIL_DILIGENCIA',
             ],
             'Parecer/decisão' => [
-                'parecer_nota_tecnica',
-                'decisao_parecer',
-                'motivo_indeferimento',
-                'portarias_snas',
-                'dt_decisao_snas',
-                'dt_publicacao_portaria_snas_dou',
-                'item_portaria_decisao_snas',
-                'pagina_decisao_snas_dou',
-                'ministerio_certificador_competente',
-                'juizo_acao_judicial',
-                'acao_judicial',
-                'protocolo_recurso_snas',
-                'dt_protocolo_recurso_snas',
-                'parecer_nota_tecnica_recurso_snas',
-                'decisao_reconsideracao_snas',
-                'portaria_decisao_recurso_snas',
-                'dt_portaria_reconsideracao_snas',
-                'dt_publicacao_dou_reconsideracao_snas',
-                'decisao_recurso_gm',
-                'motivo_indeferimento_gm',
-                'portaria_decisao_recurso_gm',
-                'dt_portaria_decisao_recurso_gm',
-                'dt_publicacao_dou_portaria_decisao_recurso_gm',
-                'justificativa_indeferimento',
-                'justificativa_indeferimento_nt',
-                'responsavel_nota_tecnica',
+                'PARECER_NOTA_TECNICA',
+                'DECISAO_PARECER',
+                'MOTIVO_INDEFERIMENTO',
+                'PORTARIAS_SNAS',
+                'DT_DECISAO_SNAS',
+                'DT_PUBICACAO_PORTARIA_SNAS_DOU',
+                'ITEM_PORTARIA_DECISAO_SNAS',
+                'PAGINA_DECISAO_SNAS_DOU',
+                'MINISTERIO_CERTIFICADOR_COMPETENTE',
+                'JUIZO_ACAO_JUDICIAL',
+                'ACAO_JUDICIAL',
+                'PROTOCOLO_RECURSO_SNAS',
+                'DT_PROTOCOLO_RECURSO_SNAS',
+                'PARECER_NOTA_TECNICA_RECURSO_SNAS',
+                'DECISAO_RECONSIDERACAO_SNAS',
+                'PORTARIA_DECISAO_RECURSO_SNAS',
+                'DT_PORTARIA_RECONSIDERACAO_SNAS',
+                'DT_PUBLICACAO_DOU_RECONSIDERACAO_SNAS',
+                'DECISAO_RECURSO_GM',
+                'MOTIVO_INDEFERMINENTO_GM',
+                'PORTARIA_DECISAO_RECURSO_GM',
+                'DT_PORTARIA_DECISAO_RECURSO_GM',
+                'DT_PUBLICACAO_DOU_PORTARIA_DECISAO_RECURSO_GM',
+                'JUSTIFICATIVA_INDEFERIMENTO',
+                'JUSTIFICATIVA_INDEFERIMENTO_NT',
+                'RESPONSAVEL_NOTA_TECNICA',
             ],
             'Requisitos legais' => [
-                'perfil_risco',
-                'comprovante_inscricao_cnpj',
-                'comprovante_inscricao_cnpj_fls',
-                'estatuto_legal',
-                'estatuto_legal_fls',
-                'destino_patrimonio_caso_dissolucao',
-                'ata_eleicao',
-                'ata_eleicao_fls',
-                'comprovante_inscricao_cmas',
-                'comprovante_inscricao_cmas_fls',
-                'relatorio_atividades',
-                'relatorio_atividades_fls',
-                'gratuidade',
-                'gratuidade_fls',
-                'receita_bruta_anual',
-                'dt_requisitos_legais',
-                'analista_requisitos_legais',
-                'documentos_obrigatorios',
-                'documentos_pendentes',
-                'compatibilidade_estatuto_loas',
-                'atividades_relatorio',
-                'gratuidade_parecer',
-                'continuidade_planejamento_universalidade',
-                'continuidade',
-                'planejamento',
-                'universalidade',
-                'situacao_cneas',
-                'supervisao_recomendada',
-                'responsavel_supervisao',
+                'PERFIL_RISCO',
+                'COMPROVANTE_INSCRICAO_CNPJ',
+                'COMPROVANTE_INSCRICAO_CNPJ_FLS',
+                'ESTATUTO_LEGAL',
+                'ESTATUTO_LEGAL_FLS',
+                'DESTINO_PATRIMONIO_CASO_DISSOLUCAO',
+                'ATA_ELEICAO',
+                'ATA_ELEICAO_FLS',
+                'COMPROVANTE_INSCRICAO_CMAS',
+                'COMPROVANTE_INSCRICAO_CMAS_FLS',
+                'RELATORIO_ATIVIDADES',
+                'RELATORIO_ATIVIDADES_FLS',
+                'GRATUIDADE',
+                'GRATUIDADE_FLS',
+                'RECEITA_BRUTA_ANUAL',
+                'DT_REQUISITOS_LEGAIS',
+                'ANALISTA_REQUISITOS_LEGAIS',
+                'DOCUMENTOS_OBRIGATORIOS',
+                'DOCUMENTOS_PENDENTES',
+                'COMPATIBILIDADE_ESTATUTO_LOAS',
+                'ATIVIDADES_RELATORIO',
+                'GRATUIDADE_PARECER',
+                'CONTINUIDADE_PLANEJAMENTO_UNIVERSALIDADE',
+                'CONTINUIDADE',
+                'PLANEJAMENTO',
+                'UNIVERSALIDADE',
+                'SITUAÇÃO_CNEAS',
+                'SUPERVISAO_RECOMENDADA',
+                'RESPONSAVEL_SUPERVISAO',
             ],
             'Ofertas/usuários/vagas' => [
-                'rede_assistencia_social',
-                'acolhimento_idosos',
-                'caracteristica_i',
-                'oferta_i',
-                'usuario_i',
-                'vagas_i',
-                'qualificacao_usuario_i',
-                'caracteristica_ii',
-                'oferta_ii',
-                'usuario_ii',
-                'vagas_ii',
-                'qualificacao_usuario_ii',
-                'caracteristica_iii',
-                'oferta_iii',
-                'usuario_iii',
-                'vagas_iii',
-                'qualificacao_usuario_iii',
-                'caracteristica_iv',
-                'oferta_iv',
-                'usuario_iv',
-                'vagas_iv',
-                'qualificacao_usuario_iv',
-                'caracteristica_v',
-                'oferta_v',
-                'usuario_v',
-                'vagas_v',
-                'qualificacao_usuario_v',
-                'oferta_vi',
-                'usuario_vi',
-                'vagas_vi',
-                'qualificacao_usuario_vi',
-                'oferta_vii',
-                'usuario_vii',
-                'vagas_vii',
-                'qualificacao_usuario_vii',
-                'outras_ofertas',
-                'outras_ofertas_i',
-                'ofertas_outras_areas',
-                'outras_atividades',
-                'caracteristicas_ofertas',
+                'REDE_ASSISITENCIA_SOCIAL',
+                'ACOLHIMENTO_IDOSOS',
+                'CARACTERISTICA_I',
+                'OFERTA_I',
+                'USUARIO_I',
+                'VAGAS_I',
+                'QUALIFICACAO_USUARIO_I',
+                'CARACTERISTICA_II',
+                'OFERTA_II',
+                'USUARIO_II',
+                'VAGAS_II',
+                'QUALIFICACAO_USUARIO_II',
+                'CARACTERISTICA_III',
+                'OFERTA_III',
+                'USUARIO_III',
+                'VAGAS_III',
+                'QUALIFICACAO_USUARIO_III',
+                'CARACTERISTICA_IV',
+                'OFERTA_IV',
+                'USUARIO_IV',
+                'VAGAS_IV',
+                'QUALIFICACAO_USUARIO_Iv',
+                'CARACTERISTICA_V',
+                'OFERTA_V',
+                'USUARIO_V',
+                'VAGAS_V',
+                'QUALIFICACAO_USUARIO_V',
+                'OFERTA_VI',
+                'USUARIO_VI',
+                'VAGAS_VI',
+                'QUALIFICACAO_USUARIO_VI',
+                'OFERTA_VII',
+                'USUARIO_VII',
+                'VAGAS_VII',
+                'QUALIFICACAO_USUARIO_VII',
+                'OUTRAS_OFERTAS',
+                'OUTRAS_OFERTAS_I',
+                'OFERTAS_OUTRAS_AREAS',
+                'OUTRAS_ATIVIDADES',
+                'CARACTERISITICAS_OFERTAS',
             ],
         ];
     }
@@ -690,27 +801,27 @@ class AccessProcessRepository
         return in_array($databaseType, ['integer', 'bigint', 'float', 'double', 'decimal'], true)
             || str_starts_with((string) $databaseType, 'decimal')
             || in_array($field, [
-                'cod_localizacao',
-                'item_portaria_decisao_snas',
-                'pagina_decisao_snas_dou',
-                'receita_bruta_anual',
-                'analista_manifestacao',
-                'cgceb_manifestacao',
-                'drsp_manifestacao',
-                'manifestacao_outro_ministerio',
-                'analista_parecer',
-                'cgceb_parecer',
-                'drsp_parecer',
-                'isencao_usufruida',
-                'ass_snas',
-                'responsavel_supervisao',
-                'vagas_i',
-                'vagas_ii',
-                'vagas_iii',
-                'vagas_iv',
-                'vagas_v',
-                'vagas_vi',
-                'vagas_vii',
+                'COD_LOCALIZACAO',
+                'ITEM_PORTARIA_DECISAO_SNAS',
+                'PAGINA_DECISAO_SNAS_DOU',
+                'RECEITA_BRUTA_ANUAL',
+                'ANALISTA_MANIFESTACAO',
+                'CGCEB_MANIFESTACACAO',
+                'DRSP_MANIFESTACAO',
+                'MANIFESTACAO_OUTRO_MINISTERIO',
+                'ANALISTA_PARECER',
+                'CGCEB_PARECER',
+                'DRSP_PARECER',
+                'ISENCAO_USUFRUIDA',
+                'ASS SNAS',
+                'RESPONSAVEL_SUPERVISAO',
+                'VAGAS_I',
+                'VAGAS_II',
+                'VAGAS_III',
+                'VAGAS_IV',
+                'VAGAS_V',
+                'VAGAS_VI',
+                'VAGAS_VII',
             ], true);
     }
 }

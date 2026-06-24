@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
-    <title>Parecer Técnico - {{ $originalProtocolo }}</title>
+    <title>Nota Técnica - {{ $originalProtocolo }}</title>
     <style>
         @page { margin: 150px 38px 24px; }
         body { color: #000; font-family: DejaVu Sans, sans-serif; font-size: 10px; line-height: 1.22; }
@@ -18,26 +18,26 @@
         margin-bottom: 0;
         width: 100%;
         }
-        .header-container img { 
+        .header-container img {
         width: 55px;          /* Mudamos para width fixa (em vez de height) para encorpar o SVG */
         height: 55px;         /* Força a proporção quadrada típica do brasão */
-        display: block; 
-        margin: 0 auto 0px auto; 
+        display: block;
+        margin: 0 auto 0px auto;
         padding: 0;
         }
-        .header-text { 
-        font-size: 9px; 
-        font-weight: normal; 
-        text-transform: uppercase; 
+        .header-text {
+        font-size: 9px;
+        font-weight: normal;
+        text-transform: uppercase;
         margin-top: 2px;      /* Distância mínima controlada milimetricamente */
-        }       
+        }
         .min-cidadania { font-size: 10px; font-weight: bold; margin-top: 0px; } /* Apenas o Ministério da Cidadania em negrito */
 
         /* Estrutura de Grid por pontos flutuantes (Compatível com Dompdf) */
         .row { clear: both; margin-bottom: 5px; width: 100%; }
         .row:after { clear: both; content: ''; display: table; }
         .col { float: left; min-height: 13px; }
-        
+
         /* Definições de Largura das Colunas */
         .w-10 { width: 10%; }
         .w-15 { width: 15%; }
@@ -57,7 +57,7 @@
         .w-75 { width: 75%; }
         .w-78 { width: 78%; }
         .w-82 { width: 82%; }
-        
+
         /* Estilização de Rótulos e Seções */
         .label { font-weight: bold; text-transform: uppercase; }
         .nowrap { white-space: nowrap; }
@@ -67,13 +67,13 @@
         .textarea-box { border: 1px solid #b5b5b5; min-height: 38px; padding: 4px; }
         .exposition-label { text-align: right; padding-right: 8px; width: 17%; }
         .exposition-box { width: 80%; }
-        
+
         /* Tabela de Atividades */
         table { border-collapse: collapse; width: 100%; margin-top: 5px; }
         th { font-size: 8px; font-weight: bold; text-align: center; text-transform: uppercase; border: none; padding-bottom: 3px; }
         td { border: 1px solid #b5b5b5; font-size: 8px; min-height: 12px; padding: 2px 3px; vertical-align: top; }
         .activities td { height: 13px; }
-        
+
         /* Rodapé e Assinaturas */
         .closing-block { page-break-inside: avoid; break-inside: avoid; margin-top: 15px; }
         .footer { margin-top: 0; }
@@ -146,9 +146,8 @@
 
     <!-- Informações do Processo -->
     <div class="row">
-        <div class="col w-58">&nbsp;</div>
-        <div class="col w-20 label">Situação CNEAS:</div>
-        <div class="col w-22">{{ $v('situacao_cneas', $v('situacao_cneas')) }}</div>
+        <div class="col w-18 label">Documento:</div>
+        <div class="col w-82">Nota técnica</div>
     </div>
 
     <div class="row">
@@ -181,6 +180,19 @@
         <div class="col w-25 label nowrap">Última Certificação:</div>
         <div class="col w-75">{{ $certificacao }}</div>
     </div>
+
+    @php
+        $pedidoManifestacao = trim((string) $v('pedido_manifestacao_encaminhamento'));
+        $orgaoEncaminhamento = trim($list('orgao_encaminhamento'));
+        $bannerTexto = trim($pedidoManifestacao . ($orgaoEncaminhamento ? ' ' . $orgaoEncaminhamento : ''));
+    @endphp
+    @if ($bannerTexto !== '')
+        <div class="row" style="margin-top: 8px; margin-bottom: 8px;">
+            <div style="border: 1px solid #b5b5b5; padding: 4px 8px; text-align: center; font-weight: bold;">
+                {{ $bannerTexto }}
+            </div>
+        </div>
+    @endif
 
     <!-- I) Documentos Obrigatórios -->
     <div class="section-title">Análise Técnica</div>
@@ -287,7 +299,7 @@
         <span class="label">Universalidade</span> {{ $v('universalidade') }}
     </div>
 
-    <!-- VII) Conclusão do Parecer -->
+    <!-- VII) Conclusão -->
     <div class="row" style="margin-top: 8px;">
         <div class="col w-25 label">VII) Conclusão do parecer:</div>
         <div class="col w-75">
@@ -316,25 +328,27 @@
         <div class="row decision-text" style="margin-top: 18px;">
             {{ $supervisaoText }}
         </div>
-    @elseif ($v('decisao_parecer') === 'INDEFERIDO')
+    @else
         <div class="analysis-block">
-            <div class="analysis-title">Análise:</div>
-            <div class="textarea-box decision-text" style="text-align: justify;">{{ trim((string) $v('justificativa_indeferimento')) !== '' ? $v('justificativa_indeferimento') : 'Não se aplica' }}</div>
+            <div class="analysis-title">Observações:</div>
+            <div class="textarea-box decision-text" style="text-align: justify;">{{ trim((string) $v('justificativa_indeferimento_nt')) !== '' ? $v('justificativa_indeferimento_nt') : 'Não se aplica' }}</div>
         </div>
 
-        <div class="row decision-text" style="margin-top: 18px;">
-            A análise das atividades descritas no referido processo foi fundamentada na Lei Orgânica da Assistência Social (Lei nº 8.742/1993) e na legislação pertinente à certificação ({{ $certificacaoLegislacao }}), bem como na Tipificação Nacional dos Serviços Socioassistenciais (Resolução CNAS nº 109/2009) e nas Resoluções CNAS nº 27, 33 e 34/2011.
-        </div>
+        @if ($v('decisao_parecer') === 'INDEFERIDO')
+            <div class="row decision-text" style="margin-top: 18px;">
+                A análise das atividades descritas no referido processo foi fundamentada na Lei Orgânica da Assistência Social (Lei nº 8.742/1993) e na legislação pertinente à certificação ({{ $certificacaoLegislacao }}), bem como na Tipificação Nacional dos Serviços Socioassistenciais (Resolução CNAS nº 109/2009) e nas Resoluções CNAS nº 27, 33 e 34/2011.
+            </div>
 
-        @if (! $isLei187)
+            @if (! $isLei187)
+                <div class="row decision-text" style="margin-top: 10px;">
+                    A entidade poderá recorrer da decisão em até trinta (30) dias a partir da publicação no Diário Oficial da União (D.O.U.). Ressalta-se que o recurso não tem efeito suspensivo, ou seja, a partir da publicação do indeferimento a entidade perde o direito à isenção prevista na legislação pertinente à certificação ({{ $certificacaoLegislacao }}). Caso o fundamento do indeferimento seja a não apresentação de documentação obrigatória, a entidade poderá apresentar em sede de recurso a documentação faltante indicada acima.
+                </div>
+            @endif
+
             <div class="row decision-text" style="margin-top: 10px;">
-                A entidade poderá recorrer da decisão em até trinta (30) dias a partir da publicação no Diário Oficial da União (D.O.U.). Ressalta-se que o recurso não tem efeito suspensivo, ou seja, a partir da publicação do indeferimento a entidade perde o direito à isenção prevista na legislação pertinente à certificação ({{ $certificacaoLegislacao }}). Caso o fundamento do indeferimento seja a não apresentação de documentação obrigatória, a entidade poderá apresentar em sede de recurso a documentação faltante indicada acima.
+                "O Cadastro Nacional de Entidades de Assistência Social (CNEAS) é um instrumento de reconhecimento e de monitoramento das ofertas socioassistenciais prestadas por organizações da sociedade civil. Seu preenchimento é responsabilidade dos órgãos gestores municipais. Para consultar a situação da sua entidade, acesse http://aplicacoes.mds.gov.br/cneas/consultacneas. Caso não a encontre, procure pelo órgão gestor da assistência social e solicite o cadastramento no CNEAS."
             </div>
         @endif
-
-        <div class="row decision-text" style="margin-top: 10px;">
-            “O Cadastro Nacional de Entidades de Assistência Social (CNEAS) é um instrumento de reconhecimento e de monitoramento das ofertas socioassistenciais prestadas por organizações da sociedade civil. Seu preenchimento é responsabilidade dos órgãos gestores municipais. Para consultar a situação da sua entidade, acesse http://aplicacoes.mds.gov.br/cneas/consultacneas. Caso não a encontre, procure pelo órgão gestor da assistência social e solicite o cadastramento no CNEAS.”
-        </div>
     @endif
 
     <div class="closing-block">

@@ -97,16 +97,14 @@ class AnaliseProcessoController extends Controller
     private function summaryColumns(): array
     {
         return [
-            'protocolo',
-            'dt_protocolo',
-            'protocolo_sei',
-            'entidade',
-            'cnpj',
-            'municipio',
-            'uf',
-            'tipo_processo',
-            'fase_processo',
-            'status_processo',
+            'PROTOCOLO',
+            'DT_PROTOCOLO',
+            'PROTOCOLO_SEI',
+            'ENTIDADE',
+            'CNPJ',
+            'MUNICIPIO',
+            'UF',
+            'ORGAO_ORIGEM',
         ];
     }
 
