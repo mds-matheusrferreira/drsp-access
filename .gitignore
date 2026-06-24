@@ -24,3 +24,9 @@ Homestead.yaml
 Thumbs.db
 /docs
 /.claude
+
+fortinet.cer
+.docker/*
+.docker/nginx/*
+.docker/nginx/conf.d/*
+package-lock.json

@@ -1,0 +1,71 @@
+services:
+  app:
+    build: 
+      args: 
+        user: derio
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile  
+    image: drsp-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www/
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - laravel-eti
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=  
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:alpine
+    container_name: webserver1
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 8001:80
+      - 444:443
+    volumes:
+      - ./:/var/www/
+      - ./docker/nginx:/etc/nginx/conf.d/  
+    networks:
+      - laravel-eti
+
+  mysql:
+    image: mysql:5.7.22
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    ports:
+      - 3308:3306
+    volumes:
+      - ./.docker/mysql/dbdata:/var/lib/mysql
+    networks:
+      - laravel-eti  
+
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+    ports:
+      - "8082:80"
+    volumes:
+      - ./uploads.ini:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+    networks:
+      - laravel-eti
+
+#Docker Networks
+networks:
+  laravel-eti:
+    driver: bridge
