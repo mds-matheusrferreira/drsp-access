@@ -191,7 +191,7 @@ class AccessProcessRepository
             'PLANEJAMENTO',
             'UNIVERSALIDADE',
         ],
-        'Conclusão do parecer' => [
+        'Conclusão' => [
             'DECISAO_PARECER',
             'MOTIVO_INDEFERIMENTO',
             'JUSTIFICATIVA_INDEFERIMENTO',
