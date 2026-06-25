@@ -128,7 +128,7 @@
                                                         <a href="{{ route('base-externa.analise-processo.nota-tecnica.edit', ['protocolo' => $row['PROTOCOLO']]) }}" class="block px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700">
                                                             Nota técnica
                                                         </a>
-                                                        <a href="#" class="block px-4 py-2 text-sm font-medium text-gray-400" aria-disabled="true" title="Funcionalidade ainda não implementada">
+                                                        <a href="{{ route('base-externa.analise-processo.manifestacao.edit', ['protocolo' => $row['PROTOCOLO']]) }}" class="block px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-700">
                                                             Manifestação
                                                         </a>
                                                     </div>

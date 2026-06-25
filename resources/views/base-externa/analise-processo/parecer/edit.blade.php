@@ -97,18 +97,6 @@
         'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
         'GRATUIDADE_PARECER' => ['A participação do idoso supera o limite da lei', 'É possível aferir a gratuidade das ofertas', 'Há indícios de contraprestação do usuário', 'Não apresentou documento que demonstre gratuidade', 'Não é possível aferir a gratuidade das ofertas', 'Não se aplica'],
         'ORGAO_ENCAMINHAMENTO' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
-        'MANIFESTACAO_OUTRO_MINISTERIO' => [
-            ['value' => '1', 'label' => 'MEC: não atua para fins de CEBAS; e parecer favorável do MS'],
-            ['value' => '2', 'label' => 'MS: não atua para fins de CEBAS; e parecer desfavorável do MEC'],
-            ['value' => '3', 'label' => 'Não atua para fins de CEBAS'],
-            ['value' => '4', 'label' => 'Não se aplica'],
-            ['value' => '5', 'label' => 'Parecer desfavorável'],
-            ['value' => '6', 'label' => 'Parecer favorável'],
-            ['value' => '7', 'label' => 'Parecer favorável no MEC e desfavorável no MS'],
-            ['value' => '8', 'label' => 'Parecer favorável no MS e desfavorável no MEC'],
-            ['value' => '9', 'label' => 'Pareceres desfavoráveis em ambos os ministérios'],
-            ['value' => '10', 'label' => 'Pareceres favoráveis em ambos os ministérios'],
-        ],
         'CONTINUIDADE' => ['Não', 'Sim'],
         'PLANEJAMENTO' => ['Não', 'Sim'],
         'UNIVERSALIDADE' => ['Não', 'Sim'],
@@ -116,8 +104,10 @@
         'MOTIVO_INDEFERIMENTO' => $rejectionReasonOptions,
         'CGCEB_PARECER' => [
             ['value' => '1', 'label' => 'Leandro de Oliveira Nardi'],
+            ['value' => '3', 'label' => 'Edgilson Tavares de Araújo'],
         ],
         'DRSP_PARECER' => [
+            ['value' => '1', 'label' => 'Leandro de Oliveira Nardi'],
             ['value' => '3', 'label' => 'Edgilson Tavares de Araújo'],
         ],
     ];
@@ -308,14 +298,19 @@
                                     $hideRejectionReasons = $field === 'MOTIVO_INDEFERIMENTO'
                                         && old('DECISAO_PARECER', $processo['DECISAO_PARECER'] ?? '') !== 'INDEFERIDO';
                                     $wideFields = $isGratuidadeSection
-                                        ? ['GRATUIDADE_PARECER', 'ORGAO_ENCAMINHAMENTO']
+                                        ? ['GRATUIDADE_PARECER', 'ORGAO_ENCAMINHAMENTO', 'NOTA_TECNICA_OUTRO_ORGAO']
                                         : ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'JUSTIFICATIVA_INDEFERIMENTO'];
                                     $wideClass = in_array($field, $wideFields, true)
                                         ? ($isGratuidadeSection ? 'md:col-span-2' : 'md:col-span-2 xl:col-span-3')
                                         : '';
+                                    $fieldLabel = match ($field) {
+                                        'NOTA_TECNICA_OUTRO_ORGAO' => 'Nota técnica de outro ministério',
+                                        'MANIFESTACAO_OUTRO_MINISTERIO' => 'Número(s)',
+                                        default => $repository->parecerTecnicoLabel($field),
+                                    };
                                 @endphp
                                 <div class="{{ $wideClass }} {{ $hidePendingDocuments || $hideRejectionReasons ? 'hidden' : '' }}" @if($field === 'DOCUMENTOS_PENDENTES') data-pending-documents-wrapper @endif @if($field === 'MOTIVO_INDEFERIMENTO') data-rejection-reasons-wrapper @endif>
-                                    <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
+                                    <label for="{{ $field }}" class="{{ $labelClass }}">{{ $fieldLabel }}</label>
                                     @include('base-externa.analise-processo.parecer._field', ['field' => $field])
                                 </div>
                             @endforeach

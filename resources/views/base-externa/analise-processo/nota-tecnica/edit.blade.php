@@ -96,20 +96,15 @@
         'COMPATIBILIDADE_ESTATUTO_LOAS' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
         'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
         'GRATUIDADE_PARECER' => ['A participação do idoso supera o limite da lei', 'É possível aferir a gratuidade das ofertas', 'Há indícios de contraprestação do usuário', 'Não apresentou documento que demonstre gratuidade', 'Não é possível aferir a gratuidade das ofertas', 'Não se aplica'],
-        'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO' => ['Encaminhamento de processo ao', 'Resposta de manifestação ao'],
-        'ORGAO_ENCAMINHAMENTO' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
-        'MANIFESTACAO_OUTRO_MINISTERIO' => [
-            ['value' => '1', 'label' => 'MEC: não atua para fins de CEBAS; e parecer favorável do MS'],
-            ['value' => '2', 'label' => 'MS: não atua para fins de CEBAS; e parecer desfavorável do MEC'],
-            ['value' => '3', 'label' => 'Não atua para fins de CEBAS'],
-            ['value' => '4', 'label' => 'Não se aplica'],
-            ['value' => '5', 'label' => 'Parecer desfavorável'],
-            ['value' => '6', 'label' => 'Parecer favorável'],
-            ['value' => '7', 'label' => 'Parecer favorável no MEC e desfavorável no MS'],
-            ['value' => '8', 'label' => 'Parecer favorável no MS e desfavorável no MEC'],
-            ['value' => '9', 'label' => 'Pareceres desfavoráveis em ambos os ministérios'],
-            ['value' => '10', 'label' => 'Pareceres favoráveis em ambos os ministérios'],
+        'MOTIVO_ENCAMINHAMENTO' => [
+            'Encaminhamento de processo ao MS',
+            'Encaminhamento de processo ao MEC',
+            'Encaminhamento de processo ao DEPAD',
+            'Resposta de manifestação ao MS',
+            'Resposta de manifestação ao MEC',
+            'Resposta de manifestação ao DEPAD',
         ],
+        'ORGAO_ENCAMINHAMENTO' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
         'CONTINUIDADE' => ['Não', 'Sim'],
         'PLANEJAMENTO' => ['Não', 'Sim'],
         'UNIVERSALIDADE' => ['Não', 'Sim'],
@@ -117,8 +112,10 @@
         'MOTIVO_INDEFERIMENTO' => $rejectionReasonOptions,
         'CGCEB_PARECER' => [
             ['value' => '1', 'label' => 'Leandro de Oliveira Nardi'],
+            ['value' => '3', 'label' => 'Edgilson Tavares de Araújo'],
         ],
         'DRSP_PARECER' => [
+            ['value' => '1', 'label' => 'Leandro de Oliveira Nardi'],
             ['value' => '3', 'label' => 'Edgilson Tavares de Araújo'],
         ],
     ];
@@ -136,7 +133,7 @@
         'Atividades do relatório' => ['iconBg' => 'bg-purple-600', 'header' => 'border-purple-200 bg-purple-50', 'subtitle' => 'Ofertas, vagas, usuários e qualificações'],
         'Gratuidade e manifestações' => ['iconBg' => 'bg-orange-600', 'header' => 'border-orange-200 bg-orange-50', 'subtitle' => 'Gratuidade e manifestações de outros órgãos'],
         'Princípios de Atendimento da Assistência Social' => ['iconBg' => 'bg-teal-600', 'header' => 'border-teal-200 bg-teal-50', 'subtitle' => 'Continuidade, planejamento e universalidade'],
-        'Conclusão do parecer' => ['iconBg' => 'bg-green-600', 'header' => 'border-green-200 bg-green-50', 'subtitle' => 'Decisão e exposição de motivos'],
+        'Conclusão' => ['iconBg' => 'bg-green-600', 'header' => 'border-green-200 bg-green-50', 'subtitle' => 'Decisão e exposição de motivos'],
         'Assinaturas' => ['iconBg' => 'bg-gray-600', 'header' => 'border-gray-200 bg-gray-50', 'subtitle' => 'Responsáveis pela nota técnica'],
     ];
 @endphp
@@ -300,6 +297,16 @@
                                 $insertAfter = array_search('ORGAO_ENCAMINHAMENTO', $sectionFields, true);
                                 array_splice($sectionFields, $insertAfter === false ? count($sectionFields) : $insertAfter + 1, 0, ['NOTA_TECNICA_OUTRO_ORGAO']);
                             }
+
+                            if ($isGratuidadeSection) {
+                                $notaTecnicaIndex = array_search('NOTA_TECNICA_OUTRO_ORGAO', $sectionFields, true);
+                                $manifestacaoIndex = array_search('MANIFESTACAO_OUTRO_MINISTERIO', $sectionFields, true);
+
+                                if ($notaTecnicaIndex !== false && $manifestacaoIndex !== false && $notaTecnicaIndex > $manifestacaoIndex) {
+                                    array_splice($sectionFields, $notaTecnicaIndex, 1);
+                                    array_splice($sectionFields, $manifestacaoIndex, 0, ['NOTA_TECNICA_OUTRO_ORGAO']);
+                                }
+                            }
                         @endphp
                         <div class="grid gap-5 md:grid-cols-2 {{ $isGratuidadeSection ? '' : 'xl:grid-cols-3' }}">
                             @foreach ($sectionFields as $field)
@@ -309,14 +316,19 @@
                                     $hideRejectionReasons = $field === 'MOTIVO_INDEFERIMENTO'
                                         && old('DECISAO_PARECER', $processo['DECISAO_PARECER'] ?? '') !== 'INDEFERIDO';
                                     $wideFields = $isGratuidadeSection
-                                        ? ['GRATUIDADE_PARECER', 'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO', 'ORGAO_ENCAMINHAMENTO']
+                                        ? ['GRATUIDADE_PARECER', 'MOTIVO_ENCAMINHAMENTO', 'ORGAO_ENCAMINHAMENTO', 'NOTA_TECNICA_OUTRO_ORGAO']
                                         : ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'JUSTIFICATIVA_INDEFERIMENTO_NT'];
                                     $wideClass = in_array($field, $wideFields, true)
                                         ? ($isGratuidadeSection ? 'md:col-span-2' : 'md:col-span-2 xl:col-span-3')
                                         : '';
+                                    $fieldLabel = match ($field) {
+                                        'NOTA_TECNICA_OUTRO_ORGAO' => 'Nota técnica de outro ministério',
+                                        'MANIFESTACAO_OUTRO_MINISTERIO' => 'Número(s)',
+                                        default => $repository->parecerTecnicoLabel($field),
+                                    };
                                 @endphp
                                 <div class="{{ $wideClass }} {{ $hidePendingDocuments || $hideRejectionReasons ? 'hidden' : '' }}" @if($field === 'DOCUMENTOS_PENDENTES') data-pending-documents-wrapper @endif @if($field === 'MOTIVO_INDEFERIMENTO') data-rejection-reasons-wrapper @endif>
-                                    <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
+                                    <label for="{{ $field }}" class="{{ $labelClass }}">{{ $fieldLabel }}</label>
                                     @include('base-externa.analise-processo.nota-tecnica._field', ['field' => $field])
                                 </div>
                             @endforeach

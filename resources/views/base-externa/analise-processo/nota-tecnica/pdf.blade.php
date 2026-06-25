@@ -115,9 +115,12 @@
     ];
     $manifestacaoOutroMinisterio = $manifestacaoOutroMinisterioOptions[(string) $v('manifestacao_outro_ministerio')] ?? $v('manifestacao_outro_ministerio');
     $list = fn (string $field) => implode('; ', array_filter(array_map('trim', preg_split('/\r\n|\r|\n|;/', (string) $v($field)))));
-    $pendingDocuments = $list('documentos_pendentes');
-    $cgcebSignature = $signatureName('cgceb_parecer', ['1' => 'Leandro de Oliveira Nardi']);
-    $drspSignature = $signatureName('drsp_parecer', ['3' => 'Edgilson Tavares de Araújo']);
+    $pendingDocuments = $v('documentos_obrigatorios') === 'Apresentou todos os documentos'
+        ? 'Não se aplica'
+        : $list('documentos_pendentes');
+    $signatoryNames = ['1' => 'Leandro de Oliveira Nardi', '3' => 'Edgilson Tavares de Araújo'];
+    $cgcebSignature = $signatureName('cgceb_parecer', $signatoryNames);
+    $drspSignature = $signatureName('drsp_parecer', $signatoryNames);
     $isLei187 = $v('legislacao_parecer') === 'Lei Complementar 187/2021';
     $documentosObrigatoriosLabel = $isLei187 ? 'Art. 31º I, II, III, IV - LC 187/2021' : 'Art. 3º, II, III, IV, VIII e Art. 39, I e II do Decreto 8.242/2014';
     $compatibilidadeLoasLabel = $isLei187 ? 'art. 73º, I Dec.111791/2023' : 'art. 34, I, Dec. 7.237/10 ou art. 39, I, Dec. 8.242/14';
@@ -182,13 +185,11 @@
     </div>
 
     @php
-        $pedidoManifestacao = trim((string) $v('pedido_manifestacao_encaminhamento'));
-        $orgaoEncaminhamento = trim($list('orgao_encaminhamento'));
-        $bannerTexto = trim($pedidoManifestacao . ($orgaoEncaminhamento ? ' ' . $orgaoEncaminhamento : ''));
+        $bannerTexto = trim((string) $v('motivo_encaminhamento'));
     @endphp
     @if ($bannerTexto !== '')
         <div class="row" style="margin-top: 8px; margin-bottom: 8px;">
-            <div style="border: 1px solid #b5b5b5; padding: 4px 8px; text-align: center; font-weight: bold;">
+            <div style="border: 1px solid #b5a882; padding: 4px 8px; text-align: center; font-weight: bold; background-color: #f5edd6;">
                 {{ $bannerTexto }}
             </div>
         </div>
@@ -254,7 +255,12 @@
 
     <div class="row" style="margin-top: 8px;">
         <div style="padding-left: 15px; font-size: 8px; text-transform: none;">b) Atividades de outras áreas não certificáveis:</div>
-        <div class="field-box">{{ $v('outras_atividades') }}</div>
+        <div class="field-box">{{ $v('outras_ofertas') }}</div>
+    </div>
+
+    <div class="row" style="margin-top: 8px;">
+        <div style="padding-left: 15px; font-size: 8px; text-transform: none;">c) Característica da entidade:</div>
+        <div class="field-box">{{ $v('caracterisiticas_ofertas') }}</div>
     </div>
 
     <!-- IV) Gratuidade -->
@@ -273,14 +279,15 @@
     <div class="row">
         <div class="col w-32">Número(s):</div>
         <div class="col" style="width: 68%;">
+            <div class="field-box">{{ $v('manifestacao_outro_ministerio') }}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col w-32">Nota técnica de outro ministério:</div>
+        <div class="col" style="width: 68%;">
             <div class="field-box">{{ $v('nota_tecnica_outro_orgao') }}</div>
         </div>
     </div>
-    @if (trim((string) $manifestacaoOutroMinisterio) !== '')
-        <div class="row indent">
-            <div class="field-box">{{ $manifestacaoOutroMinisterio }}</div>
-        </div>
-    @endif
     <div class="row">
         <div class="col w-32">Outras atividades (saúde e/ou educação):</div>
         <div class="col" style="width: 68%;">
@@ -301,7 +308,7 @@
 
     <!-- VII) Conclusão -->
     <div class="row" style="margin-top: 8px;">
-        <div class="col w-25 label">VII) Conclusão do parecer:</div>
+        <div class="col w-25 label">VII) Conclusão:</div>
         <div class="col w-75">
             <div class="field-box">{{ $v('decisao_parecer') }}</div>
         </div>

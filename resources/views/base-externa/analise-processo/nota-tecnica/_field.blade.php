@@ -56,5 +56,5 @@
 @elseif ($type === 'textarea')
     <textarea id="{{ $field }}" name="{{ $field }}" rows="3" class="{{ $inputClass }} resize-none overflow-hidden" data-autoresize>{{ $value }}</textarea>
 @else
-    <input id="{{ $field }}" name="{{ $field }}" type="{{ $type }}" value="{{ $value }}" class="{{ $inputClass }}">
+    <input id="{{ $field }}" name="{{ $field }}" type="{{ $type }}" value="{{ $value }}" class="{{ $inputClass }}" @if($type === 'number') min="1" step="1" @endif>
 @endif

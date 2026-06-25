@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BaseExterna\AnaliseProcessoController;
 use App\Http\Controllers\BaseExterna\InserirProcessoController;
+use App\Http\Controllers\BaseExterna\ManifestacaoController;
 use App\Http\Controllers\BaseExterna\NotaTecnicaController;
 use App\Http\Controllers\BaseExterna\ParecerTecnicoController;
 use App\Http\Controllers\Coordenacao\Automacoes\CneasController;
@@ -66,6 +67,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/base-externa/analise-processo/nota-tecnica', [NotaTecnicaController::class, 'edit'])->name('base-externa.analise-processo.nota-tecnica.edit');
     Route::put('/base-externa/analise-processo/nota-tecnica', [NotaTecnicaController::class, 'update'])->name('base-externa.analise-processo.nota-tecnica.update');
     Route::get('/base-externa/analise-processo/nota-tecnica/pdf', [NotaTecnicaController::class, 'pdf'])->name('base-externa.analise-processo.nota-tecnica.pdf');
+    Route::get('/base-externa/analise-processo/manifestacao', [ManifestacaoController::class, 'edit'])->name('base-externa.analise-processo.manifestacao.edit');
+    Route::put('/base-externa/analise-processo/manifestacao', [ManifestacaoController::class, 'update'])->name('base-externa.analise-processo.manifestacao.update');
+    Route::get('/base-externa/analise-processo/manifestacao/pdf', [ManifestacaoController::class, 'pdf'])->name('base-externa.analise-processo.manifestacao.pdf');
 
     Route::middleware('coordenacao.permission')->group(function () {
         // Coordenação e Planilhas

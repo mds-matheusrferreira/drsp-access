@@ -49,6 +49,7 @@ class AccessProcessRepository
         'motivo',
         'parecer',
         'nota_tecnica',
+        'fls',
     ];
 
     /**
@@ -110,11 +111,13 @@ class AccessProcessRepository
             'USUARIO_VII',
             'QUALIFICACAO_USUARIO_VII',
             'OUTRAS_ATIVIDADES',
+            'CARACTERISITICAS_OFERTAS',
         ],
         'Gratuidade e manifestações' => [
             'GRATUIDADE_PARECER',
-            'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO',
+            'MOTIVO_ENCAMINHAMENTO',
             'ORGAO_ENCAMINHAMENTO',
+            'MANIFESTACAO_OUTRO_MINISTERIO',
             'NOTA_TECNICA_OUTRO_ORGAO',
             'OFERTAS_OUTRAS_AREAS',
         ],
@@ -123,7 +126,7 @@ class AccessProcessRepository
             'PLANEJAMENTO',
             'UNIVERSALIDADE',
         ],
-        'Conclusão do parecer' => [
+        'Conclusão' => [
             'DECISAO_PARECER',
             'MOTIVO_INDEFERIMENTO',
             'JUSTIFICATIVA_INDEFERIMENTO_NT',
@@ -174,11 +177,13 @@ class AccessProcessRepository
             'USUARIO_VII',
             'QUALIFICACAO_USUARIO_VII',
             'OUTRAS_ATIVIDADES',
+            'CARACTERISITICAS_OFERTAS',
         ],
         'Gratuidade e manifestações' => [
             'GRATUIDADE_PARECER',
             'ORGAO_ENCAMINHAMENTO',
             'NOTA_TECNICA_OUTRO_ORGAO',
+            'MANIFESTACAO_OUTRO_MINISTERIO',
             'OFERTAS_OUTRAS_AREAS',
         ],
         'Princípios de Atendimento da Assistência Social' => [
@@ -195,6 +200,66 @@ class AccessProcessRepository
             'CGCEB_PARECER',
             'DRSP_PARECER',
         ],
+    ];
+
+    /**
+     * @var array<string, array<int, string>>
+     */
+    private const MANIFESTACAO_SECTION_DEFINITIONS = [
+        'Atividades do relatório' => [
+            'OFERTA_I',
+            'VAGAS_I',
+            'USUARIO_I',
+            'QUALIFICACAO_USUARIO_I',
+            'OFERTA_II',
+            'VAGAS_II',
+            'USUARIO_II',
+            'QUALIFICACAO_USUARIO_II',
+            'OFERTA_III',
+            'VAGAS_III',
+            'USUARIO_III',
+            'QUALIFICACAO_USUARIO_III',
+            'OFERTA_IV',
+            'VAGAS_IV',
+            'USUARIO_IV',
+            'QUALIFICACAO_USUARIO_Iv',
+            'OFERTA_V',
+            'VAGAS_V',
+            'USUARIO_V',
+            'QUALIFICACAO_USUARIO_V',
+            'OFERTA_VI',
+            'VAGAS_VI',
+            'USUARIO_VI',
+            'QUALIFICACAO_USUARIO_VI',
+            'OFERTA_VII',
+            'VAGAS_VII',
+            'USUARIO_VII',
+            'QUALIFICACAO_USUARIO_VII',
+            'OUTRAS_OFERTAS',
+        ],
+        'Documento' => [
+            'ORGAO_ENCAMINHAMENTO',
+            'GRATUIDADE_FLS',
+        ],
+        'Observação' => [
+            'OBS_PEDIDO_MANIFESTACAO',
+        ],
+        'Assinaturas' => [
+            'CGCEB_MANIFESTACACAO',
+            'DRSP_MANIFESTACAO',
+        ],
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    private const MANIFESTACAO_LABELS = [
+        'ORGAO_ENCAMINHAMENTO' => 'Órgão de encaminhamento',
+        'GRATUIDADE_FLS' => 'Demonstrativo Contábil (DRE e Nota Explicativa) Fl(s)',
+        'OUTRAS_OFERTAS' => 'Outra(s) atividade(s) inicialmente identificadas',
+        'OBS_PEDIDO_MANIFESTACAO' => 'Observação',
+        'CGCEB_MANIFESTACACAO' => 'CGCEB/DRSP/SNAS/MDS',
+        'DRSP_MANIFESTACAO' => 'DRSP/SNAS/MDS',
     ];
 
     /**
@@ -216,11 +281,13 @@ class AccessProcessRepository
         'COMPATIBILIDADE_ESTATUTO_LOAS' => 'Compatibilidade do estatuto com LOAS',
         'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => 'Destino do patrimônio em caso de dissolução',
         'OUTRAS_ATIVIDADES' => 'Atividades de outras áreas não certificáveis',
+        'CARACTERISITICAS_OFERTAS' => 'Característica da entidade',
         'GRATUIDADE_PARECER' => 'Gratuidade',
         'PEDIDO_MANIFESTACAO_ENCAMINHAMENTO' => 'Tipo de encaminhamento',
+        'MOTIVO_ENCAMINHAMENTO' => 'Tipo de encaminhamento',
         'ORGAO_ENCAMINHAMENTO' => 'Manifestação de outro órgão',
         'NOTA_TECNICA_OUTRO_ORGAO' => 'Número(s)',
-        'MANIFESTACAO_OUTRO_MINISTERIO' => 'Manifestação de outro ministério',
+        'MANIFESTACAO_OUTRO_MINISTERIO' => 'Nota técnica de outro ministério',
         'OFERTAS_OUTRAS_AREAS' => 'Outras atividades (saúde e/ou educação)',
         'CONTINUIDADE' => 'Continuidade',
         'PLANEJAMENTO' => 'Planejamento',
@@ -562,6 +629,44 @@ class AccessProcessRepository
         }
 
         return $sections;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function manifestacaoColumns(): array
+    {
+        $columns = array_values(array_diff(self::PARECER_HEADER_COLUMNS, ['PROTOCOLO']));
+
+        foreach (self::MANIFESTACAO_SECTION_DEFINITIONS as $fields) {
+            $columns = array_merge($columns, $fields);
+        }
+
+        return array_values(array_intersect(array_unique($columns), $this->columns()));
+    }
+
+    /**
+     * @return array<int, array{title: string, fields: array<int, string>}>
+     */
+    public function manifestacaoSections(): array
+    {
+        $columns = $this->columns();
+        $sections = [];
+
+        foreach (self::MANIFESTACAO_SECTION_DEFINITIONS as $title => $fields) {
+            $present = array_values(array_intersect($fields, $columns));
+
+            if ($present !== []) {
+                $sections[] = ['title' => $title, 'fields' => $present];
+            }
+        }
+
+        return $sections;
+    }
+
+    public function manifestacaoLabel(string $field): string
+    {
+        return self::MANIFESTACAO_LABELS[$field] ?? self::PARECER_LABELS[$field] ?? $this->fieldLabel($field);
     }
 
     public function parecerTecnicoLabel(string $field): string
