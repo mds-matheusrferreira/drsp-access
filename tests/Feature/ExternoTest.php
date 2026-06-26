@@ -31,7 +31,6 @@ class ExternoTest extends TestCase
             ->get('/coordenacao/planilhas/externo')
             ->assertOk()
             ->assertSee('Planilha Externo - Upload e download de Dados')
-            ->assertSee('Baixar modelo de planilha')
             ->assertSee('Baixar tabela atual')
             ->assertSee('Enviar Arquivo Externo')
             ->assertSee('processos_sei');

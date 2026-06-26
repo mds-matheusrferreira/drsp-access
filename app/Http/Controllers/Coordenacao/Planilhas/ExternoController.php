@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Planilhas\ExternoService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -34,6 +35,19 @@ class ExternoController extends Controller
             return back()->with('error', $exception->getMessage());
         }
 
+        $user = $request->user();
+        $userName = trim((string) ($user?->name ?: $user?->user ?: 'Usuário desconhecido'));
+
+        DB::table('logs')->insert([
+            'log' => json_encode([
+                'area' => 'planilha_externo',
+                'acao' => 'importacao',
+                'registros' => $result['inserted_rows'] ?? 0,
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'user' => $userName,
+            'date_created' => now(),
+        ]);
+
         return back()->with('success', 'Importação Externo concluída com sucesso. Registros inseridos: '.number_format((int) ($result['inserted_rows'] ?? 0), 0, ',', '.').'.');
     }
 
@@ -48,41 +62,14 @@ class ExternoController extends Controller
 
     public function backup(): StreamedResponse
     {
-        $columns = $this->externo->downloadColumns();
-        $filename = 'access-backup-' . now()->format('Ymd-His') . '.xls';
+        $xlsxPath = $this->externo->xlsxPath();
+        $filename = 'access-backup-' . now()->format('Ymd-His') . '.xlsx';
 
-        return response()->streamDownload(function () use ($columns) {
-            echo "\xEF\xBB\xBF";
-            echo '<table border="1">';
-            echo '<thead><tr>';
-            foreach ($columns as $column) {
-                echo '<th>' . $this->excelCellValue($column) . '</th>';
-            }
-            echo '</tr></thead><tbody>';
-
-            foreach ($this->externo->recordsForDownload() as $record) {
-                $row = (array) $record;
-                echo '<tr>';
-                foreach ($columns as $column) {
-                    echo '<td style="mso-number-format:\'\@\';">' . $this->excelCellValue($row[$column] ?? '') . '</td>';
-                }
-                echo '</tr>';
-            }
-
-            echo '</tbody></table>';
+        return response()->streamDownload(function () use ($xlsxPath) {
+            readfile($xlsxPath);
+            @unlink($xlsxPath);
         }, $filename, [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
-    }
-
-    private function excelCellValue(mixed $value): string
-    {
-        $value = (string) $value;
-
-        if (preg_match('/^[=+\-@]/', $value) === 1) {
-            $value = '\'' . $value;
-        }
-
-        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }

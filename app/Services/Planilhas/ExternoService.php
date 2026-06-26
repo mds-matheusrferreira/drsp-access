@@ -2,6 +2,7 @@
 
 namespace App\Services\Planilhas;
 
+use App\Services\XlsxWriter;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\UploadedFile;
@@ -197,13 +198,10 @@ class ExternoService
             return ['total' => 0, 'updated_at' => null];
         }
 
-        $updatedAt = null;
-        if (Schema::hasColumn(self::TABLE, 'DT_ATUALIZACAO')) {
-            $updatedAt = DB::table(self::TABLE)
-                ->whereNotNull('DT_ATUALIZACAO')
-                ->orderByDesc('DT_ATUALIZACAO')
-                ->value('DT_ATUALIZACAO');
-        }
+        $updatedAt = DB::table('logs')
+            ->where('log', 'like', '%"area":"planilha_externo"%')
+            ->orderByDesc('date_created')
+            ->value('date_created');
 
         return [
             'total' => DB::table(self::TABLE)->count(),
@@ -241,6 +239,11 @@ class ExternoService
     public function downloadColumns(): array
     {
         return self::HEADERS;
+    }
+
+    public function xlsxPath(): string
+    {
+        return XlsxWriter::generate(self::HEADERS, $this->recordsForDownload());
     }
 
     public function templateHtmlTable(): string

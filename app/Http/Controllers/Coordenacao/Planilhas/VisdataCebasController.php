@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Coordenacao\Planilhas;
 
 use App\Http\Controllers\Controller;
 use App\Services\Planilhas\VisdataCebasService;
+use App\Services\XlsxWriter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -64,44 +65,17 @@ class VisdataCebasController extends Controller
 
     public function backup(): StreamedResponse
     {
-        $columns = $this->visdata->downloadColumns();
-        $filename = 'cebas-suas-backup-' . now()->format('Ymd-His') . '.xls';
+        $xlsxPath = XlsxWriter::generate(
+            $this->visdata->downloadColumns(),
+            $this->visdata->recordsForDownload()
+        );
+        $filename = 'cebas-suas-backup-' . now()->format('Ymd-His') . '.xlsx';
 
-        return response()->streamDownload(function () use ($columns) {
-            echo "\xEF\xBB\xBF";
-            echo '<table border="1">';
-
-            if ($columns !== []) {
-                echo '<thead><tr>';
-                foreach ($columns as $column) {
-                    echo '<th>' . $this->excelCellValue($column) . '</th>';
-                }
-                echo '</tr></thead>';
-            }
-
-            echo '<tbody>';
-            foreach ($this->visdata->recordsForDownload() as $record) {
-                $row = (array) $record;
-                echo '<tr>';
-                foreach ($columns as $column) {
-                    echo '<td style="mso-number-format:\'\@\';">' . $this->excelCellValue($row[$column] ?? '') . '</td>';
-                }
-                echo '</tr>';
-            }
-            echo '</tbody></table>';
+        return response()->streamDownload(function () use ($xlsxPath) {
+            readfile($xlsxPath);
+            @unlink($xlsxPath);
         }, $filename, [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
-    }
-
-    private function excelCellValue(mixed $value): string
-    {
-        $value = (string) $value;
-
-        if (preg_match('/^[=+\-@]/', $value) === 1) {
-            $value = '\'' . $value;
-        }
-
-        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }
