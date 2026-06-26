@@ -91,10 +91,44 @@
     ];
 
     $selectValues = [
-        'DOCUMENTOS_OBRIGATORIOS' => ['Apresentou todos os documentos', 'Não apresentou todos os documentos', 'Não foram analisados os documentos por não autar na assistência social'],
-        'DOCUMENTOS_PENDENTES' => ['Ata de eleição', 'Balanço patrimonial', 'Comprovante de cnpj', 'Declaração de gratuidade', 'Demonstração dos fluxos de caixa', 'Demonstração das mutações do patrimônio líquido', 'Demonstração de resultado de exercício (D.R.E.)', 'Estatuto', 'Inscrição no Conselho Local de Assistência Social', 'Nota explicativa', 'Parecer de auditoria independente', 'Relatório de atividades'],
-        'COMPATIBILIDADE_ESTATUTO_LOAS' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
-        'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento', 'Não foi analisado'],
+        'DOCUMENTOS_OBRIGATORIOS' => ['Apresentou todos os documentos', 'Não apresentou todos os documentos'],
+        'DOCUMENTOS_PENDENTES' => [
+            // Documentos fundamentais
+            'Ata de eleição',
+            'Estatuto',
+            'Comprovante de cnpj',
+            // Contábeis
+            'Balanço patrimonial',
+            'Nota explicativa',
+            'Parecer de auditoria independente',
+            'Relatório de atividades',
+            'Demonstração de resultado de exercício (D.R.E.)',
+            'Demonstração dos fluxos de caixa',
+            'Demonstração das mutações do patrimônio líquido',
+            // Regularidade fiscal
+            'Certidão Negativa ou Positiva com Efeitos de Negativa de Débitos',
+            'Certificado de Regularidade do FGTS',
+            // Conselhos e inscrições
+            'Inscrição no Conselho Local de Assistência Social',
+            'Inscrição no Conselho Municipal da Criança e do Adolescentes – CMDCA',
+            'Comprovante de inscrição junto ao Conselho Municipal da Pessoa Idosa do ano de protocolo',
+            // Cadastros
+            'Comprovante de Cadastro Nacional de Aprendizagem Profissional CNAP',
+            'Comprovante atualizado do Cadastro Nacional de Estabelecimentos de Saúde (CNES)',
+            // Autorizações de funcionamento
+            'Autorização de funcionamento expedida pela autoridade executiva competente: Educação Básica (creches, pré-escola, ensino fundamental e médio)',
+            'Autorização de funcionamento expedida pela autoridade executiva competente, serão emitidas pelas Secretarias de Educação Estadual ou Municipal. Educação Superior, MEC',
+            // Declarações
+            'Declaração de gratuidade',
+            'Declaração de que cumpre os requisitos inscritos nos incisos II e III do §1º do art. 18 da LC 187/2021 (informar anualmente os dados referentes à instituição ao Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (Inep) / atender a padrões mínimos de qualidade aferidos pelos processos de avaliação conduzidos pela autoridade executiva federal competente)',
+            'Declaração de que realiza eventual cobrança de participação da pessoa idosa no custeio da entidade até o limite de 70% de qualquer benefício previdenciário ou de assistência social percebido pela pessoa idosa',
+            // Pessoa idosa
+            'Curatela da pessoa idosa',
+            'Encaminhamento do usuário pelo Poder Judiciário, pelo Ministério Público ou pelo gestor local do SUAS/e',
+            'Termo de doação da pessoa idosa ou de seu responsável, demonstrando que a doação ocorreu de forma livre e voluntária',
+        ],
+        'COMPATIBILIDADE_ESTATUTO_LOAS' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento'],
+        'DESTINO_PATRIMONIO_CASO_DISSOLUCAO' => ['Compatível com a legislação', 'Não está compatível com a legislação', 'Não apresentou o documento'],
         'GRATUIDADE_PARECER' => ['A participação do idoso supera o limite da lei', 'É possível aferir a gratuidade das ofertas', 'Há indícios de contraprestação do usuário', 'Não apresentou documento que demonstre gratuidade', 'Não é possível aferir a gratuidade das ofertas', 'Não se aplica'],
         'ORGAO_ENCAMINHAMENTO' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
         'CONTINUIDADE' => ['Não', 'Sim'],
@@ -227,14 +261,14 @@
                         <div class="space-y-4" data-activities-wrapper>
                             @php
                                 $activityFields = collect($offerRomanNumerals)
-                                    ->flatMap(fn ($roman) => [$romanField('oferta', $roman), $romanField('vagas', $roman), $romanField('usuario', $roman), $qualificationField($roman)])
+                                    ->flatMap(fn ($roman) => [$romanField('OFERTA', $roman), $romanField('VAGAS', $roman), $romanField('USUARIO', $roman), $qualificationField($roman)])
                                     ->all();
                                 $visibleActivities = 0;
                             @endphp
 
                             @foreach ($offerRomanNumerals as $roman)
                                 @php
-                                    $fields = [$romanField('oferta', $roman), $romanField('vagas', $roman), $romanField('usuario', $roman), $qualificationField($roman)];
+                                    $fields = [$romanField('OFERTA', $roman), $romanField('VAGAS', $roman), $romanField('USUARIO', $roman), $qualificationField($roman)];
                                     $presentFields = array_values(array_intersect($fields, $section['fields']));
                                     $hasContent = collect($presentFields)->contains(fn ($field) => filled(old($field, $processo[$field] ?? null)));
                                     $isVisible = $loop->first || $hasContent;
@@ -247,11 +281,17 @@
                                             @foreach ($presentFields as $field)
                                                 @php
                                                     $fieldClass = match (true) {
-                                                        str_starts_with($field, 'usuario_'), str_starts_with($field, 'qualificacao_usuario_') => 'md:col-span-2',
+                                                        str_starts_with(strtolower($field), 'usuario_'), str_starts_with(strtolower($field), 'qualificacao_usuario_') => 'md:col-span-2',
+                                                        default => '',
+                                                    };
+                                                    $fieldData = match (true) {
+                                                        str_starts_with(strtolower($field), 'oferta_') => 'data-oferta-field',
+                                                        str_starts_with(strtolower($field), 'usuario_') => 'data-usuario-field',
+                                                        str_starts_with(strtolower($field), 'qualificacao_usuario_') => 'data-qualificacao-field',
                                                         default => '',
                                                     };
                                                 @endphp
-                                                <div class="{{ $fieldClass }}">
+                                                <div class="{{ $fieldClass }}" {!! $fieldData !!}>
                                                     <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
                                                     @include('base-externa.analise-processo.parecer._field', ['field' => $field])
                                                 </div>
@@ -439,6 +479,18 @@
             const button = wrapper.querySelector('[data-add-activity]');
             const blocks = Array.from(wrapper.querySelectorAll('[data-activity-block]'));
 
+            function syncOfertaDependents(block) {
+                const ofertaSelect = block.querySelector('[data-oferta-field] select');
+                const hasOferta = ofertaSelect && ofertaSelect.value !== '';
+                block.querySelector('[data-usuario-field]')?.classList.toggle('hidden', !hasOferta);
+                block.querySelector('[data-qualificacao-field]')?.classList.toggle('hidden', !hasOferta);
+            }
+
+            blocks.forEach((block) => {
+                syncOfertaDependents(block);
+                block.querySelector('[data-oferta-field] select')?.addEventListener('change', () => syncOfertaDependents(block));
+            });
+
             button?.addEventListener('click', () => {
                 const nextBlock = blocks.find((block) => block.classList.contains('hidden'));
 
@@ -448,6 +500,7 @@
                 }
 
                 nextBlock.classList.remove('hidden');
+                syncOfertaDependents(nextBlock);
 
                 if (!blocks.some((block) => block.classList.contains('hidden'))) {
                     buttonWrapper?.classList.add('hidden');

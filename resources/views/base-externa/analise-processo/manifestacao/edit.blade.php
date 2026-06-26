@@ -211,7 +211,7 @@
                         <div class="space-y-4" data-activities-wrapper>
                             @php
                                 $activityFields = collect($offerRomanNumerals)
-                                    ->flatMap(fn ($roman) => [$romanField('oferta', $roman), $romanField('vagas', $roman), $romanField('usuario', $roman), $qualificationField($roman)])
+                                    ->flatMap(fn ($roman) => [$romanField('OFERTA', $roman), $romanField('VAGAS', $roman), $romanField('USUARIO', $roman), $qualificationField($roman)])
                                     ->all();
                                 $visibleActivities = 0;
                             @endphp
@@ -234,8 +234,14 @@
                                                         str_starts_with(strtolower($field), 'usuario_'), str_starts_with(strtolower($field), 'qualificacao_usuario_') => 'md:col-span-2',
                                                         default => '',
                                                     };
+                                                    $fieldData = match (true) {
+                                                        str_starts_with(strtolower($field), 'oferta_') => 'data-oferta-field',
+                                                        str_starts_with(strtolower($field), 'usuario_') => 'data-usuario-field',
+                                                        str_starts_with(strtolower($field), 'qualificacao_usuario_') => 'data-qualificacao-field',
+                                                        default => '',
+                                                    };
                                                 @endphp
-                                                <div class="{{ $fieldClass }}">
+                                                <div class="{{ $fieldClass }}" {!! $fieldData !!}>
                                                     <label for="{{ $field }}" class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
                                                     @include('base-externa.analise-processo.nota-tecnica._field', ['field' => $field])
                                                 </div>
@@ -368,6 +374,18 @@
             const button = wrapper.querySelector('[data-add-activity]');
             const blocks = Array.from(wrapper.querySelectorAll('[data-activity-block]'));
 
+            function syncOfertaDependents(block) {
+                const ofertaSelect = block.querySelector('[data-oferta-field] select');
+                const hasOferta = ofertaSelect && ofertaSelect.value !== '';
+                block.querySelector('[data-usuario-field]')?.classList.toggle('hidden', !hasOferta);
+                block.querySelector('[data-qualificacao-field]')?.classList.toggle('hidden', !hasOferta);
+            }
+
+            blocks.forEach((block) => {
+                syncOfertaDependents(block);
+                block.querySelector('[data-oferta-field] select')?.addEventListener('change', () => syncOfertaDependents(block));
+            });
+
             button?.addEventListener('click', () => {
                 const nextBlock = blocks.find((block) => block.classList.contains('hidden'));
 
@@ -377,6 +395,7 @@
                 }
 
                 nextBlock.classList.remove('hidden');
+                syncOfertaDependents(nextBlock);
 
                 if (!blocks.some((block) => block.classList.contains('hidden'))) {
                     buttonWrapper?.classList.add('hidden');
