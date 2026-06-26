@@ -204,10 +204,28 @@
         </table>
     </div>
 
+    <div class="row" style="margin-top: 4px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="white-space: nowrap; font-size: 9px; padding: 0 4px 1px 0; vertical-align: bottom; border: none;">Outras atividades (saúde e/ou educação):</td>
+                <td style="border: none; border-bottom: 1px solid #9a9a9a; padding: 0 3px 1px; vertical-align: bottom; width: 100%;">{{ $list('ofertas_outras_areas') }}</td>
+            </tr>
+        </table>
+    </div>
+
     <!-- II) Demonstrativo Contábil -->
     <div class="row label" style="margin-top: 8px;">II) Demonstrativo Contábil (DRE e Nota Explicativa): Fi(s)</div>
     <div class="row">
         <div class="field-box">{{ $v('gratuidade_fls') }}</div>
+    </div>
+
+    <div class="row" style="margin-top: 4px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="white-space: nowrap; font-size: 9px; padding: 0 4px 1px 0; vertical-align: bottom; border: none;">A preponderância das despesas</td>
+                <td style="border: none; border-bottom: 1px solid #9a9a9a; padding: 0 3px 1px; vertical-align: bottom; width: 100%;">{{ $v('outras_ofertas_i') }}</td>
+            </tr>
+        </table>
     </div>
 
     <!-- OBSERVAÇÃO -->

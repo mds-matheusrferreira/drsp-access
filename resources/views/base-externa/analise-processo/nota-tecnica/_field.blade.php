@@ -14,7 +14,7 @@
 
 @if (isset($selectValues[$field]))
     @php
-        $isMultiple = in_array($field, ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'ORGAO_ENCAMINHAMENTO'], true)
+        $isMultiple = in_array($field, ['DOCUMENTOS_PENDENTES', 'MOTIVO_INDEFERIMENTO', 'ORGAO_ENCAMINHAMENTO', 'OFERTAS_OUTRAS_AREAS'], true)
             || str_starts_with($field, 'USUARIO_')
             || str_starts_with($field, 'QUALIFICACAO_USUARIO_');
         $selectedValues = $isMultiple

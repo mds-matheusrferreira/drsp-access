@@ -75,6 +75,32 @@
 
     $selectValues = [
         'ORGAO_ENCAMINHAMENTO' => ['MEC', 'MS', 'DEPAD', 'Não se aplica'],
+        'OUTRAS_OFERTAS' => ['Educação', 'Saúde'],
+        'OFERTAS_OUTRAS_AREAS' => [
+            'Creche',
+            'Ensino básico',
+            'Ensino superior',
+            'Educação para jovens e adultos',
+            'Educação à distância',
+            'Comunidade terapêutica',
+            'Atendimento médico',
+            'Atendimento odontológico',
+            'Promoção à saúde',
+            'Ensino para pessoas com deficiência',
+            'Cursos profissionalizantes',
+            'Residência Terapêutica',
+            'Não se aplica',
+        ],
+        'OUTRAS_OFERTAS_I' => [
+            'está na área da assistência social',
+            'está na área da educação',
+            'está na área da saúde',
+            'está em área não certificável',
+            'não apresentou documento contábil segregado',
+            'educação',
+            'saúde',
+            'Não se aplica',
+        ],
         'CGCEB_MANIFESTACACAO' => [
             ['value' => '1', 'label' => 'Leandro de Oliveira Nardi'],
             ['value' => '3', 'label' => 'Edgilson Tavares de Araújo'],
@@ -144,8 +170,7 @@
         @method('PUT')
         <input type="hidden" name="original_protocolo" value="{{ $originalProtocolo }}">
 
-        {{-- Informações do processo (somente leitura) --}}
-        <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm" aria-labelledby="informacoes-title">
             <div class="border-b border-blue-200 bg-blue-50 px-6 py-4">
                 <div class="flex items-center gap-3">
                     <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
@@ -154,39 +179,29 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-base font-semibold text-gray-900">Informações do processo</h2>
-                        <p class="text-sm text-gray-500">Dados básicos (somente leitura)</p>
+                        <h2 id="informacoes-title" class="text-lg font-semibold text-gray-900">Informações do Processo</h2>
+                        <p class="text-sm text-gray-600">Dados básicos da manifestação</p>
                     </div>
                 </div>
             </div>
-            <div class="p-6">
-                <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($headerColumns as $col)
-                        <div>
-                            <dt class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($col) }}</dt>
-                            <dd class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                                @php
-                                    $val = $processo[$col] ?? '';
-                                    if (str_starts_with($col, 'DT_') && preg_match('/^\d{4}-\d{2}-\d{2}/', (string) $val)) {
-                                        $val = \Carbon\Carbon::parse($val)->format('d/m/Y');
-                                    }
-                                @endphp
-                                {{ $val !== '' && $val !== null ? $val : '—' }}
-                            </dd>
-                        </div>
-                    @endforeach
-                </dl>
+            <div class="grid gap-5 p-6 md:grid-cols-2 xl:grid-cols-3">
+                @foreach ($headerColumns as $field)
+                    @php
+                        $headerValue = $processo[$field] ?? '-';
+
+                        if (str_starts_with($field, 'DT_') && is_string($headerValue) && preg_match('/^\d{4}-\d{2}-\d{2}/', $headerValue)) {
+                            $headerValue = \Carbon\Carbon::parse($headerValue)->format('d/m/Y');
+                        }
+                    @endphp
+                    <div class="{{ $field === 'ENTIDADE' ? 'md:col-span-2 xl:col-span-3' : '' }}">
+                        <label class="{{ $labelClass }}">{{ $repository->parecerTecnicoLabel($field) }}</label>
+                        <div class="min-h-11 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700">{{ $headerValue }}</div>
+                    </div>
+                @endforeach
             </div>
         </section>
 
-        {{-- Tipo de encaminhamento (somente leitura) --}}
-        @if (!empty($processo['PEDIDO_MANIFESTACAO_ENCAMINHAMENTO']))
-            <div class="rounded-lg border border-amber-300 bg-amber-50 px-5 py-3 text-center text-sm font-bold text-amber-900">
-                Solicitação de manifestação: {{ $processo['PEDIDO_MANIFESTACAO_ENCAMINHAMENTO'] }}
-            </div>
-        @endif
-
-        {{-- Seções editáveis --}}
+{{-- Seções editáveis --}}
         @foreach ($sections as $section)
             @php
                 $style = $sectionStyles[$section['title']] ?? ['iconBg' => 'bg-gray-600', 'header' => 'border-gray-200 bg-gray-50', 'subtitle' => ''];

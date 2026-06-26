@@ -236,10 +236,12 @@ class AccessProcessRepository
             'USUARIO_VII',
             'QUALIFICACAO_USUARIO_VII',
             'OUTRAS_OFERTAS',
+            'OFERTAS_OUTRAS_AREAS',
         ],
         'Documento' => [
             'ORGAO_ENCAMINHAMENTO',
             'GRATUIDADE_FLS',
+            'OUTRAS_OFERTAS_I',
         ],
         'Observação' => [
             'OBS_PEDIDO_MANIFESTACAO',
@@ -256,6 +258,7 @@ class AccessProcessRepository
     private const MANIFESTACAO_LABELS = [
         'ORGAO_ENCAMINHAMENTO' => 'Órgão de encaminhamento',
         'GRATUIDADE_FLS' => 'Demonstrativo Contábil (DRE e Nota Explicativa) Fl(s)',
+        'OUTRAS_OFERTAS_I' => 'A preponderância das despesas',
         'OUTRAS_OFERTAS' => 'Outra(s) atividade(s) inicialmente identificadas',
         'OBS_PEDIDO_MANIFESTACAO' => 'Observação',
         'CGCEB_MANIFESTACACAO' => 'CGCEB/DRSP/SNAS/MDS',
@@ -476,7 +479,8 @@ class AccessProcessRepository
             }
 
             if (is_array($value)) {
-                $value = implode("\n", array_filter(array_map('trim', $value), fn ($item) => $item !== ''));
+                $separator = $column === 'OFERTAS_OUTRAS_AREAS' ? ';' : "\n";
+                $value = implode($separator, array_filter(array_map('trim', $value), fn ($item) => $item !== ''));
             }
 
             if (is_string($value)) {
