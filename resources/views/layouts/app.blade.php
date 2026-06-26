@@ -60,49 +60,7 @@
                     ],
                 ],
             ],
-            [
-                'label' => 'Coordenação',
-                'active' => request()->routeIs('coordenacao.*'),
-                'icon' => 'folder',
-                'href' => route('coordenacao.index'),
-            ],
-            [
-                'label' => 'Emissor de Certificado',
-                'active' => false,
-                'icon' => 'file',
-                'href' => 'https://aplicacoes.mds.gov.br/snas/redeprivada/eccebas/',
-                'external' => true,
-            ],
-            [
-                'label' => 'Plataformas',
-                'active' => false,
-                'icon' => 'layers',
-                'children' => [
-                    [
-                        'label' => 'Lecom',
-                        'href' => 'https://cidadania.servicos.gov.br/bpm/pesquisa_processo',
-                        'external' => true,
-                    ],
-                    [
-                        'label' => 'SEI',
-                        'href' =>
-                            'https://sei.cidadania.gov.br/sei/controlador.php?acao=procedimento_controlar&acao_origem=principal&acao_retorno=principal&inicializando=1&infra_sistema=100000100&infra_unidade_atual=110000221&infra_hash=8cb6c25c95791024313862d3229b5a82cd9b808c004770caeebd59464ba6f74b',
-                        'external' => true,
-                    ],
-                    [
-                        'label' => 'CNEAS',
-                        'href' =>
-                            'https://aplicacoes.mds.gov.br/saa-web/login.action?url=https://aplicacoes.mds.gov.br/cneas&mensagemSaa=Sess%E3o+encerrada.',
-                        'external' => true,
-                    ],
-                    [
-                        'label' => 'Protocolo Digital',
-                        'href' =>
-                            'https://app.anm.gov.br/SCA/Site/Login.aspx?ReturnUrl=https%3A%2F%2Fapp.anm.gov.br%2Fprotocolo',
-                        'external' => true,
-                    ],
-                ],
-            ],
+           
         ];
 
         if ($hasCoordenacaoPermission) {

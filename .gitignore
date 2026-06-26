@@ -32,3 +32,4 @@ fortinet.cer
 package-lock.json
 .openclaude-profile.json
 /.venv
+php/*

@@ -42,7 +42,4 @@ WORKDIR /var/www
 # Copia os arquivos do projeto
 COPY . /var/www/
 
-RUN npm install
-RUN npm run build
-
 RUN chown -R www-data:www-data /var/www
