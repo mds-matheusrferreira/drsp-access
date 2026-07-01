@@ -20,6 +20,7 @@ class ExternoController extends Controller
     {
         return view('coordenacao.planilhas.externo', [
             'stats' => $this->externo->stats(),
+            'importHistory' => $this->externo->importHistory(),
         ]);
     }
 
@@ -48,7 +49,9 @@ class ExternoController extends Controller
             'date_created' => now(),
         ]);
 
-        return back()->with('success', 'Importação Externo concluída com sucesso. Registros inseridos: '.number_format((int) ($result['inserted_rows'] ?? 0), 0, ',', '.').'.');
+        return back()
+            ->with('success', 'Importação Externo concluída com sucesso. Registros inseridos: '.number_format((int) ($result['inserted_rows'] ?? 0), 0, ',', '.').'.')
+            ->with('backup_filename', $result['backup_filename'] ?? null);
     }
 
     public function modelo(): StreamedResponse
@@ -68,6 +71,20 @@ class ExternoController extends Controller
         return response()->streamDownload(function () use ($xlsxPath) {
             readfile($xlsxPath);
             @unlink($xlsxPath);
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    public function downloadBackup(string $filename): StreamedResponse
+    {
+        $path = $this->externo->backupPath($filename);
+
+        abort_if(! file_exists($path), 404, 'Backup não encontrado.');
+
+        return response()->streamDownload(function () use ($path) {
+            readfile($path);
+            @unlink($path);
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);

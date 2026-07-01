@@ -195,18 +195,44 @@ class ExternoService
     public function stats(): array
     {
         if (! Schema::hasTable(self::TABLE)) {
-            return ['total' => 0, 'updated_at' => null];
+            return ['total' => 0, 'updated_at' => null, 'updated_by' => null];
         }
 
-        $updatedAt = DB::table('logs')
-            ->where('log', 'like', '%"area":"planilha_externo"%')
-            ->orderByDesc('date_created')
-            ->value('date_created');
+        $logs = $this->importHistory();
+        $latest = $logs[0] ?? null;
 
         return [
             'total' => DB::table(self::TABLE)->count(),
-            'updated_at' => $updatedAt ? $this->formatDisplayDate($updatedAt) : null,
+            'updated_at' => $latest['date_created'] ?? null,
+            'updated_by' => $latest['user'] ?? null,
         ];
+    }
+
+    /**
+     * @return array<int, array{user: string, date_created: string|null, registros: int, area: string, acao: string}>
+     */
+    public function importHistory(): array
+    {
+        if (! Schema::hasTable('logs')) {
+            return [];
+        }
+
+        return DB::table('logs')
+            ->where('log', 'like', '%"area":"planilha_externo"%')
+            ->orderByDesc('date_created')
+            ->get()
+            ->map(function ($row): array {
+                $data = json_decode((string) $row->log, true) ?: [];
+
+                return [
+                    'user' => (string) $row->user,
+                    'date_created' => $row->date_created ? $this->formatLogDate($row->date_created) : null,
+                    'registros' => (int) ($data['registros'] ?? 0),
+                    'area' => (string) ($data['area'] ?? 'planilha_externo'),
+                    'acao' => (string) ($data['acao'] ?? 'importacao'),
+                ];
+            })
+            ->all();
     }
 
     public function import(UploadedFile $file): array
@@ -216,6 +242,8 @@ class ExternoService
         $rows = $this->readXlsxRows($file->getRealPath() ?: $file->path());
         $records = $this->recordsFromRows($rows);
 
+        $backupFilename = $this->saveBackup();
+
         DB::transaction(function () use ($records) {
             DB::table(self::TABLE)->delete();
 
@@ -224,7 +252,31 @@ class ExternoService
             }
         });
 
-        return ['inserted_rows' => count($records)];
+        return ['inserted_rows' => count($records), 'backup_filename' => $backupFilename];
+    }
+
+    public function saveBackup(): string
+    {
+        $filename = 'externo-backup-' . now()->format('Ymd-His') . '.xlsx';
+        $dir = storage_path('app/backups');
+
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        foreach (glob($dir . '/externo-backup-*.xlsx') ?: [] as $old) {
+            @unlink($old);
+        }
+
+        $tmpPath = $this->xlsxPath();
+        rename($tmpPath, $dir . '/' . $filename);
+
+        return $filename;
+    }
+
+    public function backupPath(string $filename): string
+    {
+        return storage_path('app/backups/' . basename($filename));
     }
 
     public function recordsForDownload(): iterable
@@ -484,6 +536,17 @@ class ExternoService
     }
 
     private function formatDisplayDate(mixed $value): string
+    {
+        $value = (string) $value;
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {
+            return (new DateTime(substr($value, 0, 10)))->format('d/m/Y');
+        }
+
+        return $value;
+    }
+
+    private function formatLogDate(mixed $value): string
     {
         $value = (string) $value;
 

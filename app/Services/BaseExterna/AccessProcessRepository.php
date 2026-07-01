@@ -305,6 +305,10 @@ class AccessProcessRepository
         'RESPONSAVEL_NOTA_TECNICA' => 'Responsável Nota Técnica',
     ];
 
+    private ?array $cachedColumns = null;
+
+    private ?array $cachedColumnTypes = null;
+
     public function tableExists(): bool
     {
         return Schema::hasTable(self::TABLE);
@@ -315,11 +319,15 @@ class AccessProcessRepository
      */
     public function columns(): array
     {
-        if (! $this->tableExists()) {
-            return [];
+        if ($this->cachedColumns !== null) {
+            return $this->cachedColumns;
         }
 
-        return array_values(array_filter(
+        if (! $this->tableExists()) {
+            return $this->cachedColumns = [];
+        }
+
+        return $this->cachedColumns = array_values(array_filter(
             Schema::getColumnListing(self::TABLE),
             fn (string $column) => ! in_array($column, self::TECHNICAL_COLUMNS, true)
         ));
@@ -330,6 +338,10 @@ class AccessProcessRepository
      */
     public function columnTypes(): array
     {
+        if ($this->cachedColumnTypes !== null) {
+            return $this->cachedColumnTypes;
+        }
+
         $types = [];
 
         foreach ($this->columns() as $column) {
@@ -340,7 +352,7 @@ class AccessProcessRepository
             }
         }
 
-        return $types;
+        return $this->cachedColumnTypes = $types;
     }
 
     /**
@@ -418,13 +430,13 @@ class AccessProcessRepository
     {
         $protocolo = trim($protocolo);
 
-        if ($this->protocolCount($protocolo) !== 1) {
+        if (! $this->tableExists() || $protocolo === '') {
             return null;
         }
 
-        $row = DB::table(self::TABLE)->where('PROTOCOLO', $protocolo)->first();
+        $rows = DB::table(self::TABLE)->where('PROTOCOLO', $protocolo)->limit(2)->get();
 
-        return $row ? (array) $row : null;
+        return $rows->count() === 1 ? (array) $rows->first() : null;
     }
 
     /**
@@ -446,6 +458,22 @@ class AccessProcessRepository
 
         return DB::table(self::TABLE)
             ->where('PROTOCOLO', $originalProtocolo)
+            ->update($sanitized);
+    }
+
+    /**
+     * Executa update com dados já sanitizados — usar somente quando sanitizeForUpdate() já foi chamado.
+     *
+     * @param  array<string, mixed>  $sanitized
+     */
+    public function updateSanitized(string $protocolo, array $sanitized): int
+    {
+        if ($sanitized === []) {
+            return 0;
+        }
+
+        return DB::table(self::TABLE)
+            ->where('PROTOCOLO', trim($protocolo))
             ->update($sanitized);
     }
 

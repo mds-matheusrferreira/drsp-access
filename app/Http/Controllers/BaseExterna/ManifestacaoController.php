@@ -51,7 +51,7 @@ class ManifestacaoController extends Controller
         $original = $this->accessProcesses->findByProtocolo($originalProtocolo) ?? [];
         $sanitized = $this->accessProcesses->sanitizeForUpdate($payload);
         $changedFields = $this->changedFields($original, $sanitized);
-        $this->accessProcesses->updateByProtocolo($originalProtocolo, $payload);
+        $this->accessProcesses->updateSanitized($originalProtocolo, $sanitized);
 
         if (($validated['_action'] ?? 'save') === 'save' && $changedFields !== []) {
             $this->logManifestacaoSave($request, $originalProtocolo, $changedFields);

@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/externo/import', [ExternoController::class, 'import'])->name('externo.import');
             Route::get('/externo/modelo', [ExternoController::class, 'modelo'])->name('externo.modelo');
             Route::get('/externo/backup', [ExternoController::class, 'backup'])->name('externo.backup');
+            Route::get('/externo/backup-preimport/{filename}', [ExternoController::class, 'downloadBackup'])->name('externo.backup-preimport')->where('filename', '[a-zA-Z0-9_\-\.]+');
         });
     });
 
